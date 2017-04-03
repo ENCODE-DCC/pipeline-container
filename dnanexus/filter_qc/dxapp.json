@@ -1,0 +1,117 @@
+{
+  "name": "filter_qc",
+  "title": "ENCODE TF Chip-seq Mapped Read Filter and QC.",
+  "summary": "Take a raw bam file of mapped reads, filter, calculate QC metrics",
+  "dxapi": "1.0.0",
+  "version": "0.0.1",
+  "categories": [
+    "ENCODE Analysis Pipeline"
+  ],
+  "inputSpec": [
+    {
+      "name": "input_bam",
+      "label": "Raw, unfiltered, mapped reads.",
+      "class": "file"
+    },
+    {
+      "name": "paired_end",
+      "label": "True if the bam was derived from paired-end reads.",
+      "class": "boolean"
+    },
+    {
+      "name": "samtools_params",
+      "label": "Command-line parameters to samtools common to both single- and paired-end data",
+      "class": "string",
+      "optional": true,
+      "default": "-q 30"
+    },
+    {
+      "name": "debug",
+      "label": "debug mode",
+      "class": "boolean",
+      "optional": true,
+      "default": false
+    }
+  ],
+  "outputSpec": [
+    {
+      "name": "filtered_bam",
+      "label": "Mapped reads surviving the filter.",
+      "class": "file"
+    },
+    {
+      "name": "filtered_bam_index",
+      "label": "Indexed reads surviving the filter.",
+      "class": "file"
+    },
+    {
+      "name": "filtered_mapstats",
+      "label": "Post-filtering mapping statistics.",
+      "class": "file"
+    },
+    {
+      "name": "dup_file_qc",
+      "label": "Duplication metrics from MarkDuplicates.",
+      "class": "file"
+    },
+    {
+      "name": "pbc_file_qc",
+      "label": "Library complexity measures.",
+      "class": "file"
+    },
+    {
+      "name": "paired_end",
+      "label": "True if the bam was derived from paired-end reads.",
+      "class": "boolean"
+    },
+    {
+      "name": "NRF",
+      "label": "Non-redundant fraction",
+      "class": "string"
+    },
+    {
+      "name": "PBC1",
+      "label": "PCR Bottleneck Coefficient 1",
+      "class": "string"
+    },
+    {
+      "name": "PBC2",
+      "label": "PCR Bottleneck Coefficient 2",
+      "class": "string"
+    },
+    {
+      "name": "duplicate_fraction",
+      "label": "Picard MarkDuplicates fraction",
+      "class": "string"
+    }
+  ],
+  "runSpec": {
+    "interpreter": "python2.7",
+    "file": "src/filter_qc.py",
+    "execDepends": [
+      {"name": "samtools",
+       "package_manager": "git",
+       "url": "https://github.com/samtools/samtools.git",
+       "destdir": "/tmp",
+       "tag": "0.1.19",
+       "build_commands": "make samtools && cp /tmp/samtools/samtools /usr/local/bin/samtools"},
+      {"name": "bedtools"},
+      {"name": "ant"},
+      {"name": "openjdk-6-jdk"},
+      {"name": "picard",
+       "package_manager": "git",
+       "url": "https://github.com/broadinstitute/picard.git",
+       "tag": "1.92",
+       "build_commands": "ant -Djava6.home=/usr/lib/jvm/java-6-openjdk-amd64/ -Ddist=/picard -lib lib/ant package-commands"}
+     ],
+    "systemRequirements": {
+      "main": {"instanceType": "mem3_hdd2_x2"}
+    }
+  },
+  "access": {
+    "network": [
+      "*"
+    ]
+  },
+  "authorizedUsers": []
+}

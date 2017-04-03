@@ -1,0 +1,41 @@
+{
+  "name": "pool",
+  "title": "ENCODE TF ChIP-seq Pooler",
+  "summary": "Take two gzipped-files and concatenate them into a new gzipped file.",
+  "dxapi": "1.0.0",
+  "version": "0.0.1",
+  "categories": [
+    "ENCODE Analysis Pipeline"
+  ],
+  "inputSpec": [
+    {
+      "name": "inputs",
+      "label": "List of files to concatenate.",
+      "class": "array:file",
+      "optional": false
+    },
+    {
+      "name": "prefix",
+      "label": "Basename for output files",
+      "class": "string",
+      "optional": true
+    }
+  ],
+  "outputSpec": [
+    {
+      "name": "pooled",
+      "label": "Pool of the inputs.",
+      "class": "file"
+    }
+  ],
+  "runSpec": {
+    "interpreter": "python2.7",
+    "file": "src/pool.py"
+  },
+  "access": {
+    "network": [
+      "*"
+    ]
+  },
+  "authorizedUsers": []
+}
