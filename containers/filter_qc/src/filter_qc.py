@@ -73,6 +73,16 @@ def pbc_parse(fname):
         pbc_qc = dict(zip(headers, metrics))
     return pbc_qc
 
+'''
+Image details:
+1. Samtools 0.1.19  (https://github.com/samtools/samtools.git)
+2. Picard 1.92 (https://github.com/broadinstitute/picard.git)
+3. Java (openjdk-6-jdk)
+4. Python 2.7
+5. bedtools (not sure about version) (https://github.com/arq5x/bedtools2.git)
+
+'''
+
 
 def main(input_bam, paired_end, samtools_params, debug):
 
