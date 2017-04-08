@@ -290,4 +290,4 @@ def main(input_bam, paired_end, samtools_params, debug):
     logger.info("Exiting with output:\n%s" % (pprint(output)))
     return output
 
-
+print ('runing from inage')
