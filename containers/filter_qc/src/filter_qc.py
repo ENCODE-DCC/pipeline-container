@@ -75,17 +75,17 @@ def pbc_parse(fname):
 
 '''
 Image details:
-1. Samtools 0.1.19  (https://github.com/samtools/samtools.git)
-2. Picard 1.92 (https://github.com/broadinstitute/picard.git)
-3. Java (openjdk-6-jdk)
-4. Python 2.7
-5. bedtools (not sure about version) (https://github.com/arq5x/bedtools2.git)
+1. Samtools 0.1.19  (https://github.com/samtools/samtools.git) DONE
+2. Picard 1.92 (https://github.com/broadinstitute/picard.git) DONE (svnversion error)
+3. Java (openjdk-6-jdk) DONE
+4. Python 2.7 DONE
+5. bedtools (2.26) (https://github.com/arq5x/bedtools2.git) DONE
 
 '''
 
 
 def main(input_bam, paired_end, samtools_params, debug):
-
+    print ('hooray')
     if debug:
         logger.setLevel(logging.DEBUG)
     else:
