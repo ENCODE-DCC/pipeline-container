@@ -23,6 +23,7 @@ logger.propagate = False
 logger.setLevel(logging.INFO)
 
 
+
 def dup_parse(fname):
     with open(fname, 'r') as dup_file:
         if not dup_file:
@@ -73,24 +74,17 @@ def pbc_parse(fname):
         pbc_qc = dict(zip(headers, metrics))
     return pbc_qc
 
-'''
-Image details:
-1. Samtools 0.1.19  (https://github.com/samtools/samtools.git) DONE
-2. Picard 1.92 (https://github.com/broadinstitute/picard.git) DONE (svnversion error)
-3. Java (openjdk-6-jdk) DONE
-4. Python 2.7 DONE
-5. bedtools (2.26) (https://github.com/arq5x/bedtools2.git) DONE
-
-'''
-
 
 def main(input_bam, paired_end, samtools_params, debug):
-    print ('hooray')
-    if debug:
-        logger.setLevel(logging.DEBUG)
-    else:
-        logger.setLevel(logging.INFO)
 
+    # create a file handler
+    handler = logging.FileHandler('image.log')
+
+    if debug:
+        handler.setLevel(logging.DEBUG)
+    else:
+        handler.setLevel(logging.INFO)
+    logger.addHandler(handler)
     # input_json is no longer used
     # # if there is input_JSON, it over-rides any explicit parameters
     # if input_JSON:
@@ -107,10 +101,10 @@ def main(input_bam, paired_end, samtools_params, debug):
     #     raise Exception
     # assert paired_end is not None, 'paired_end is required, explicitly or in input_JSON'
 
-    raw_bam_file = input_bam
+    raw_bam_file = open(input_bam, 'r')
     raw_bam_filename = raw_bam_file.name
     raw_bam_basename = raw_bam_file.name.rstrip('.bam')
-
+    raw_bam_file.close()
     subprocess.check_output('set -x; ls -l', shell=True)
 
     filt_bam_prefix = raw_bam_basename + ".filt.srt"
@@ -233,6 +227,7 @@ def main(input_bam, paired_end, samtools_params, debug):
     # sort by position and strand
     # Obtain unique count statistics
     pbc_file_qc_filename = final_bam_prefix + ".pbc.qc"
+
     # PBC File output
     # TotalReadPairs [tab]
     # DistinctReadPairs [tab]
@@ -290,4 +285,4 @@ def main(input_bam, paired_end, samtools_params, debug):
     logger.info("Exiting with output:\n%s" % (pprint(output)))
     return output
 
-print ('runing from inage')
+main('/tmp/container/portion.bam', False, '', False)
