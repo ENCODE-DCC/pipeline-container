@@ -11,21 +11,20 @@ import common
 import logging
 
 logger = logging.getLogger(__name__)
-logger.addHandler(dxpy.DXLogHandler())
 logger.propagate = False
 logger.setLevel(logging.INFO)
 
 BWA_PATH = {
-    "0.7.7": "/usr/local/bin/bwa0.7.7",
-    "0.7.10": "/usr/local/bin/bwa0.7.10"
+    "0.7.7": "/tmp/bwa_0_7_7/bwa",
+    "0.7.10": "/tmp/bwa_0_7_10/bwa"
 }
 
 SAMTOOLS_PATH = {
-    "0.1.19": "/usr/local/bin/samtools-0.1.19/samtools",
-    "1.0": "/usr/local/bin/samtools-1.0/bin/samtools"
+    "0.1.19": "/tmp/samtools_0_1_19/samtools/samtools",
+    "1.0": "/tmp/samtools_1_0/samtools/samtools"
 }
 
-TRIMMOMATIC_PATH = "/usr/local/bin/Trimmomatic-0.36/trimmomatic-0.36.jar"
+TRIMMOMATIC_PATH = "/tmp/Trimmomatic-0.36/trimmomatic-0.36.jar"
 
 # the order of this list is important.
 # strip_extensions strips from the right inward, so
