@@ -91,7 +91,6 @@ def resolve_reference(reference_tar_filename, reference_dirname):
     return '/'.join([reference_dirname, filename])
 
 
-@dxpy.entry_point("crop")
 def crop(reads1_file, reads2_file, crop_length, debug):
 
     if debug:
@@ -104,15 +103,13 @@ def crop(reads1_file, reads2_file, crop_length, debug):
         output = dict(zip(
             ["cropped_reads1", "cropped_reads2"], [reads1_file, reads2_file]))
     else:
-        reads1_filename = dxpy.describe(reads1_file)['name']
+        reads1_filename = reads1_file.name
         reads1_basename = strip_extensions(reads1_filename, STRIP_EXTENSIONS)
-        dxpy.download_dxfile(reads1_file, reads1_filename)
         if reads2_file:
             end_string = "PE"
-            reads2_filename = dxpy.describe(reads2_file)['name']
+            reads2_filename = reads2_file.name
             reads2_basename = \
                 strip_extensions(reads2_filename, STRIP_EXTENSIONS)
-            dxpy.download_dxfile(reads2_file, reads2_filename)
             output_fwd_paired_filename = reads1_basename + '-crop-paired.fq.gz'
             output_fwd_unpaired_filename = \
                 reads1_basename + '-crop-unpaired.fq.gz'
@@ -154,13 +151,11 @@ def crop(reads1_file, reads2_file, crop_length, debug):
             SE_output = dxpy.upload_local_file(SE_output_filename)
             cropped_reads = [dxpy.dxlink(SE_output), None]
         else:
-            output_fwd_paired = \
-                dxpy.upload_local_file(output_fwd_paired_filename)
-            output_rev_paired = \
-                dxpy.upload_local_file(output_rev_paired_filename)
+            output_fwd_paired = output_fwd_paired_filename
+            output_rev_paired = output_rev_paired_filename
             cropped_reads = [
-                dxpy.dxlink(output_fwd_paired),
-                dxpy.dxlink(output_rev_paired)]
+                output_fwd_paired,
+                output_rev_paired]
 
         output = dict(zip(["cropped_reads1", "cropped_reads2"], cropped_reads))
 
@@ -168,130 +163,6 @@ def crop(reads1_file, reads2_file, crop_length, debug):
     return output
 
 
-@dxpy.entry_point("postprocess")
-def postprocess(indexed_reads, unmapped_reads, reference_tar,
-                bwa_version, samtools_version, debug):
-
-    if debug:
-        logger.setLevel(logging.DEBUG)
-    else:
-        logger.setLevel(logging.INFO)
-
-    samtools = SAMTOOLS_PATH.get(samtools_version)
-    assert samtools, "samtools version %s is not supported" % (samtools_version)
-    bwa = BWA_PATH.get(bwa_version)
-    assert bwa, "BWA version %s is not supported" % (bwa_version)
-    logger.info("In postprocess with samtools %s and bwa %s" % (samtools, bwa))
-
-    indexed_reads_filenames = []
-    unmapped_reads_filenames = []
-    for i, reads in enumerate(indexed_reads):
-        read_pair_number = i+1
-
-        fn = dxpy.describe(reads)['name']
-        logger.info("indexed_reads %d: %s" % (read_pair_number, fn))
-        indexed_reads_filenames.append(fn)
-        dxpy.download_dxfile(reads, fn)
-
-        unmapped = unmapped_reads[i]
-        fn = dxpy.describe(unmapped)['name']
-        logger.info("unmapped reads %d: %s" % (read_pair_number, fn))
-        unmapped_reads_filenames.append(fn)
-        dxpy.download_dxfile(unmapped, fn)
-
-    reference_tar_filename = dxpy.describe(reference_tar)['name']
-    logger.info("reference_tar: %s" % (reference_tar_filename))
-    dxpy.download_dxfile(reference_tar, reference_tar_filename)
-    # extract the reference files from the tar
-    reference_dirname = 'reference_files'
-    reference_filename = \
-        resolve_reference(reference_tar_filename, reference_dirname)
-    logger.info("Using reference file: %s" % (reference_filename))
-
-    paired_end = len(indexed_reads) == 2
-
-    if paired_end:
-        r1_basename = strip_extensions(
-            unmapped_reads_filenames[0], STRIP_EXTENSIONS)
-        r2_basename = strip_extensions(
-            unmapped_reads_filenames[1], STRIP_EXTENSIONS)
-        reads_basename = r1_basename + r2_basename
-    else:
-        reads_basename = strip_extensions(
-            unmapped_reads_filenames[0], STRIP_EXTENSIONS)
-    raw_bam_filename = '%s.raw.srt.bam' % (reads_basename)
-    raw_bam_mapstats_filename = '%s.raw.srt.bam.flagstat.qc' % (reads_basename)
-
-    if paired_end:
-        reads1_filename = indexed_reads_filenames[0]
-        reads2_filename = indexed_reads_filenames[1]
-        unmapped_reads1_filename = unmapped_reads_filenames[0]
-        unmapped_reads2_filename = unmapped_reads_filenames[1]
-        raw_sam_filename = reads_basename + ".raw.sam"
-        badcigar_filename = "badreads.tmp"
-        steps = [
-            "%s sampe -P %s %s %s %s %s"
-            % (bwa, reference_filename, reads1_filename, reads2_filename,
-               unmapped_reads1_filename, unmapped_reads2_filename),
-            "tee %s" % (raw_sam_filename),
-            r"""awk 'BEGIN {FS="\t" ; OFS="\t"} ! /^@/ && $6!="*" { cigar=$6; gsub("[0-9]+D","",cigar); n = split(cigar,vals,"[A-Z]"); s = 0; for (i=1;i<=n;i++) s=s+vals[i]; seqlen=length($10) ; if (s!=seqlen) print $1"\t" ; }'""",
-            "sort",
-            "uniq"]
-        out, err = common.run_pipe(steps, badcigar_filename)
-        print(out)
-        if err:
-            logger.error("sampe error: %s" % (err))
-
-        steps = [
-            "cat %s" % (raw_sam_filename),
-            "grep -v -F -f %s" % (badcigar_filename)]
-    else:  # single end
-        reads_filename = indexed_reads_filenames[0]
-        unmapped_reads_filename = unmapped_reads_filenames[0]
-        steps = [
-            "%s samse %s %s %s"
-            % (bwa, reference_filename,
-               reads_filename, unmapped_reads_filename)]
-
-    if samtools_version == "0.1.9":
-        steps.extend([
-            "%s view -Su -" % (samtools),
-            "%s sort - %s"
-            % (samtools, raw_bam_filename.rstrip('.bam'))])  # samtools adds .bam
-    else:
-        steps.extend([
-            "%s view -@%d -Su -" % (samtools, cpu_count()),
-            "%s sort -@%d - %s"
-            % (samtools, cpu_count(), raw_bam_filename.rstrip('.bam'))])  # samtools adds .bam
-
-    logger.info("Running pipe: %s" % (steps))
-    out, err = common.run_pipe(steps)
-
-    if out:
-        print(out)
-    if err:
-        logger.error("samtools error: %s" % (err))
-
-    with open(raw_bam_mapstats_filename, 'w') as fh:
-        subprocess.check_call(
-            shlex.split("%s flagstat %s" % (samtools, raw_bam_filename)),
-            stdout=fh)
-    print(subprocess.check_output('ls -l', shell=True))
-
-    mapped_reads = dxpy.upload_local_file(raw_bam_filename)
-    mapping_statistics = dxpy.upload_local_file(raw_bam_mapstats_filename)
-    flagstat_qc = flagstat_parse(raw_bam_mapstats_filename)
-
-    output = {
-        'mapped_reads': dxpy.dxlink(mapped_reads),
-        'mapping_statistics': dxpy.dxlink(mapping_statistics),
-        'n_mapped_reads': flagstat_qc.get('mapped')[0]  # 0 is hi-q reads
-    }
-    logger.info("Returning from postprocess with output: %s" % (output))
-    return output
-
-
-@dxpy.entry_point("process")
 def process(reads_file, reference_tar, bwa_aln_params, bwa_version, debug):
     # reads_file, reference_tar should be links to file objects.
     # reference_tar should be a tar of files generated by bwa index and
@@ -374,10 +245,12 @@ def main(reads1, crop_length, reference_tar,
             "debug": debug
         }
         logger.info("Crop job input: %s" % (crop_subjob_input))
-        crop_subjob = dxpy.new_dxjob(crop_subjob_input, "crop")
-        unmapped_reads = [crop_subjob.get_output_ref("cropped_reads1")]
+
+        crop_subjob = crop(reads1, reads2, crop_length, debug)
+
+        unmapped_reads = [crop_subjob.get("cropped_reads1")]
         if paired_end:
-            unmapped_reads.append(crop_subjob.get_output_ref("cropped_reads2"))
+            unmapped_reads.append(crop_subjob.get("cropped_reads2"))
         else:
             unmapped_reads.append(None)
 
@@ -393,6 +266,9 @@ def main(reads1, crop_length, reference_tar,
             "debug": debug
         }
         logger.info("Mapping job input: %s" % (mapping_subjob_input))
+
+#### Keep from here!!!!
+
         if crop_subjob:
             mapping_subjobs.append(dxpy.new_dxjob(
                 fn_input=mapping_subjob_input,
@@ -433,4 +309,4 @@ def main(reads1, crop_length, reference_tar,
     logger.info("Exiting with output: %s" % (output))
     return output
 
-dxpy.run()
+
