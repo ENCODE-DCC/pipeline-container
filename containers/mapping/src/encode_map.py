@@ -7,7 +7,6 @@ import shlex
 import re
 from multiprocessing import cpu_count
 import dxpy
-import common
 import logging
 
 logger = logging.getLogger(__name__)
@@ -37,41 +36,6 @@ def strip_extensions(filename, extensions):
     for extension in extensions:
         basename = basename.rpartition(extension)[0] or basename
     return basename
-
-
-def flagstat_parse(fname):
-    with open(fname, 'r') as flagstat_file:
-        if not flagstat_file:
-            return None
-        flagstat_lines = flagstat_file.read().splitlines()
-
-    qc_dict = {
-        # values are regular expressions,
-        # will be replaced with scores [hiq, lowq]
-        'in_total': 'in total',
-        'duplicates': 'duplicates',
-        'mapped': 'mapped',
-        'paired_in_sequencing': 'paired in sequencing',
-        'read1': 'read1',
-        'read2': 'read2',
-        'properly_paired': 'properly paired',
-        'with_self_mate_mapped': 'with itself and mate mapped',
-        'singletons': 'singletons',
-        # i.e. at the end of the line
-        'mate_mapped_different_chr': 'with mate mapped to a different chr$',
-        # RE so must escape
-        'mate_mapped_different_chr_hiQ':
-            'with mate mapped to a different chr \(mapQ>=5\)'
-    }
-
-    for (qc_key, qc_pattern) in qc_dict.items():
-        qc_metrics = next(re.split(qc_pattern, line)
-                          for line in flagstat_lines
-                          if re.search(qc_pattern, line))
-        (hiq, lowq) = qc_metrics[0].split(' + ')
-        qc_dict[qc_key] = [int(hiq.rstrip()), int(lowq.rstrip())]
-
-    return qc_dict
 
 
 def resolve_reference(reference_tar_filename, reference_dirname):
@@ -218,10 +182,14 @@ def main(reads1, crop_length, reference_tar,
     # Main entry-point.  Parameter defaults assumed to come from dxapp.json.
     # reads1, reference_tar, reads2 are links to DNAnexus files or None
 
+    # create a file handler
+    handler = logging.FileHandler('mapping.log')
+
     if debug:
-        logger.setLevel(logging.DEBUG)
+        handler.setLevel(logging.DEBUG)
     else:
-        logger.setLevel(logging.INFO)
+        handler.setLevel(logging.INFO)
+    logger.addHandler(handler)
 
     # This spawns only one or two subjobs for single- or paired-end,
     # respectively.  It could also download the files, chunk the reads,
@@ -309,4 +277,4 @@ def main(reads1, crop_length, reference_tar,
     logger.info("Exiting with output: %s" % (output))
     return output
 
-
+main('/tmp/container/portion.bam', False, '', False)
