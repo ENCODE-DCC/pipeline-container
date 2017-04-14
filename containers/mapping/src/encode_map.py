@@ -4,7 +4,6 @@
 import os
 import subprocess
 import shlex
-import re
 from multiprocessing import cpu_count
 import dxpy
 import logging
@@ -13,10 +12,7 @@ logger = logging.getLogger(__name__)
 logger.propagate = False
 logger.setLevel(logging.INFO)
 
-BWA_PATH = {
-    "0.7.7": "/tmp/bwa_0_7_7/bwa",
-    "0.7.10": "/tmp/bwa_0_7_10/bwa"
-}
+BWA_PATH = "/tmp/bwa_0_7_10/bwa"
 
 SAMTOOLS_PATH = {
     "0.1.19": "/tmp/samtools_0_1_19/samtools/samtools",
@@ -177,7 +173,7 @@ def process(reads_file, reference_tar, bwa_aln_params, bwa_version, debug):
 
 @dxpy.entry_point("main")
 def main(reads1, crop_length, reference_tar,
-         bwa_version, bwa_aln_params, samtools_version, debug, reads2=None):
+         bwa_aln_params, samtools_version, debug, reads2=None):
 
     # Main entry-point.  Parameter defaults assumed to come from dxapp.json.
     # reads1, reference_tar, reads2 are links to DNAnexus files or None
@@ -224,57 +220,27 @@ def main(reads1, crop_length, reference_tar,
 
     unmapped_reads = [r for r in unmapped_reads if r]
 
-    mapping_subjobs = []
     for reads in unmapped_reads:
         mapping_subjob_input = {
             "reads_file": reads,
             "reference_tar": reference_tar,
             "bwa_aln_params": bwa_aln_params,
-            "bwa_version": bwa_version,
             "debug": debug
         }
         logger.info("Mapping job input: %s" % (mapping_subjob_input))
 
-#### Keep from here!!!!
-
-        if crop_subjob:
-            mapping_subjobs.append(dxpy.new_dxjob(
-                fn_input=mapping_subjob_input,
-                fn_name="process",
-                depends_on=[crop_subjob]))
-        else:
-            mapping_subjobs.append(dxpy.new_dxjob(
-                fn_input=mapping_subjob_input,
-                fn_name="process"))
-
-    # Create the job that will perform the "postprocess" step.
-    # depends_on=mapping_subjobs, so blocks on all mapping subjobs
-
-    postprocess_job = dxpy.new_dxjob(
-        fn_input={
-            "indexed_reads": [
-                subjob.get_output_ref("suffix_array_index")
-                for subjob in mapping_subjobs],
-            "unmapped_reads": unmapped_reads,
-            "reference_tar": reference_tar,
-            "bwa_version": bwa_version,
-            "samtools_version": samtools_version,
-            "debug": debug},
-        fn_name="postprocess",
-        depends_on=mapping_subjobs)
-
-    mapped_reads = postprocess_job.get_output_ref("mapped_reads")
-    mapping_statistics = postprocess_job.get_output_ref("mapping_statistics")
-    n_mapped_reads = postprocess_job.get_output_ref("n_mapped_reads")
+        process(reads, reference_tar, bwa_aln_params, debug)
 
     output = {
-        "mapped_reads": mapped_reads,
         "crop_length": crop_length,
-        "mapping_statistics": mapping_statistics,
         "paired_end": paired_end,
-        "n_mapped_reads": n_mapped_reads
     }
-    logger.info("Exiting with output: %s" % (output))
+
+    logger.info("Exiting mapping with output: %s" % (output))
     return output
 
-main('/tmp/container/portion.bam', False, '', False)
+main('/tmp/container/portion.fastq.gz', 'native', '/tmp/container/ENCFF643CGH.tar.gz', "-q 5 -l 32 -k 2", "1.0", False)
+
+### https://www.encodeproject.org/files/ENCFF643CGH/  GRCh38 reference
+
+
