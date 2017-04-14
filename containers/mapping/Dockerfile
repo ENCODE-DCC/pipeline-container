@@ -9,21 +9,15 @@ RUN cd /tmp && mkdir samtools_1_0 && cd samtools_1_0 && git clone --branch 1.0 h
 RUN cd /tmp/samtools_0_1_19/samtools/ && make
 RUN cd /tmp/samtools_1_0 && git clone --branch 1.0 git://github.com/samtools/htslib.git
 RUN cd /tmp/samtools_1_0/samtools/ && make
-RUN cd /tmp && mkdir bwa_0_7_10 && mkdir bwa_0_7_7
+RUN cd /tmp && mkdir bwa_0_7_10
 RUN cd /tmp/bwa_0_7_10 && git clone --branch 0.7.10 https://github.com/lh3/bwa.git
-RUN cd /tmp/bwa_0_7_7 && git clone --branch 0.7.7 https://github.com/lh3/bwa.git
 RUN cd /tmp/bwa_0_7_10/bwa && make
-RUN cd /tmp/bwa_0_7_10/bwa && make
+RUN cd /tmp/bedtools2 && make && cp -a /tmp/bedtools2/bin/. /usr/local/bin/
+RUN cd /tmp && git clone https://github.com/ENCODE-DCC/pipeline-container.git && cd /tmp/pipeline-container && git checkout dissection-idan
+RUN cd /tmp/pipeline-container && git fetch && git pull
 WORKDIR /tmp/pipeline-container
 
-
-# RUN cd /tmp/bedtools2 && make && cp -a /tmp/bedtools2/bin/. /usr/local/bin/
-# RUN cd /tmp && git clone https://github.com/ENCODE-DCC/pipeline-container.git && cd /tmp/pipeline-container && git checkout dissection-idan
-# RUN cd /tmp/pipeline-container && git fetch && git pull
-
-
 #executables /tmp/bwa_0_7_10/bwa
-#executables /tmp/bwa_0_7_7/bwa
 #executables /tmp/samtools_1_0/samtools/samtools
 #executables /tmp/samtools_0_1_19/samtools/samtools
 #executables /tmp/Trimmomatic-0.36/trimmomatic-0.36.jar

@@ -133,17 +133,16 @@ def process(reads_file, reference_tar, bwa_aln_params, bwa_version, debug):
     else:
         logger.setLevel(logging.INFO)
 
-    bwa = BWA_PATH.get(bwa_version)
-    assert bwa, "BWA version %s is not supported" % (bwa_version)
+    bwa = BWA_PATH
     logger.info("In process with bwa %s" % (bwa))
 
     # Generate filename strings and download the files to the local filesystem
-    reads_filename = dxpy.describe(reads_file)['name']
-    reads_file = dxpy.download_dxfile(reads_file, reads_filename)
+    reads_filename = reads_file
+    ##reads_file = dxpy.download_dxfile(reads_file, reads_filename)
     reads_basename = strip_extensions(reads_filename, STRIP_EXTENSIONS)
 
-    reference_tar_filename = dxpy.describe(reference_tar)['name']
-    dxpy.download_dxfile(reference_tar, reference_tar_filename)
+    reference_tar_filename = reference_tar
+
     reference_dirname = 'reference_files'
     reference_filename = \
         resolve_reference(reference_tar_filename, reference_dirname)
@@ -175,6 +174,7 @@ def process(reads_file, reference_tar, bwa_aln_params, bwa_version, debug):
 def main(reads1, crop_length, reference_tar,
          bwa_aln_params, samtools_version, debug, reads2=None):
 
+    print ('helllo')
     # Main entry-point.  Parameter defaults assumed to come from dxapp.json.
     # reads1, reference_tar, reads2 are links to DNAnexus files or None
 
@@ -239,7 +239,7 @@ def main(reads1, crop_length, reference_tar,
     logger.info("Exiting mapping with output: %s" % (output))
     return output
 
-main('/tmp/container/portion.fastq.gz', 'native', '/tmp/container/ENCFF643CGH.tar.gz', "-q 5 -l 32 -k 2", "1.0", False)
+main('/tmp/container/part.ENCFF000RQF.fastq.gz', 'native', '/tmp/container/ENCFF643CGH.tar.gz', "-q 5 -l 32 -k 2", "1.0", False)
 
 ### https://www.encodeproject.org/files/ENCFF643CGH/  GRCh38 reference
 
