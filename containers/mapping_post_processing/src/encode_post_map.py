@@ -21,8 +21,8 @@ SAMTOOLS_PATH = {
 }
 
 BWA_PATH = {
-    "0.7.7": "/tmp/bwa_0_7_7/bwa",
-    "0.7.10": "/tmp/bwa_0_7_10/bwa"
+
+    "0.7.10": "/tmp/bwa_0_7_10/bwa/bwa"
 }
 # the order of this list is important.
 # strip_extensions strips from the right inward, so
@@ -89,13 +89,16 @@ def resolve_reference(reference_tar_filename, reference_dirname):
     return '/'.join([reference_dirname, filename])
 
 
-def postprocess(indexed_reads, unmapped_reads, reference_tar,
+def postprocess(indexed_reads, unmapped_reads, crop_length, reference_tar,
                 bwa_version, samtools_version, debug):
 
+    handler = logging.FileHandler('post_mapping.log')
+
     if debug:
-        logger.setLevel(logging.DEBUG)
+        handler.setLevel(logging.DEBUG)
     else:
-        logger.setLevel(logging.INFO)
+        handler.setLevel(logging.INFO)
+    logger.addHandler(handler)
 
     samtools = SAMTOOLS_PATH.get(samtools_version)
     assert samtools, "samtools version %s is not supported" % (samtools_version)
@@ -107,25 +110,21 @@ def postprocess(indexed_reads, unmapped_reads, reference_tar,
     unmapped_reads_filenames = []
     for i, reads in enumerate(indexed_reads):
         read_pair_number = i+1
-
-        fn = dxpy.describe(reads)['name']
-        logger.info("indexed_reads %d: %s" % (read_pair_number, fn))
-        indexed_reads_filenames.append(fn)
-        dxpy.download_dxfile(reads, fn)
+        logger.info("indexed_reads %d: %s" % (read_pair_number, reads))
+        indexed_reads_filenames.append(reads)
 
         unmapped = unmapped_reads[i]
-        fn = dxpy.describe(unmapped)['name']
-        logger.info("unmapped reads %d: %s" % (read_pair_number, fn))
-        unmapped_reads_filenames.append(fn)
-        dxpy.download_dxfile(unmapped, fn)
+        logger.info("unmapped reads %d: %s" % (read_pair_number, unmapped))
+        unmapped_reads_filenames.append(unmapped)
 
-    reference_tar_filename = dxpy.describe(reference_tar)['name']
+    reference_tar_filename = reference_tar
     logger.info("reference_tar: %s" % (reference_tar_filename))
-    dxpy.download_dxfile(reference_tar, reference_tar_filename)
     # extract the reference files from the tar
-    reference_dirname = 'reference_files'
+    reference_dirname = '/tmp/reference_files'
+
     reference_filename = \
         resolve_reference(reference_tar_filename, reference_dirname)
+
     logger.info("Using reference file: %s" % (reference_filename))
 
     paired_end = len(indexed_reads) == 2
@@ -198,20 +197,22 @@ def postprocess(indexed_reads, unmapped_reads, reference_tar,
             stdout=fh)
     print(subprocess.check_output('ls -l', shell=True))
 
-    mapped_reads = dxpy.upload_local_file(raw_bam_filename)
-    mapping_statistics = dxpy.upload_local_file(raw_bam_mapstats_filename)
+    mapped_reads = raw_bam_filename
+    mapping_statistics = raw_bam_mapstats_filename
     flagstat_qc = flagstat_parse(raw_bam_mapstats_filename)
 
     output = {
-        'mapped_reads': dxpy.dxlink(mapped_reads),
-        'mapping_statistics': dxpy.dxlink(mapping_statistics),
-        'n_mapped_reads': flagstat_qc.get('mapped')[0]  # 0 is hi-q reads
+        'mapped_reads': mapped_reads,
+        'mapping_statistics': mapping_statistics,
+        'n_mapped_reads': flagstat_qc.get('mapped')[0],  # 0 is hi-q reads
+        "crop_length": crop_length,
+        "paired_end": paired_end
     }
     logger.info("Returning from postprocess with output: %s" % (output))
     return output
 
 
-def main(reads1, crop_length, reference_tar,
+'''def main(reads1, crop_length, reference_tar,
          bwa_version, bwa_aln_params, samtools_version, debug, reads2=None):
 
     # Main entry-point.  Parameter defaults assumed to come from dxapp.json.
@@ -308,3 +309,11 @@ def main(reads1, crop_length, reference_tar,
     return output
 
 main('/tmp/container/portion.bam', False, '', False)
+main('/tmp/container/part.ENCFF000RQF.fastq.gz', '20',
+'/tmp/container/ENCFF643CGH.tar.gz', "-q 5 -l 32 -k 2", "1.0", False)
+
+'''
+postprocess('/tmp/container/part.ENCFF000RQF-crop.sai',
+            '/tmp/container/part.ENCFF000RQF-crop.fq.gz',
+            '20', '/tmp/container/ENCFF643CGH.tar.gz',
+            '0.7.10', '0.1.19', False)

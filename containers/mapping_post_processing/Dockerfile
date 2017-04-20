@@ -2,6 +2,7 @@ FROM ubuntu:14.04
 #RUN apt-get update && apt-get install -y wget unzip
 #RUN cd /tmp && wget http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/Trimmomatic-0.36.zip
 #RUN cd /tmp && unzip Trimmomatic-0.36.zip && cd Trimmomatic-0.36 && ls
+
 RUN apt-get update && apt-get install -y git build-essential zlib1g-dev libncurses5-dev libncursesw5-dev python-dev python-setuptools # openjdk-6-jdk
 
 RUN cd /tmp && git clone --branch v2.26.0 https://github.com/arq5x/bedtools2.git

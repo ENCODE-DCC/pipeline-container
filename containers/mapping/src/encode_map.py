@@ -166,7 +166,8 @@ def process(reads_file, reference_tar, bwa_aln_params, debug):
     logger.info("Returning from process with %s" % (output))
     return output
 
-
+# always only read1, because each end is mapped independently
+# probbaly should update code accordingly
 def main(reads1, crop_length, reference_tar,
          bwa_aln_params, samtools_version, debug, reads2=None):
     # Main entry-point.  Parameter defaults assumed to come from dxapp.json.
