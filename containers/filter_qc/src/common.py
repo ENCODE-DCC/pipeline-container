@@ -69,7 +69,7 @@ def run_pipe(steps, outfile=None):
                     p = Popen(shlex.split(step), stdout=fh)
                 break
             print("first step shlex to stdout: %s" % (shlex.split(step)))
-            print ('zopa')
+
             p = Popen(shlex.split(step), stdout=PIPE)
         elif n == last_step_n and outfile:  # only treat the last step specially if you're sending stdout to a file
             with open(outfile, 'w') as fh:

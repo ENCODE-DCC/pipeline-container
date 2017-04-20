@@ -6,12 +6,10 @@ import subprocess
 import shlex
 import re
 from multiprocessing import cpu_count
-import dxpy
 import common
 import logging
 
 logger = logging.getLogger(__name__)
-logger.addHandler(dxpy.DXLogHandler())
 logger.propagate = False
 logger.setLevel(logging.INFO)
 
@@ -35,6 +33,25 @@ def strip_extensions(filename, extensions):
     for extension in extensions:
         basename = basename.rpartition(extension)[0] or basename
     return basename
+
+
+def resolve_reference(reference_tar_filename, reference_dirname):
+    if reference_tar_filename.endswith('.gz') or reference_tar_filename.endswith('.tgz'):
+        tar_command = \
+            'tar -xzv --no-same-owner --no-same-permissions -C %s -f %s' \
+            % (reference_dirname, reference_tar_filename)
+    else:
+        tar_command = \
+            'tar -xv --no-same-owner --no-same-permissions -C %s -f %s' \
+            % (reference_dirname, reference_tar_filename)
+
+    logger.info("Unpacking %s with %s" % (reference_tar_filename, tar_command))
+
+    print(subprocess.check_output(shlex.split(tar_command)))
+
+    # assume the reference file is the only .fa or .fna file
+    filename = next((f for f in os.listdir(reference_dirname) if f.endswith('.fa') or f.endswith('.fna') or f.endswith('.fa.gz') or f.endswith('.fna.gz')), None)
+    return '/'.join([reference_dirname, filename])
 
 
 def flagstat_parse(fname):
@@ -72,23 +89,6 @@ def flagstat_parse(fname):
     return qc_dict
 
 
-def resolve_reference(reference_tar_filename, reference_dirname):
-    if reference_tar_filename.endswith('.gz') or reference_tar_filename.endswith('.tgz'):
-        tar_command = \
-            'tar -xzv --no-same-owner --no-same-permissions -C %s -f %s' \
-            % (reference_dirname, reference_tar_filename)
-    else:
-        tar_command = \
-            'tar -xv --no-same-owner --no-same-permissions -C %s -f %s' \
-            % (reference_dirname, reference_tar_filename)
-    print(subprocess.check_output(shlex.split('mkdir %s' % (reference_dirname))))
-    logger.info("Unpacking %s with %s" % (reference_tar_filename, tar_command))
-    print(subprocess.check_output(shlex.split(tar_command)))
-    # assume the reference file is the only .fa or .fna file
-    filename = next((f for f in os.listdir(reference_dirname) if f.endswith('.fa') or f.endswith('.fna') or f.endswith('.fa.gz') or f.endswith('.fna.gz')), None)
-    return '/'.join([reference_dirname, filename])
-
-
 def postprocess(indexed_reads, unmapped_reads, crop_length, reference_tar,
                 bwa_version, samtools_version, debug):
 
@@ -108,7 +108,10 @@ def postprocess(indexed_reads, unmapped_reads, crop_length, reference_tar,
 
     indexed_reads_filenames = []
     unmapped_reads_filenames = []
+    #print (indexed_reads)
+
     for i, reads in enumerate(indexed_reads):
+        #print (str(i) + '\t' + str(reads))
         read_pair_number = i+1
         logger.info("indexed_reads %d: %s" % (read_pair_number, reads))
         indexed_reads_filenames.append(reads)
@@ -124,6 +127,7 @@ def postprocess(indexed_reads, unmapped_reads, crop_length, reference_tar,
 
     reference_filename = \
         resolve_reference(reference_tar_filename, reference_dirname)
+
 
     logger.info("Using reference file: %s" % (reference_filename))
 
@@ -313,7 +317,7 @@ main('/tmp/container/part.ENCFF000RQF.fastq.gz', '20',
 '/tmp/container/ENCFF643CGH.tar.gz', "-q 5 -l 32 -k 2", "1.0", False)
 
 '''
-postprocess('/tmp/container/part.ENCFF000RQF-crop.sai',
-            '/tmp/container/part.ENCFF000RQF-crop.fq.gz',
+postprocess(['/tmp/container/part.ENCFF000RQF-crop.sai'],
+            ['/tmp/container/part.ENCFF000RQF-crop.fq.gz'],
             '20', '/tmp/container/ENCFF643CGH.tar.gz',
             '0.7.10', '0.1.19', False)
