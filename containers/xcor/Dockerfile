@@ -1,36 +1,18 @@
 FROM ubuntu:14.04
+RUN apt-get update && apt-get install -y r-base
+RUN sudo su - -c "R -e \"install.packages('caTools', repos = 'http://cran.rstudio.com/')\""
+RUN sudo su - -c "R -e \"install.packages('snow', repos = 'http://cran.rstudio.com/')\""
+RUN apt-get install -y git build-essential zlib1g-dev libncurses5-dev libncursesw5-dev python-dev python-setuptools libboost-dev 
 
-SPP_VERSION_MAP = {
-    "1.10.1": "/phantompeakqualtools/spp_1.10.1.tar.gz",
-    "1.14":   "/phantompeakqualtools/spp-1.14.tar.gz"
-}
+RUN sudo easy_install pip
+RUN pip install common
+RUN pip install python-dateutil
+RUN cd /tmp && mkdir samtools_0_1_19 && cd samtools_0_1_19 && git clone --branch 0.1.19 https://github.com/samtools/samtools.git
+RUN cd /tmp/samtools_0_1_19/samtools/ && make
+RUN cd /tmp && git clone --branch v2.26.0 https://github.com/arq5x/bedtools2.git
+RUN cd /tmp/bedtools2 && make && cp -a /tmp/bedtools2/bin/. /usr/local/bin/
 
-bedtools
+#RUN cd /tmp && git clone https://github.com/ENCODE-DCC/pipeline-container.git && cd /tmp/pipeline-container && git checkout dissection-idan
+#RUN cd /tmp/pipeline-container && git fetch && git pull
 
-samtools
-
-  "runSpec": {
-    "interpreter": "python2.7",
-    "file": "src/xcor.py",
-    "execDepends": [
-    {"name": "samtools",
-      "package_manager": "git",
-      "url": "https://github.com/samtools/samtools.git",
-      "destdir": "/samtools-build",
-      "tag": "0.1.19",
-      "build_commands": "make samtools && cp samtools /usr/local/bin"},
-    {"name": "bedtools",
-      "package_manager": "git",
-      "url": "https://github.com/arq5x/bedtools2.git",
-      "destdir": "/bedtools-build",
-      "tag": "v2.19.1",
-      "build_commands": "make && cp bin/* /usr/local/bin"},
-    {"name": "libboost1.46-dev"},
-    {"name": "libboost-dev"},
-    {"name": "caTools", "package_manager": "cran"},
-    {"name": "snow", "package_manager": "cran"}
-    ]
-  },
-
-  Rscript
-
+WORKDIR /tmp/pipeline-container
