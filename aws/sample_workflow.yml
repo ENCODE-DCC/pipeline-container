@@ -1,0 +1,7 @@
+aws_credentials:
+    access_key_id: XXX-from-aws-configure
+    secret_access_key: YYY-from-aws-configure
+    default_region: us-east-1
+compute_environment:
+    memory: 2048
+    vcpus: 4

@@ -87,3 +87,9 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# AWS credentials
+aws/workflow.yml
+
+# Output of CWL run
+datastore/
