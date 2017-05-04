@@ -23,7 +23,7 @@ STRIP_EXTENSIONS = ['.gz', '.fq', '.fastq', '.fa', '.fasta']
 
 
 def strip_extensions(filename, extensions):
-    basename = filename
+    basename = filename.split('/')[-1]
     for extension in extensions:
         basename = basename.rpartition(extension)[0] or basename
     return basename

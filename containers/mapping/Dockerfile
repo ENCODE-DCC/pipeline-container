@@ -7,11 +7,12 @@ RUN apt-get install -y --fix-missing git build-essential zlib1g-dev libncurses5-
 RUN cd /tmp1 && mkdir bwa_0_7_10
 RUN cd /tmp1/bwa_0_7_10 && git clone --branch 0.7.10 https://github.com/lh3/bwa.git
 RUN cd /tmp1/bwa_0_7_10/bwa && make
-ARG CACHEBUST=2
+ARG CACHEBUST=3
 RUN cd /tmp1 && git clone https://github.com/ENCODE-DCC/pipeline-container.git && cd /tmp1/pipeline-container && git checkout dissection-idan
 RUN cd /tmp1/pipeline-container && git fetch && git pull
 RUN cd /tmp1 && mkdir reference_files
-#WORKDIR /tmp1/pipeline-container
-CMD [ "python", "/tmp1/pipeline-container/containers/mapping/src/encode_map.py" ]
-#ENTRYPOINT ["python", "/tmp/pipeline-container/containers/mapping/src/encode_map.py"]
+
+#CMD [ "python", "/tmp1/pipeline-container/containers/mapping/src/encode_map.py" ]
+ENTRYPOINT ["python", "/tmp1/pipeline-container/containers/mapping/src/encode_map.py"]
 #CMD ls
+#WORKDIR /tmp1/pipeline-container
