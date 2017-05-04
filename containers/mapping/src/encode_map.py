@@ -139,7 +139,7 @@ def process(reads_file, reference_tar, bwa_aln_params, debug):
 
     reference_tar_filename = reference_tar
 
-    reference_dirname = '/tmp1/reference_files'
+    reference_dirname = '.'
 
     reference_filename = \
         resolve_reference(reference_tar_filename, reference_dirname)
@@ -226,7 +226,7 @@ def main(reads1, crop_length, reference_tar,
         }
         logger.info("Mapping job input: %s" % (mapping_subjob_input))
 
-        process(reads, reference_tar, bwa_aln_params, debug)
+        #process(reads, reference_tar, bwa_aln_params, debug)
 
     output = {
         "crop_length": crop_length,
@@ -237,7 +237,7 @@ def main(reads1, crop_length, reference_tar,
     return output
 
 #main('/tmp/container/part.ENCFF000RQF.fastq.gz', 'native', '/tmp/container/ENCFF643CGH.tar.gz', "-q 5 -l 32 -k 2", "1.0", False)
-main(sys.argv[1], '20', '/tmp/container/ENCFF643CGH.tar.gz', "-q 5 -l 32 -k 2", "1.0", False)
+main(sys.argv[1], '20', sys.argv[2], "-q 5 -l 32 -k 2", "1.0", False)
 ### https://www.encodeproject.org/files/ENCFF643CGH/  GRCh38 reference
 
 

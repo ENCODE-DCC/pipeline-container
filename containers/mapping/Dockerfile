@@ -13,6 +13,7 @@ RUN cd /tmp1/pipeline-container && git fetch && git pull
 RUN cd /tmp1 && mkdir reference_files
 
 #CMD [ "python", "/tmp1/pipeline-container/containers/mapping/src/encode_map.py" ]
-ENTRYPOINT ["python", "/tmp1/pipeline-container/containers/mapping/src/encode_map.py"]
+#ENTRYPOINT ["python", "/tmp1/pipeline-container/containers/mapping/src/encode_map.py"]
+ENTRYPOINT ["python"]
 #CMD ls
 #WORKDIR /tmp1/pipeline-container
