@@ -88,10 +88,3 @@ ENV/
 # Rope project settings
 .ropeproject
 
-*.cwl
-
-*.txt
-
-*.yml
-
-*.gz
