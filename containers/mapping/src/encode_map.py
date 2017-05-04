@@ -6,13 +6,15 @@ import subprocess
 import shlex
 from multiprocessing import cpu_count
 import logging
+import sys
+
 
 logger = logging.getLogger(__name__)
 logger.propagate = False
 logger.setLevel(logging.INFO)
 
-BWA_PATH = "/tmp/bwa_0_7_10/bwa/bwa"
-TRIMMOMATIC_PATH = "/tmp/Trimmomatic-0.36/trimmomatic-0.36.jar"
+BWA_PATH = "/tmp1/bwa_0_7_10/bwa/bwa"
+TRIMMOMATIC_PATH = "/tmp1/Trimmomatic-0.36/trimmomatic-0.36.jar"
 
 # the order of this list is important.
 # strip_extensions strips from the right inward, so
@@ -137,7 +139,7 @@ def process(reads_file, reference_tar, bwa_aln_params, debug):
 
     reference_tar_filename = reference_tar
 
-    reference_dirname = '/tmp/reference_files'
+    reference_dirname = '/tmp1/reference_files'
 
     reference_filename = \
         resolve_reference(reference_tar_filename, reference_dirname)
@@ -235,7 +237,7 @@ def main(reads1, crop_length, reference_tar,
     return output
 
 #main('/tmp/container/part.ENCFF000RQF.fastq.gz', 'native', '/tmp/container/ENCFF643CGH.tar.gz', "-q 5 -l 32 -k 2", "1.0", False)
-main('/tmp/container/part.ENCFF000RQF.fastq.gz', '20', '/tmp/container/ENCFF643CGH.tar.gz', "-q 5 -l 32 -k 2", "1.0", False)
+main(sys.argv[1], '20', '/tmp/container/ENCFF643CGH.tar.gz', "-q 5 -l 32 -k 2", "1.0", False)
 ### https://www.encodeproject.org/files/ENCFF643CGH/  GRCh38 reference
 
 
