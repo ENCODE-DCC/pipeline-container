@@ -1,0 +1,16 @@
+script1:
+  class: File
+  path: /Users/idan/Desktop/pipeline-container/src/encode_map.py
+
+script2:
+  class: File
+  path: /Users/idan/Desktop/pipeline-container/src/encode_post_map.py
+
+fastq:
+  class: File
+  path: /Users/idan/Documents/dockerFiles/mapping/part.ENCFF000RQF.fastq.gz
+
+reference:
+  class: File
+  path: /Users/idan/Documents/dockerFiles/mapping/ENCFF643CGH.tar.gz
+

@@ -8,19 +8,20 @@ import re
 from multiprocessing import cpu_count
 import common
 import logging
+import sys
 
 logger = logging.getLogger(__name__)
 logger.propagate = False
 logger.setLevel(logging.INFO)
 
 SAMTOOLS_PATH = {
-    "0.1.19": "/tmp/samtools_0_1_19/samtools/samtools",
-    "1.0": "/tmp/samtools_1_0/samtools/samtools"
+    "0.1.19": "/image_software/samtools_0_1_19/samtools/samtools",
+    "1.0": "/image_software/samtools_1_0/samtools/samtools"
 }
 
 BWA_PATH = {
 
-    "0.7.10": "/tmp/bwa_0_7_10/bwa/bwa"
+    "0.7.10": "/image_software/bwa_0_7_10/bwa/bwa"
 }
 # the order of this list is important.
 # strip_extensions strips from the right inward, so
@@ -123,7 +124,7 @@ def postprocess(indexed_reads, unmapped_reads, crop_length, reference_tar,
     reference_tar_filename = reference_tar
     logger.info("reference_tar: %s" % (reference_tar_filename))
     # extract the reference files from the tar
-    reference_dirname = '/tmp/reference_files'
+    reference_dirname = '.'
 
     reference_filename = \
         resolve_reference(reference_tar_filename, reference_dirname)
@@ -215,109 +216,7 @@ def postprocess(indexed_reads, unmapped_reads, crop_length, reference_tar,
     logger.info("Returning from postprocess with output: %s" % (output))
     return output
 
-
-'''def main(reads1, crop_length, reference_tar,
-         bwa_version, bwa_aln_params, samtools_version, debug, reads2=None):
-
-    # Main entry-point.  Parameter defaults assumed to come from dxapp.json.
-    # reads1, reference_tar, reads2 are links to DNAnexus files or None
-
-    # create a file handler
-    handler = logging.FileHandler('post_mapping.log')
-
-    if debug:
-        handler.setLevel(logging.DEBUG)
-    else:
-        handler.setLevel(logging.INFO)
-    logger.addHandler(handler)
-
-    # This spawns only one or two subjobs for single- or paired-end,
-    # respectively.  It could also download the files, chunk the reads,
-    # and spawn multiple subjobs.
-
-    # Files are downloaded later by subjobs into their own filesystems
-    # and uploaded to the project.
-
-    # Initialize file handlers for input files.
-
-    paired_end = reads2 is not None
-
-    if crop_length == 'native':
-        crop_subjob = None
-        unmapped_reads = [reads1, reads2]
-    else:
-        crop_subjob_input = {
-            "reads1_file": reads1,
-            "reads2_file": reads2,
-            "crop_length": crop_length,
-            "debug": debug
-        }
-        logger.info("Crop job input: %s" % (crop_subjob_input))
-        crop_subjob = dxpy.new_dxjob(crop_subjob_input, "crop")
-        unmapped_reads = [crop_subjob.get_output_ref("cropped_reads1")]
-        if paired_end:
-            unmapped_reads.append(crop_subjob.get_output_ref("cropped_reads2"))
-        else:
-            unmapped_reads.append(None)
-
-    unmapped_reads = [r for r in unmapped_reads if r]
-
-    mapping_subjobs = []
-    for reads in unmapped_reads:
-        mapping_subjob_input = {
-            "reads_file": reads,
-            "reference_tar": reference_tar,
-            "bwa_aln_params": bwa_aln_params,
-            "bwa_version": bwa_version,
-            "debug": debug
-        }
-        logger.info("Mapping job input: %s" % (mapping_subjob_input))
-        if crop_subjob:
-            mapping_subjobs.append(dxpy.new_dxjob(
-                fn_input=mapping_subjob_input,
-                fn_name="process",
-                depends_on=[crop_subjob]))
-        else:
-            mapping_subjobs.append(dxpy.new_dxjob(
-                fn_input=mapping_subjob_input,
-                fn_name="process"))
-
-    # Create the job that will perform the "postprocess" step.
-    # depends_on=mapping_subjobs, so blocks on all mapping subjobs
-
-    postprocess_job = dxpy.new_dxjob(
-        fn_input={
-            "indexed_reads": [
-                subjob.get_output_ref("suffix_array_index")
-                for subjob in mapping_subjobs],
-            "unmapped_reads": unmapped_reads,
-            "reference_tar": reference_tar,
-            "bwa_version": bwa_version,
-            "samtools_version": samtools_version,
-            "debug": debug},
-        fn_name="postprocess",
-        depends_on=mapping_subjobs)
-
-    mapped_reads = postprocess_job.get_output_ref("mapped_reads")
-    mapping_statistics = postprocess_job.get_output_ref("mapping_statistics")
-    n_mapped_reads = postprocess_job.get_output_ref("n_mapped_reads")
-
-    output = {
-        "mapped_reads": mapped_reads,
-        "crop_length": crop_length,
-        "mapping_statistics": mapping_statistics,
-        "paired_end": paired_end,
-        "n_mapped_reads": n_mapped_reads
-    }
-    logger.info("Exiting with output: %s" % (output))
-    return output
-
-main('/tmp/container/portion.bam', False, '', False)
-main('/tmp/container/part.ENCFF000RQF.fastq.gz', '20',
-'/tmp/container/ENCFF643CGH.tar.gz', "-q 5 -l 32 -k 2", "1.0", False)
-
-'''
-postprocess(['/tmp/container/part.ENCFF000RQF-crop.sai'],
-            ['/tmp/container/part.ENCFF000RQF-crop.fq.gz'],
-            '20', '/tmp/container/ENCFF643CGH.tar.gz',
+postprocess([sys.argv[2]],
+            [sys.argv[1]],
+            '20', sys.argv[3],
             '0.7.10', '0.1.19', False)

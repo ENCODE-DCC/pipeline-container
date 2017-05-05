@@ -13,8 +13,8 @@ logger = logging.getLogger(__name__)
 logger.propagate = False
 logger.setLevel(logging.INFO)
 
-BWA_PATH = "/tmp1/bwa_0_7_10/bwa/bwa"
-TRIMMOMATIC_PATH = "/tmp1/Trimmomatic-0.36/trimmomatic-0.36.jar"
+BWA_PATH = "/image_software/bwa_0_7_10/bwa/bwa"
+TRIMMOMATIC_PATH = "/image_software/Trimmomatic-0.36/trimmomatic-0.36.jar"
 
 # the order of this list is important.
 # strip_extensions strips from the right inward, so
@@ -236,8 +236,6 @@ def main(reads1, crop_length, reference_tar,
     logger.info("Exiting mapping with output: %s" % (output))
     return output
 
-#main('/tmp/container/part.ENCFF000RQF.fastq.gz', 'native', '/tmp/container/ENCFF643CGH.tar.gz', "-q 5 -l 32 -k 2", "1.0", False)
+# argument 1 is the fastq file path
+# argument 2 is the reference tar file
 main(sys.argv[1], '20', sys.argv[2], "-q 5 -l 32 -k 2", "1.0", False)
-### https://www.encodeproject.org/files/ENCFF643CGH/  GRCh38 reference
-
-
