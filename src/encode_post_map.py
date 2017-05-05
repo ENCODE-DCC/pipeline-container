@@ -216,6 +216,9 @@ def postprocess(indexed_reads, unmapped_reads, crop_length, reference_tar,
     logger.info("Returning from postprocess with output: %s" % (output))
     return output
 
+
+sys.path.append(os.path.abspath(sys.argv[4]))
+print ('FUCKING PATH IS ' + sys.argv[4])
 postprocess([sys.argv[2]],
             [sys.argv[1]],
             '20', sys.argv[3],

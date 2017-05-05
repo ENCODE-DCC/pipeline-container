@@ -3,7 +3,7 @@ class: CommandLineTool
 
 hints:
   - class: DockerRequirement
-    dockerImageId: mapping
+    dockerImageId: local_post_processing
 
 inputs:
   script_file:
@@ -22,9 +22,17 @@ inputs:
     type: File
     inputBinding:
       position: 4
+  common_path:
+    type: Directory
+    inputBinding:
+      position: 5
 
 outputs:
   bam_output:
     type: File
     outputBinding:
       glob: "*.bam"
+  post_mapping_log:
+      type: File
+      outputBinding:
+        glob: "*.log"  

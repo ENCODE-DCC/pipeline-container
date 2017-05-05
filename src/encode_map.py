@@ -226,7 +226,7 @@ def main(reads1, crop_length, reference_tar,
         }
         logger.info("Mapping job input: %s" % (mapping_subjob_input))
 
-        #process(reads, reference_tar, bwa_aln_params, debug)
+        process(reads, reference_tar, bwa_aln_params, debug)
 
     output = {
         "crop_length": crop_length,

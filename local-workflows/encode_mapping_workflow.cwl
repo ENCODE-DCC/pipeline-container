@@ -15,6 +15,9 @@ inputs:
   - id: reference
     type: File
 
+  - id: common
+    type: Directory
+
 
 outputs:
   sai:
@@ -35,7 +38,7 @@ steps:
       script_file: script1
       fastq_file: fastq
       reference_file: reference
-    out: [cropped_file, sai_file]
+    out: [cropped_file, sai_file, mapping_log]
 
   post_processing:
     run: post_processing.cwl
@@ -44,4 +47,5 @@ steps:
       sai_file: mapper/sai_file
       cropped_fastq_file: mapper/cropped_file
       reference_file: reference
-    out: [bam_output]
+      common_path: common
+    out: [bam_output, post_mapping_log]
