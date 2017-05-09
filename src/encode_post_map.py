@@ -109,10 +109,8 @@ def postprocess(indexed_reads, unmapped_reads, crop_length, reference_tar,
 
     indexed_reads_filenames = []
     unmapped_reads_filenames = []
-    #print (indexed_reads)
 
     for i, reads in enumerate(indexed_reads):
-        #print (str(i) + '\t' + str(reads))
         read_pair_number = i+1
         logger.info("indexed_reads %d: %s" % (read_pair_number, reads))
         indexed_reads_filenames.append(reads)
@@ -134,6 +132,8 @@ def postprocess(indexed_reads, unmapped_reads, crop_length, reference_tar,
 
     paired_end = len(indexed_reads) == 2
 
+
+    # fixing the directories
     if paired_end:
         r1_basename = strip_extensions(
             unmapped_reads_filenames[0], STRIP_EXTENSIONS)
@@ -141,10 +141,15 @@ def postprocess(indexed_reads, unmapped_reads, crop_length, reference_tar,
             unmapped_reads_filenames[1], STRIP_EXTENSIONS)
         reads_basename = r1_basename + r2_basename
     else:
-        reads_basename = strip_extensions(
-            unmapped_reads_filenames[0], STRIP_EXTENSIONS)
+        reads_basename = (strip_extensions(
+            unmapped_reads_filenames[0], STRIP_EXTENSIONS)).split('/')[-1]
+
+    print (reads_basename)
+
     raw_bam_filename = '%s.raw.srt.bam' % (reads_basename)
     raw_bam_mapstats_filename = '%s.raw.srt.bam.flagstat.qc' % (reads_basename)
+
+    print (raw_bam_mapstats_filename)
 
     if paired_end:
         reads1_filename = indexed_reads_filenames[0]
@@ -218,8 +223,7 @@ def postprocess(indexed_reads, unmapped_reads, crop_length, reference_tar,
 
 
 sys.path.append(os.path.abspath(sys.argv[4]))
-print ('FUCKING PATH IS ' + sys.argv[4])
-postprocess([sys.argv[2]],
-            [sys.argv[1]],
+postprocess([sys.argv[1]],
+            [sys.argv[2]],
             '20', sys.argv[3],
             '0.7.10', '0.1.19', False)

@@ -10,29 +10,34 @@ inputs:
     type: File
     inputBinding:
       position: 1
-  sai_file:
-    type: File
-    inputBinding:
-      position: 2
-  cropped_fastq_file:
-    type: File
-    inputBinding:
-      position: 3
   reference_file:
     type: File
     inputBinding:
-      position: 4
+      position: 2
   common_path:
     type: Directory
     inputBinding:
-      position: 5
+      position: 3
+  unmapped_fastqs:
+    type: File[]
+    inputBinding:
+      position: 3
+  sai_files:
+    type: File[]
+    inputBinding:
+      position: 4
+
 
 outputs:
-  bam_output:
+  unfiltered_bam:
     type: File
     outputBinding:
-      glob: "*.bam"
+      glob: "*.raw.srt.bam"
+  unfiltered_flagstats:
+    type: File
+    outputBinding:
+      glob: "*.raw.srt.bam.flagstat.qc"
   post_mapping_log:
       type: File
       outputBinding:
-        glob: "*.log"  
+        glob: "post_mapping.log"  

@@ -10,26 +10,42 @@ inputs:
     type: File
     inputBinding:
       position: 1
-  fastq_file:
-    type: File
-    inputBinding:
-      position: 2
+
   reference_file:
     type: File
     inputBinding:
+      position: 2
+
+  trimming_length:
+    type: string
+    inputBinding:
       position: 3
 
-outputs:
-    cropped_file:
-        type: File
-        outputBinding:
-          glob: "*-crop.fq.gz"
-    sai_file:
-        type: File
-        outputBinding:
-          glob: "*-crop.sai"
-    mapping_log:
-        type: File
-        outputBinding:
-          glob: "*.log"    
+  fastq_files:
+    type:
+      type: array
+      items: File
+    inputBinding:
+      position: 4
 
+
+  
+outputs:
+  unmapped_files:
+    type:
+      type: array
+      items: File
+    outputBinding:
+      glob: "*.fq.gz"
+
+  sai_files:
+    type:
+      type: array
+      items: File
+    outputBinding:
+      glob: "*.sai"
+  
+  mapping_log:
+    type: File
+    outputBinding:
+      glob: "mapping.log"    

@@ -45,6 +45,7 @@ def resolve_reference(reference_tar_filename, reference_dirname):
 
     # assume the reference file is the only .fa or .fna file
     filename = next((f for f in os.listdir(reference_dirname) if f.endswith('.fa') or f.endswith('.fna') or f.endswith('.fa.gz') or f.endswith('.fna.gz')), None)
+
     return '/'.join([reference_dirname, filename])
 
 
@@ -64,7 +65,7 @@ def crop(reads1_file, reads2_file, crop_length, debug):
         reads1_basename = strip_extensions(reads1_filename, STRIP_EXTENSIONS)
         if reads2_file:
             end_string = "PE"
-            reads2_filename = reads2_file.name
+            reads2_filename = reads2_file
             reads2_basename = \
                 strip_extensions(reads2_filename, STRIP_EXTENSIONS)
             output_fwd_paired_filename = reads1_basename + '-crop-paired.fq.gz'
@@ -170,8 +171,8 @@ def process(reads_file, reference_tar, bwa_aln_params, debug):
 
 # always only read1, because each end is mapped independently
 # probbaly should update code accordingly
-def main(reads1, crop_length, reference_tar,
-         bwa_aln_params, samtools_version, debug, reads2=None):
+def main( crop_length, reference_tar,
+         bwa_aln_params, samtools_version, debug, reads1, reads2):
     # Main entry-point.  Parameter defaults assumed to come from dxapp.json.
     # reads1, reference_tar, reads2 are links to DNAnexus files or None
 
@@ -236,6 +237,7 @@ def main(reads1, crop_length, reference_tar,
     logger.info("Exiting mapping with output: %s" % (output))
     return output
 
-# argument 1 is the fastq file path
-# argument 2 is the reference tar file
-main(sys.argv[1], '20', sys.argv[2], "-q 5 -l 32 -k 2", "1.0", False)
+if len(sys.argv) == 4:
+    main(sys.argv[2], sys.argv[1], "-q 5 -l 32 -k 2", "1.0", False, sys.argv[3], None)
+else:
+    main(sys.argv[2], sys.argv[1], "-q 5 -l 32 -k 2", "1.0", False, sys.argv[3], sys.argv[4])

@@ -1,0 +1,22 @@
+script_file:
+  class: File
+  path: /Users/idan/Desktop/pipeline-container/src/encode_map.py
+
+reference_file:
+  class: File
+  path: /Users/idan/Documents/dockerFiles/elegans/elegans.tar
+
+trimming_length: "45"
+
+fastq_files:
+  - class: File
+    path: /Users/idan/Documents/dockerFiles/elegans/read1.fastq.gz
+    nameroot: fastq_file_1
+  - class: File
+    path: /Users/idan/Documents/dockerFiles/elegans/read2.fastq.gz
+    nameroot: fastq_file_2
+
+
+
+
+

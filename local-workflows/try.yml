@@ -1,0 +1,11 @@
+script_file:
+  class: File
+  path: /Users/idan/Desktop/pipeline-container/src/filter_qc.py
+
+bam_file:
+  class: File
+  path: /Users/idan/Desktop/pipeline-container/local-workflows/part.ENCFF584-crop.raw.srt.bam
+
+common_path: 
+  class: Directory
+  path: /Users/idan/Desktop/pipeline-container/src

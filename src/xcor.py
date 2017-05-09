@@ -16,6 +16,7 @@ import shlex
 from multiprocessing import cpu_count
 import common
 import logging
+import sys
 
 logger = logging.getLogger(__name__)
 logger.propagate = False
@@ -67,12 +68,18 @@ def xcor_parse(fname):
     return xcor_qc
 
 
-def main(input_bam, paired_end, spp_version):
+def main(input_bam, paired_end, spp_version, debug):
+    # create a file handler
+    handler = logging.FileHandler('xcor.log')
 
-    input_bam_file = input_bam
+    if debug:
+        handler.setLevel(logging.DEBUG)
+    else:
+        handler.setLevel(logging.INFO)
+    logger.addHandler(handler)
 
     input_bam_filename = input_bam
-    input_bam_basename = input_bam.rstrip('.bam')
+    input_bam_basename = (input_bam.rstrip('.bam')).split('/')[-1]
 
     intermediate_TA_filename = input_bam_basename + ".tagAlign"
     if paired_end:
@@ -184,4 +191,4 @@ def main(input_bam, paired_end, spp_version):
 
     return output
 
-#main('/tmp/container/part.ENCFF000RQF.fastq.gz', '20', '/tmp/container/ENCFF643CGH.tar.gz', "-q 5 -l 32 -k 2", "1.0", False)
+main(sys.argv[1], False, '1.14', False)

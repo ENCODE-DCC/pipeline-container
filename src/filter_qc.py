@@ -12,6 +12,7 @@
 #   http://autodoc.dnanexus.com/bindings/python/current/
 
 import os
+import sys
 import subprocess
 import shlex
 import common
@@ -23,30 +24,28 @@ logger.propagate = False
 logger.setLevel(logging.INFO)
 
 
-
 def dup_parse(fname):
     with open(fname, 'r') as dup_file:
         if not dup_file:
             return None
-
         lines = iter(dup_file.read().splitlines())
-
         for line in lines:
             if line.startswith('## METRICS CLASS'):
                 headers = lines.next().rstrip('\n').lower()
                 metrics = lines.next().rstrip('\n')
                 break
-
         headers = headers.split('\t')
         metrics = metrics.split('\t')
         headers.pop(0)
         metrics.pop(0)
 
         dup_qc = dict(zip(headers, metrics))
+
     return dup_qc
 
 
 def pbc_parse(fname):
+
     with open(fname, 'r') as pbc_file:
         if not pbc_file:
             return None
@@ -72,13 +71,14 @@ def pbc_parse(fname):
         metrics = line.split('\t')
 
         pbc_qc = dict(zip(headers, metrics))
+
     return pbc_qc
 
 
 def main(input_bam, paired_end, samtools_params, debug):
 
     # create a file handler
-    handler = logging.FileHandler('image.log')
+    handler = logging.FileHandler('filter_qc.log')
 
     if debug:
         handler.setLevel(logging.DEBUG)
@@ -101,10 +101,8 @@ def main(input_bam, paired_end, samtools_params, debug):
     #     raise Exception
     # assert paired_end is not None, 'paired_end is required, explicitly or in input_JSON'
 
-    raw_bam_file = open(input_bam, 'r')
-    raw_bam_filename = raw_bam_file.name
-    raw_bam_basename = raw_bam_file.name.rstrip('.bam')
-    raw_bam_file.close()
+    raw_bam_basename = (input_bam.rstrip('.bam')).split('/')[-1]
+
     subprocess.check_output('set -x; ls -l', shell=True)
 
     filt_bam_prefix = raw_bam_basename + ".filt.srt"
@@ -157,7 +155,7 @@ def main(input_bam, paired_end, samtools_params, debug):
         with open(filt_bam_filename, 'w') as fh:
             samtools_filter_command = (
                 "samtools view -F 1804 %s -b %s"
-                % (samtools_params, raw_bam_filename)
+                % (samtools_params, input_bam)
                 )
             logger.info(samtools_filter_command)
             subprocess.check_call(
@@ -207,6 +205,7 @@ def main(input_bam, paired_end, samtools_params, debug):
         subprocess.check_call(
             shlex.split(samtools_dedupe_command),
             stdout=fh)
+
     # Index final bam file
     samtools_index_command = \
         "samtools index %s %s" % (final_bam_filename, final_bam_index_filename)
@@ -258,12 +257,18 @@ def main(input_bam, paired_end, samtools_params, debug):
         logger.error("PBC file error: %s" % (err))
 
     logger.info("Uploading results files to the project")
+
+    print (final_bam_filename)
+    print (final_bam_index_filename)
+    print (dup_file_qc_filename)
+    print (pbc_file_qc_filename)
     #filtered_bam = dxpy.upload_local_file(final_bam_filename)
     #filtered_bam_index = dxpy.upload_local_file(final_bam_index_filename)
     #filtered_mapstats = \
     #    dxpy.upload_local_file(final_bam_file_mapstats_filename)
     #dup_file = dxpy.upload_local_file(dup_file_qc_filename)
     #pbc_file = dxpy.upload_local_file(pbc_file_qc_filename)
+    
     dup_qc = dup_parse(dup_file_qc_filename)
     pbc_qc = pbc_parse(pbc_file_qc_filename)
     logger.info("dup_qc: %s" % (dup_qc))
@@ -285,4 +290,5 @@ def main(input_bam, paired_end, samtools_params, debug):
     logger.info("Exiting with output:\n%s" % (pprint(output)))
     return output
 
-main('/tmp/container/portion.bam', False, '', False)
+sys.path.append(os.path.abspath(sys.argv[2]))
+main(sys.argv[1], False, '', False)

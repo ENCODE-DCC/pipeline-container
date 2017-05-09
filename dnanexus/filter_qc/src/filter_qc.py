@@ -26,6 +26,10 @@ logger.setLevel(logging.INFO)
 
 
 def dup_parse(fname):
+    print ('??????????')
+
+    print ('DEDUP ' + fname)
+    print ('???????????')
     with open(fname, 'r') as dup_file:
         if not dup_file:
             return None
@@ -48,6 +52,11 @@ def dup_parse(fname):
 
 
 def pbc_parse(fname):
+
+    print ('??????????')
+
+    print ('PBC ' + fname)
+    print ('???????????')
     with open(fname, 'r') as pbc_file:
         if not pbc_file:
             return None
