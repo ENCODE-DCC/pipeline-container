@@ -89,9 +89,23 @@ def flagstat_parse(fname):
 
     return qc_dict
 
+def special_sort(reads_files):
+    to_sort = []
+    for f in reads_files:
+        to_sort.append(f.split('/')[-1])
+    sorted_names = sorted(to_sort)
 
-def postprocess(indexed_reads, unmapped_reads, crop_length, reference_tar,
-                bwa_version, samtools_version, debug):
+    sorting_result = []
+    for n in sorted_names:
+        for x in reads_files:
+            if x.endswith(n) and x.find('crop-unpaired') == -1:
+                sorting_result.append(x)
+                break
+    return sorting_result
+#def postprocess(indexed_reads, unmapped_reads, crop_length, reference_tar,
+#                bwa_version, samtools_version, debug):
+def postprocess(crop_length, reference_tar,
+                bwa_version, samtools_version, debug, reads_files):
 
     handler = logging.FileHandler('post_mapping.log')
 
@@ -106,6 +120,16 @@ def postprocess(indexed_reads, unmapped_reads, crop_length, reference_tar,
     bwa = BWA_PATH.get(bwa_version)
     assert bwa, "BWA version %s is not supported" % (bwa_version)
     logger.info("In postprocess with samtools %s and bwa %s" % (samtools, bwa))
+
+    indexed_reads = []
+    unmapped_reads = []
+    prefixes = []
+    for file_name in special_sort(reads_files):
+        if file_name.endswith('.sai'):
+            indexed_reads.append(file_name)
+            prefixes.append(file_name[:-4])
+        else:
+            unmapped_reads.append(file_name)
 
     indexed_reads_filenames = []
     unmapped_reads_filenames = []
@@ -127,29 +151,23 @@ def postprocess(indexed_reads, unmapped_reads, crop_length, reference_tar,
     reference_filename = \
         resolve_reference(reference_tar_filename, reference_dirname)
 
-
     logger.info("Using reference file: %s" % (reference_filename))
 
     paired_end = len(indexed_reads) == 2
 
-
     # fixing the directories
     if paired_end:
-        r1_basename = strip_extensions(
-            unmapped_reads_filenames[0], STRIP_EXTENSIONS)
-        r2_basename = strip_extensions(
-            unmapped_reads_filenames[1], STRIP_EXTENSIONS)
+        r1_basename = (strip_extensions(
+            unmapped_reads_filenames[0], STRIP_EXTENSIONS)).split('/')[-1]
+        r2_basename = (strip_extensions(
+            unmapped_reads_filenames[1], STRIP_EXTENSIONS)).split('/')[-1]
         reads_basename = r1_basename + r2_basename
     else:
         reads_basename = (strip_extensions(
             unmapped_reads_filenames[0], STRIP_EXTENSIONS)).split('/')[-1]
 
-    print (reads_basename)
-
     raw_bam_filename = '%s.raw.srt.bam' % (reads_basename)
     raw_bam_mapstats_filename = '%s.raw.srt.bam.flagstat.qc' % (reads_basename)
-
-    print (raw_bam_mapstats_filename)
 
     if paired_end:
         reads1_filename = indexed_reads_filenames[0]
@@ -221,9 +239,7 @@ def postprocess(indexed_reads, unmapped_reads, crop_length, reference_tar,
     logger.info("Returning from postprocess with output: %s" % (output))
     return output
 
-
-sys.path.append(os.path.abspath(sys.argv[4]))
-postprocess([sys.argv[1]],
-            [sys.argv[2]],
-            '20', sys.argv[3],
-            '0.7.10', '0.1.19', False)
+sys.path.append(os.path.abspath(sys.argv[3]))
+postprocess(sys.argv[1],
+            sys.argv[2],
+            '0.7.10', '0.1.19', False, sys.argv[4:])

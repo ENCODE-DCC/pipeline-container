@@ -1,6 +1,6 @@
 script_file:
   class: File
-  path: /Users/idan/Desktop/pipeline-container/src/filter_qc.py
+  path: /Users/idan/Desktop/pipeline-container/src/xcor.py
 
 bam_file:
   class: File

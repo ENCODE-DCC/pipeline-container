@@ -10,22 +10,26 @@ inputs:
     type: File
     inputBinding:
       position: 1
+  trimming_length:
+    type: string
+    inputBinding:
+      position: 2
   reference_file:
     type: File
     inputBinding:
-      position: 2
+      position: 3
   common_path:
     type: Directory
     inputBinding:
-      position: 3
+      position: 4
   unmapped_fastqs:
     type: File[]
     inputBinding:
-      position: 3
+      position: 5
   sai_files:
     type: File[]
     inputBinding:
-      position: 4
+      position: 6
 
 
 outputs:

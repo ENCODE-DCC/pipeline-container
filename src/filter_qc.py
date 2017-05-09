@@ -123,7 +123,7 @@ def main(input_bam, paired_end, samtools_params, debug):
             # exclude FLAG 1804: unmapped, next segment unmapped, secondary
             # alignments, not passing platform q, PCR or optical duplicates
             # require FLAG 2: properly aligned
-            "samtools view -F 1804 -f 2 %s -u %s" % (samtools_params, raw_bam_filename),
+            "samtools view -F 1804 -f 2 %s -u %s" % (samtools_params, raw_bam_basename),
             # sort:  -n sort by name; - take input from stdin;
             # out to specified filename
             # Will produce name sorted BAM
