@@ -28,15 +28,14 @@ inputs:
     inputBinding:
       position: 4
 
-
-  
+ 
 outputs:
   unmapped_files:
     type:
       type: array
       items: File
     outputBinding:
-      glob: "*.fq.gz"
+      glob: "*.gz"
 
   sai_files:
     type:

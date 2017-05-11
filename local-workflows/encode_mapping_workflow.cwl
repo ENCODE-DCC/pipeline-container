@@ -12,6 +12,9 @@ inputs:
   - id: script3
     type: File
 
+  - id: script4
+    type: File
+
   - id: trimming_parameter
     type: string
 
@@ -24,11 +27,26 @@ inputs:
   - id: common
     type: Directory
 
+  - id: spp_1.10.1
+    type: File
+  
+  - id: spp_1.14
+    type: File
+
+  - id: r_tools_directory
+    type: Directory
+
+  - id: renviron
+    type: File
+
+  - id: paired
+    type: boolean
+
 
 outputs:
-  sais:
-    type: File[]
-    outputSource: mapper/sai_files
+#  sais:
+#    type: File[]
+#    outputSource: mapper/sai_files
   unfiltered_bam:
     type: File
     outputSource: post_processing/unfiltered_bam
@@ -47,9 +65,6 @@ outputs:
   pbc_qc:
     type: File
     outputSource: filter_qc/pbc_file_qc
-#  cropped:
-#    type: File
-#    outputSource: mapper/cropped_file
   mapping_log:
     type: File
     outputSource: mapper/mapping_log
@@ -59,6 +74,19 @@ outputs:
   filter_qc_log:
     type: File
     outputSource: filter_qc/filter_qc_log
+  xcor_log:
+    type: File
+    outputSource: xcor/xcor_log
+  cc:
+    type: File
+    outputSource: xcor/cc_file
+  cc_pdf:
+    type: File
+    outputSource: xcor/cc_plot
+  tag_align:
+    type: File[]
+    outputSource: xcor/tag_align
+
 
 steps:
 
@@ -90,9 +118,15 @@ steps:
       common_path: common
     out: [filtered_bam, filtered_bam_bai, filtered_map_stats, dup_file_qc, pbc_file_qc, filter_qc_log]
 
-#  xcor:
-#    run: xcor.cwl
-#    in:
-#      script_file: script4
-#      bam_file: filter_qc/filtered_bam
-#    out: [tagAlign_file, scores_file, plot_file]
+  xcor:
+    run: xcor.cwl
+    in:
+      script_file: script4
+      bam_file: filter_qc/filtered_bam
+      paired: paired
+      common_path: common
+      spp_1.10.1: spp_1.10.1
+      spp_1.14: spp_1.14
+      r_tools_directory: r_tools_directory
+      renviron: renviron
+    out: [cc_file, cc_plot, xcor_log, tag_align]

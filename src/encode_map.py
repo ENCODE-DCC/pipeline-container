@@ -58,8 +58,14 @@ def crop(reads1_file, reads2_file, crop_length, debug):
 
     logger.setLevel(logging.INFO)
     if crop_length == 'native':
+        local_copy_reads1 = reads1_file.split('/')[-1]
+        subprocess.check_output(shlex.split('cp %s %s' % reads1_file, local_copy_reads1 ))
+        local_copy_reads2 = None
+        if reads2_file:
+            local_copy_reads2 = reads2_file.split('/')[-1]
+            subprocess.check_output(shlex.split('cp %s %s' % reads2_file, local_copy_reads2 ))
         output = dict(zip(
-            ["cropped_reads1", "cropped_reads2"], [reads1_file, reads2_file]))
+            ["cropped_reads1", "cropped_reads2"], [local_copy_reads1, local_copy_reads2]))
     else:
         reads1_filename = reads1_file
         reads1_basename = strip_extensions(reads1_filename, STRIP_EXTENSIONS)
@@ -198,7 +204,13 @@ def main( crop_length, reference_tar,
 
     if crop_length == 'native':
         crop_subjob = None
-        unmapped_reads = [reads1, reads2]
+        local_copy_reads1 = reads1.split('/')[-1]
+        subprocess.check_output(shlex.split('cp %s %s' % (reads1, local_copy_reads1)))
+        local_copy_reads2 = None
+        if paired_end:
+            local_copy_reads2 = reads2.split('/')[-1]
+            subprocess.check_output(shlex.split('cp %s %s' % (reads2, local_copy_reads2)))
+        unmapped_reads = [local_copy_reads1, local_copy_reads2]
     else:
         crop_subjob_input = {
             "reads1_file": reads1,

@@ -39,7 +39,19 @@ inputs:
     inputBinding:
       position: 8
 outputs:
-    filtered_bam:
-        type: File
-        outputBinding:
-          glob: "*.nodup.bam"
+  xcor_log:
+    type: File
+    outputBinding:
+      glob: "xcor.log"
+  cc_file:
+    type: File
+    outputBinding:
+      glob: "*.cc.qc"
+  cc_plot:
+    type: File
+    outputBinding:
+      glob: "*.cc.plot.pdf"
+  tag_align:
+    type: File[]
+    outputBinding:
+      glob: "*.tagAlign.gz"

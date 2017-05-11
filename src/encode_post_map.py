@@ -123,6 +123,7 @@ def postprocess(crop_length, reference_tar,
 
     indexed_reads = []
     unmapped_reads = []
+
     prefixes = []
     for file_name in special_sort(reads_files):
         if file_name.endswith('.sai'):
@@ -131,6 +132,8 @@ def postprocess(crop_length, reference_tar,
         else:
             unmapped_reads.append(file_name)
 
+    print (indexed_reads)
+    print (unmapped_reads)
     indexed_reads_filenames = []
     unmapped_reads_filenames = []
 
