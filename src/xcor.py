@@ -17,15 +17,17 @@ from multiprocessing import cpu_count
 import common
 import logging
 import sys
+import os
 
 logger = logging.getLogger(__name__)
 logger.propagate = False
 logger.setLevel(logging.INFO)
 
+SAMTOOLS_PATH = "/image_software/samtools_0_1_19/samtools/samtools"
 
 SPP_VERSION_MAP = {
-    "1.10.1": "../phantompeakqualtools/spp_1.10.1.tar.gz",
-    "1.14":   "../phantompeakqualtools/spp-1.14.tar.gz"
+    "1.10.1": sys.argv[4],
+    "1.14":   sys.argv[5]
 }
 
 
@@ -98,7 +100,7 @@ def main(input_bam, paired_end, spp_version, debug):
         "tee %s" % (intermediate_TA_filename),
         "gzip -cn"],
         outfile=final_TA_filename)
-
+    samtools = SAMTOOLS_PATH
     # ================
     # Create BEDPE file
     # ================
@@ -107,14 +109,13 @@ def main(input_bam, paired_end, spp_version, debug):
         # need namesorted bam to make BEDPE
         final_nmsrt_bam_prefix = input_bam_basename + ".nmsrt"
         final_nmsrt_bam_filename = final_nmsrt_bam_prefix + ".bam"
-        samtools_sort_command = \
-            "samtools sort -n %s %s" % (input_bam_filename, final_nmsrt_bam_prefix)
+        samtools_sort_command = "%s sort -n %s %s" % (samtools, input_bam_filename, final_nmsrt_bam_prefix)
         logger.info(samtools_sort_command)
         subprocess.check_output(shlex.split(samtools_sort_command))
-        out, err = common.run_pipe([
-            "bamToBed -bedpe -mate1 -i %s" % (final_nmsrt_bam_filename),
-            "gzip -cn"],
-            outfile=final_BEDPE_filename)
+        #out, err = common.run_pipe([
+        #    "bamToBed -bedpe -mate1 -i %s" % (final_nmsrt_bam_filename),
+        #    "gzip -cn"],
+        #    outfile=final_BEDPE_filename)
 
     # =================================
     # Subsample tagAlign file
@@ -155,14 +156,17 @@ def main(input_bam, paired_end, spp_version, debug):
     spp_tarball = SPP_VERSION_MAP.get(spp_version)
     assert spp_tarball, "spp version %s is not supported" % (spp_version)
     # install spp
-    subprocess.check_output(shlex.split('R CMD INSTALL %s' % (spp_tarball)))
+    
+    subprocess.check_output(shlex.split('cp %s /private/var/spool/cwl' % sys.argv[7] ))
+    subprocess.check_output(shlex.split('R CMD INSTALL -l /private/var/spool/cwl %s' % (spp_tarball)))
+    
     # run spp
-    run_spp_command = '/phantompeakqualtools/run_spp_nodups.R'
+    run_spp_command = sys.argv[6]+'/run_spp_nodups.R'
     out, err = common.run_pipe([
         "Rscript %s -c=%s -p=%d -filtchr=chrM -savp=%s -out=%s"
         % (run_spp_command, subsampled_TA_filename, cpu_count(),
            CC_plot_filename, CC_scores_filename)])
-    out, err = common.run_pipe([
+    '''out, err = common.run_pipe([
         r"""sed -r  's/,[^\t]+//g' %s""" % (CC_scores_filename)],
         outfile="temp")
     out, err = common.run_pipe([
@@ -189,6 +193,8 @@ def main(input_bam, paired_end, spp_version, debug):
     if paired_end:
         output.update({"BEDPE_file": BEDPE_file})
 
-    return output
+    return output'''
+    return
 
-main(sys.argv[1], False, '1.14', False)
+sys.path.append(os.path.abspath(sys.argv[3]))
+main(sys.argv[1], sys.argv[2], '1.14', False)

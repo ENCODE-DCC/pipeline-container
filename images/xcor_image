@@ -13,5 +13,5 @@ RUN cd /image_software && git clone --branch v2.26.0 https://github.com/arq5x/be
 RUN cd /image_software/bedtools2 && make && cp -a /image_software/bedtools2/bin/. /usr/local/bin/
 RUN cd /image_software && git clone https://github.com/ENCODE-DCC/pipeline-container.git && cd /image_software/pipeline-container && git checkout dissection-idan
 RUN cd /image_software/pipeline-container && git fetch && git pull
-
+RUN apt-get install -y r-base-dev r-bioc-rsamtools 
 ENTRYPOINT ["python"]
