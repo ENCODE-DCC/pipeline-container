@@ -26,8 +26,8 @@ logger.setLevel(logging.INFO)
 SAMTOOLS_PATH = "/image_software/samtools_0_1_19/samtools/samtools"
 
 SPP_VERSION_MAP = {
-    "1.10.1": sys.argv[4],
-    "1.14":   sys.argv[5]
+    "1.10.1": sys.argv[3],
+    "1.14":   sys.argv[4]
 }
 
 
@@ -70,8 +70,12 @@ def xcor_parse(fname):
     return xcor_qc
 
 
-def main(input_bam, paired_end, spp_version, debug):
+def main(input_bam, fastqs, spp_version, debug):
     # create a file handler
+    if len(fastqs) > 1:
+        paired_end = True
+    else:
+        paired_end = False
     handler = logging.FileHandler('xcor.log')
 
     if debug:
@@ -157,11 +161,11 @@ def main(input_bam, paired_end, spp_version, debug):
     assert spp_tarball, "spp version %s is not supported" % (spp_version)
     # install spp
     
-    subprocess.check_output(shlex.split('cp %s /private/var/spool/cwl' % sys.argv[7] ))
+    subprocess.check_output(shlex.split('cp %s /private/var/spool/cwl' % sys.argv[6] ))
     subprocess.check_output(shlex.split('R CMD INSTALL -l /private/var/spool/cwl %s' % (spp_tarball)))
     
     # run spp
-    run_spp_command = sys.argv[6]+'/run_spp_nodups.R'
+    run_spp_command = sys.argv[5]+'/run_spp_nodups.R'
     out, err = common.run_pipe([
         "Rscript %s -c=%s -p=%d -filtchr=chrM -savp=%s -out=%s"
         % (run_spp_command, subsampled_TA_filename, cpu_count(),
@@ -196,5 +200,5 @@ def main(input_bam, paired_end, spp_version, debug):
     return output
 
 
-sys.path.append(os.path.abspath(sys.argv[3]))
-main(sys.argv[1], sys.argv[2], '1.14', False)
+sys.path.append(os.path.abspath(sys.argv[2]))
+main(sys.argv[1], sys.argv[7:], '1.14', False)

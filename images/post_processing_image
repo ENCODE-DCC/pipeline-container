@@ -16,4 +16,4 @@ RUN cd /image_software && git clone https://github.com/ENCODE-DCC/pipeline-conta
 RUN cd /image_software/pipeline-container && git fetch && git pull
 RUN cd /image_software && mkdir reference_files
 
-ENTRYPOINT ["python"]
+ENTRYPOINT ["python", "/image_software/pipeline-container/src/encode_post_map.py"]

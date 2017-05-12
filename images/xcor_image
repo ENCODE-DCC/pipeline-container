@@ -1,8 +1,7 @@
 FROM ubuntu
-RUN apt-get update && apt-get install -y r-base
+RUN apt-get update && apt-get install -y r-base r-base-dev r-bioc-rsamtools git build-essential zlib1g-dev libncurses5-dev libncursesw5-dev python-dev python-setuptools libboost-dev
 RUN su - -c "R -e \"install.packages('caTools', repos = 'http://cran.rstudio.com/')\""
 RUN su - -c "R -e \"install.packages('snow', repos = 'http://cran.rstudio.com/')\""
-RUN apt-get install -y git build-essential zlib1g-dev libncurses5-dev libncursesw5-dev python-dev python-setuptools libboost-dev 
 RUN easy_install pip
 RUN pip install common
 RUN pip install python-dateutil
@@ -13,5 +12,5 @@ RUN cd /image_software && git clone --branch v2.26.0 https://github.com/arq5x/be
 RUN cd /image_software/bedtools2 && make && cp -a /image_software/bedtools2/bin/. /usr/local/bin/
 RUN cd /image_software && git clone https://github.com/ENCODE-DCC/pipeline-container.git && cd /image_software/pipeline-container && git checkout dissection-idan
 RUN cd /image_software/pipeline-container && git fetch && git pull
-RUN apt-get install -y r-base-dev r-bioc-rsamtools 
-ENTRYPOINT ["python"]
+
+ENTRYPOINT ["python", "/image_software/pipeline-container/src/xcor.py"]

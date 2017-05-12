@@ -1,7 +1,3 @@
-script_file:
-  class: File
-  path: /Users/idan/Desktop/pipeline-container/src/encode_map.py
-
 reference_file:
   class: File
   path: /Users/idan/Documents/dockerFiles/elegans/elegans.tar

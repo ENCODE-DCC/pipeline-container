@@ -12,4 +12,4 @@ RUN cd /image_software/pipeline-container && git fetch && git pull
 RUN easy_install pip
 RUN pip install common
 RUN pip install python-dateutil
-ENTRYPOINT ["python"]
+ENTRYPOINT ["python", "/image_software/pipeline-container/src/filter_qc.py"]

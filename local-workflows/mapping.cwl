@@ -3,34 +3,30 @@ class: CommandLineTool
 
 hints:
   - class: DockerRequirement
-    dockerImageId: local_mapping
+    dockerImageId: mapping:latest
   - class: ResourceRequirement
     coresMin: 1
     ramMin: 4092 #"the process requires at least 4G of RAM
     outdirMin: 512000
 
 inputs:
-  script_file:
-    type: File
-    inputBinding:
-      position: 1
 
   reference_file:
     type: File
     inputBinding:
-      position: 2
+      position: 1
 
   trimming_length:
     type: string
     inputBinding:
-      position: 3
+      position: 2
 
   fastq_files:
     type:
       type: array
       items: File
     inputBinding:
-      position: 4
+      position: 3
 
  
 outputs:
@@ -51,4 +47,4 @@ outputs:
   mapping_log:
     type: File
     outputBinding:
-      glob: "mapping.log"    
+      glob: "mapping.log"

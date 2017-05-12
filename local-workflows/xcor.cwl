@@ -3,41 +3,40 @@ class: CommandLineTool
 
 hints:
   - class: DockerRequirement
-    dockerImageId: local_xcor
+    dockerImageId: xcor:latest
 
 inputs:
-  script_file:
-    type: File
-    inputBinding:
-      position: 1
   bam_file:
     type: File
     inputBinding:
-      position: 2
-  paired:
-    type: boolean
-    inputBinding:
-      position: 3
+      position: 1
   common_path:
     type: Directory
     inputBinding:
-      position: 4
+      position: 2
   spp_1.10.1:
     type: File
     inputBinding:
-      position: 5
+      position: 3
   spp_1.14:
     type: File
     inputBinding:
-      position: 6
+      position: 4
   r_tools_directory:
     type: Directory
     inputBinding:
-      position: 7 
+      position: 5 
   renviron:
     type: File
     inputBinding:
-      position: 8
+      position: 6
+  fastq_files:
+    type:
+      type: array
+      items: File
+    inputBinding:
+      position: 7
+
 outputs:
   xcor_log:
     type: File

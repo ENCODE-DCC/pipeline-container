@@ -1,20 +1,4 @@
-script1:
-  class: File
-  path: /Users/idan/Desktop/pipeline-container/src/encode_map.py
-
-script2:
-  class: File
-  path: /Users/idan/Desktop/pipeline-container/src/encode_post_map.py
-
-script3:
-  class: File
-  path: /Users/idan/Desktop/pipeline-container/src/filter_qc.py
-
-script4:
-  class: File
-  path: /Users/idan/Desktop/pipeline-container/src/xcor.py
-
-trimming_parameter: "native"
+trimming_parameter: "40"
 
 fastqs:
   - class: File
@@ -47,5 +31,3 @@ r_tools_directory:
 renviron:
   class: File
   path: /Users/idan/Desktop/pipeline-container/local-workflows/.Renviron
-
-paired: true

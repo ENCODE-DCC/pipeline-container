@@ -3,17 +3,6 @@ cwlVersion: v1.0
 class: Workflow
 
 inputs:
-  - id: script1
-    type: File
-
-  - id: script2
-    type: File
-
-  - id: script3
-    type: File
-
-  - id: script4
-    type: File
 
   - id: trimming_parameter
     type: string
@@ -38,9 +27,6 @@ inputs:
 
   - id: renviron
     type: File
-
-  - id: paired
-    type: boolean
 
 
 outputs: 
@@ -92,7 +78,6 @@ steps:
   mapper:
     run: mapping.cwl
     in:
-      script_file: script1
       reference_file: reference
       trimming_length: trimming_parameter
       fastq_files: fastqs
@@ -101,10 +86,10 @@ steps:
   post_processing:
     run: post_processing.cwl
     in:
-      script_file: script2
+     
       trimming_length: trimming_parameter
       reference_file: reference
-      common_path: common
+#      common_path: common
       unmapped_fastqs: mapper/unmapped_files
       sai_files: mapper/sai_files
     out: [unfiltered_bam, unfiltered_flagstats, post_mapping_log]
@@ -112,7 +97,7 @@ steps:
   filter_qc:
     run: filter_qc.cwl
     in:
-      script_file: script3
+      
       bam_file: post_processing/unfiltered_bam
       common_path: common
     out: [filtered_bam, filtered_bam_bai, filtered_map_stats, dup_file_qc, pbc_file_qc, filter_qc_log]
@@ -120,14 +105,14 @@ steps:
   xcor:
     run: xcor.cwl
     in:
-      script_file: script4
+     
       bam_file: filter_qc/filtered_bam
-      paired: paired
       common_path: common
       spp_1.10.1: spp_1.10.1
       spp_1.14: spp_1.14
       r_tools_directory: r_tools_directory
       renviron: renviron
+      fastq_files: fastqs
     out: [cc_file, cc_plot, xcor_log, tag_align]
 
   output_folder:

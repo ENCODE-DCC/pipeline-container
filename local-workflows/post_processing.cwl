@@ -3,33 +3,29 @@ class: CommandLineTool
 
 hints:
   - class: DockerRequirement
-    dockerImageId: local_post_processing
+    dockerImageId: post_mapping:latest
 
 inputs:
-  script_file:
-    type: File
-    inputBinding:
-      position: 1
   trimming_length:
     type: string
     inputBinding:
-      position: 2
+      position: 1
   reference_file:
     type: File
     inputBinding:
-      position: 3
-  common_path:
-    type: Directory
-    inputBinding:
-      position: 4
+      position: 2
+#  common_path:
+#    type: Directory
+#    inputBinding:
+#      position: 3
   unmapped_fastqs:
     type: File[]
     inputBinding:
-      position: 5
+      position: 4
   sai_files:
     type: File[]
     inputBinding:
-      position: 6
+      position: 5
 
 
 outputs:

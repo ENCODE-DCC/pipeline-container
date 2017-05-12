@@ -3,21 +3,17 @@ class: CommandLineTool
 
 hints:
   - class: DockerRequirement
-    dockerImageId: local_filter_qc
+    dockerImageId: filter:latest
 
 inputs:
-  script_file:
-    type: File
-    inputBinding:
-      position: 1
   bam_file:
     type: File
     inputBinding:
-      position: 2
+      position: 1
   common_path:
     type: Directory
     inputBinding:
-      position: 3
+      position: 2
 
 outputs:
     filtered_bam:

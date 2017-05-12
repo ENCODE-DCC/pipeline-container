@@ -242,7 +242,7 @@ def postprocess(crop_length, reference_tar,
     logger.info("Returning from postprocess with output: %s" % (output))
     return output
 
-sys.path.append(os.path.abspath(sys.argv[3]))
+#sys.path.append(os.path.abspath(sys.argv[3]))
 postprocess(sys.argv[1],
             sys.argv[2],
             '0.7.10', '0.1.19', False, sys.argv[4:])
