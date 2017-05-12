@@ -17,7 +17,7 @@ from multiprocessing import cpu_count
 import common
 import logging
 import sys
-import os
+
 
 logger = logging.getLogger(__name__)
 logger.propagate = False
@@ -26,8 +26,8 @@ logger.setLevel(logging.INFO)
 SAMTOOLS_PATH = "/image_software/samtools_0_1_19/samtools/samtools"
 
 SPP_VERSION_MAP = {
-    "1.10.1": sys.argv[2],
-    "1.14":   sys.argv[3]
+    "1.10.1": '../phantompeakqualtools/spp_1.10.1.tar.gz',
+    "1.14":  '../phantompeakqualtools/spp-1.14.tar.gz'
 }
 
 
@@ -161,11 +161,11 @@ def main(input_bam, fastqs, spp_version, debug):
     assert spp_tarball, "spp version %s is not supported" % (spp_version)
     # install spp
     
-    subprocess.check_output(shlex.split('cp %s /private/var/spool/cwl' % sys.argv[5]))
+    subprocess.check_output(shlex.split('cp %s /private/var/spool/cwl' % sys.argv[3]))
     subprocess.check_output(shlex.split('R CMD INSTALL -l /private/var/spool/cwl %s' % (spp_tarball)))
     
     # run spp
-    run_spp_command = sys.argv[4]+'/run_spp_nodups.R'
+    run_spp_command = sys.argv[2]+'/run_spp_nodups.R'
     out, err = common.run_pipe([
         "Rscript %s -c=%s -p=%d -filtchr=chrM -savp=%s -out=%s"
         % (run_spp_command, subsampled_TA_filename, cpu_count(),
@@ -200,4 +200,4 @@ def main(input_bam, fastqs, spp_version, debug):
     return output
 
 
-main(sys.argv[1], sys.argv[6:], '1.14', False)
+main(sys.argv[1], sys.argv[4:], '1.14', False)

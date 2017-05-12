@@ -13,12 +13,6 @@ inputs:
   - id: reference
     type: File
 
-  - id: spp_1.10.1
-    type: File
-  
-  - id: spp_1.14
-    type: File
-
   - id: r_tools_directory
     type: Directory
 
@@ -100,8 +94,6 @@ steps:
     run: xcor.cwl
     in:
       bam_file: filter_qc/filtered_bam
-      spp_1.10.1: spp_1.10.1
-      spp_1.14: spp_1.14
       r_tools_directory: r_tools_directory
       renviron: renviron
       fastq_files: fastqs
