@@ -43,10 +43,8 @@ inputs:
     type: boolean
 
 
-outputs:
-#  sais:
-#    type: File[]
-#    outputSource: mapper/sai_files
+outputs: 
+
   unfiltered_bam:
     type: File
     outputSource: post_processing/unfiltered_bam
@@ -86,10 +84,11 @@ outputs:
   tag_align:
     type: File[]
     outputSource: xcor/tag_align
-
+  output_dir:
+    type: Directory
+    outputSource: output_folder/folder
 
 steps:
-
   mapper:
     run: mapping.cwl
     in:
@@ -130,3 +129,21 @@ steps:
       r_tools_directory: r_tools_directory
       renviron: renviron
     out: [cc_file, cc_plot, xcor_log, tag_align]
+
+  output_folder:
+    run: mount_folder.cwl
+    in: 
+      unfiltered_bam: post_processing/unfiltered_bam
+      filtered_bam: filter_qc/filtered_bam
+      unfiltered_flagstat: post_processing/unfiltered_flagstats
+      filtered_flagstat: filter_qc/filtered_map_stats
+      dup_qc: filter_qc/dup_file_qc
+      pbc_qc: filter_qc/pbc_file_qc
+      mapping_log: mapper/mapping_log
+      post_mapping_log: post_processing/post_mapping_log
+      filter_qc_log: filter_qc/filter_qc_log
+      xcor_log: xcor/xcor_log
+      cc: xcor/cc_file
+      cc_pdf: xcor/cc_plot
+      tag_align: xcor/tag_align
+    out: [folder]

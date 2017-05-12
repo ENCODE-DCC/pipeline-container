@@ -93,3 +93,5 @@ ENV/
 
 
 *fq.gz
+
+*.bam

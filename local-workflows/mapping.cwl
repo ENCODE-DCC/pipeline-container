@@ -4,6 +4,10 @@ class: CommandLineTool
 hints:
   - class: DockerRequirement
     dockerImageId: local_mapping
+  - class: ResourceRequirement
+    coresMin: 1
+    ramMin: 4092 #"the process requires at least 4G of RAM
+    outdirMin: 512000
 
 inputs:
   script_file:
