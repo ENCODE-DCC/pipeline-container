@@ -14,18 +14,14 @@ inputs:
     type: File
     inputBinding:
       position: 2
-#  common_path:
-#    type: Directory
-#    inputBinding:
-#      position: 3
   unmapped_fastqs:
     type: File[]
     inputBinding:
-      position: 4
+      position: 3
   sai_files:
     type: File[]
     inputBinding:
-      position: 5
+      position: 4
 
 
 outputs:

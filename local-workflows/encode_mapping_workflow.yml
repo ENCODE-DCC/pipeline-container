@@ -12,10 +12,6 @@ reference:
   class: File
   path: /Users/idan/Documents/dockerFiles/elegans/elegans.tar
 
-common: 
-  class: Directory
-  path: /Users/idan/Desktop/pipeline-container/src
-
 spp_1.10.1:
   class: File
   path: /Users/idan/Desktop/pipeline-container/phantompeakqualtools/spp_1.10.1.tar.gz

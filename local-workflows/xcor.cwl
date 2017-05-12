@@ -10,32 +10,28 @@ inputs:
     type: File
     inputBinding:
       position: 1
-  common_path:
-    type: Directory
-    inputBinding:
-      position: 2
   spp_1.10.1:
     type: File
     inputBinding:
-      position: 3
+      position: 2
   spp_1.14:
     type: File
     inputBinding:
-      position: 4
+      position: 3
   r_tools_directory:
     type: Directory
     inputBinding:
-      position: 5 
+      position: 4 
   renviron:
     type: File
     inputBinding:
-      position: 6
+      position: 5
   fastq_files:
     type:
       type: array
       items: File
     inputBinding:
-      position: 7
+      position: 6
 
 outputs:
   xcor_log:

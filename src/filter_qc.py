@@ -290,5 +290,4 @@ def main(input_bam, paired_end, samtools_params, debug):
     logger.info("Exiting with output:\n%s" % (pprint(output)))
     return output
 
-sys.path.append(os.path.abspath(sys.argv[2]))
 main(sys.argv[1], False, '', False)
