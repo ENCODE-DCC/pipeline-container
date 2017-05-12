@@ -13,9 +13,6 @@ inputs:
   - id: reference
     type: File
 
-  - id: common
-    type: Directory
-
   - id: spp_1.10.1
     type: File
   
@@ -89,7 +86,6 @@ steps:
      
       trimming_length: trimming_parameter
       reference_file: reference
-#      common_path: common
       unmapped_fastqs: mapper/unmapped_files
       sai_files: mapper/sai_files
     out: [unfiltered_bam, unfiltered_flagstats, post_mapping_log]
@@ -97,17 +93,13 @@ steps:
   filter_qc:
     run: filter_qc.cwl
     in:
-      
       bam_file: post_processing/unfiltered_bam
-      common_path: common
     out: [filtered_bam, filtered_bam_bai, filtered_map_stats, dup_file_qc, pbc_file_qc, filter_qc_log]
 
   xcor:
     run: xcor.cwl
     in:
-     
       bam_file: filter_qc/filtered_bam
-      common_path: common
       spp_1.10.1: spp_1.10.1
       spp_1.14: spp_1.14
       r_tools_directory: r_tools_directory

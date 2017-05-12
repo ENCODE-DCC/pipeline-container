@@ -10,10 +10,6 @@ inputs:
     type: File
     inputBinding:
       position: 1
-  common_path:
-    type: Directory
-    inputBinding:
-      position: 2
 
 outputs:
     filtered_bam:
