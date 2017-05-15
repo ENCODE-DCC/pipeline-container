@@ -13,13 +13,6 @@ inputs:
   - id: reference
     type: File
 
-  - id: r_tools_directory
-    type: Directory
-
-  - id: renviron
-    type: File
-
-
 outputs: 
 
   unfiltered_bam:
@@ -94,8 +87,6 @@ steps:
     run: xcor.cwl
     in:
       bam_file: filter_qc/filtered_bam
-      r_tools_directory: r_tools_directory
-      renviron: renviron
       fastq_files: fastqs
     out: [cc_file, cc_plot, xcor_log, tag_align]
 

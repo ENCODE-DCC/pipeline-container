@@ -30,6 +30,7 @@ SPP_VERSION_MAP = {
     "1.14":  '../phantompeakqualtools/spp-1.14.tar.gz'
 }
 
+SPP_TOOLS = '../phantompeakqualtools'
 
 def xcor_parse(fname):
     with open(fname, 'r') as xcor_file:
@@ -160,12 +161,12 @@ def main(input_bam, fastqs, spp_version, debug):
     spp_tarball = SPP_VERSION_MAP.get(spp_version)
     assert spp_tarball, "spp version %s is not supported" % (spp_version)
     # install spp
-    
-    subprocess.check_output(shlex.split('cp %s /private/var/spool/cwl' % sys.argv[3]))
+
+    #subprocess.check_output(shlex.split('cp ' + SPP_TOOLS + '/.Renviron /private/var/spool/cwl'))
     subprocess.check_output(shlex.split('R CMD INSTALL -l /private/var/spool/cwl %s' % (spp_tarball)))
-    
+
     # run spp
-    run_spp_command = sys.argv[2]+'/run_spp_nodups.R'
+    run_spp_command = SPP_TOOLS+'/run_spp_nodups.R'
     out, err = common.run_pipe([
         "Rscript %s -c=%s -p=%d -filtchr=chrM -savp=%s -out=%s"
         % (run_spp_command, subsampled_TA_filename, cpu_count(),
@@ -200,4 +201,4 @@ def main(input_bam, fastqs, spp_version, debug):
     return output
 
 
-main(sys.argv[1], sys.argv[4:], '1.14', False)
+main(sys.argv[1], sys.argv[2:], '1.14', False)
