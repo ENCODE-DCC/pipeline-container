@@ -163,7 +163,7 @@ def main(input_bam, fastqs, spp_version, debug):
     # install spp
 
     #print (shlex.split('cp ' + SPP_TOOLS + '/.Renviron /private/var/spool/cwl/.Renviron'))
-    subprocess.check_output(shlex.split('cp ' + SPP_TOOLS + '/.Renviron ~/.Renviron'))
+    subprocess.check_output(shlex.split('cp ' + SPP_TOOLS + '/.Renviron $HOME/.Renviron'))
     subprocess.check_output(shlex.split('R CMD INSTALL -l ~ %s' % (spp_tarball)))
 
     # run spp
