@@ -162,8 +162,7 @@ def main(input_bam, fastqs, spp_version, debug):
     assert spp_tarball, "spp version %s is not supported" % (spp_version)
     # install spp
 
-    #print (shlex.split('cp ' + SPP_TOOLS + '/.Renviron /private/var/spool/cwl/.Renviron'))
-    subprocess.check_output(shlex.split('cp ' + SPP_TOOLS + '/.Renviron $HOME/.Renviron'))
+    subprocess.check_output(shlex.split('cp ' + SPP_TOOLS + '/.Renviron /private/var/spool/cwl/.Renviron'))
     subprocess.check_output(shlex.split('R CMD INSTALL -l ~ %s' % (spp_tarball)))
 
     # run spp
