@@ -162,11 +162,12 @@ def main(input_bam, fastqs, spp_version, debug):
     assert spp_tarball, "spp version %s is not supported" % (spp_version)
     # install spp
 
+    print (shlex.split('cp ' + SPP_TOOLS + '/.Renviron /private/var/spool/cwl/.Renviron'))
     subprocess.check_output(shlex.split('cp ' + SPP_TOOLS + '/.Renviron /private/var/spool/cwl/.Renviron'))
-    #subprocess.check_output(shlex.split('R CMD INSTALL -l ~ %s' % (spp_tarball)))
+    subprocess.check_output(shlex.split('R CMD INSTALL -l ~ %s' % (spp_tarball)))
 
     # run spp
-    '''run_spp_command = SPP_TOOLS+'/run_spp_nodups.R'
+    run_spp_command = SPP_TOOLS+'/run_spp_nodups.R'
     out, err = common.run_pipe([
         "Rscript %s -c=%s -p=%d -filtchr=chrM -savp=%s -out=%s"
         % (run_spp_command, subsampled_TA_filename, cpu_count(),
@@ -176,7 +177,7 @@ def main(input_bam, fastqs, spp_version, debug):
         outfile="temp")
     out, err = common.run_pipe([
         "mv temp %s" % (CC_scores_filename)])
-    '''
+
     tagAlign_file = final_TA_filename
     if paired_end:
         BEDPE_file = final_BEDPE_filename
@@ -199,6 +200,6 @@ def main(input_bam, fastqs, spp_version, debug):
         output.update({"BEDPE_file": BEDPE_file})
 
     return output
-
+    return
 
 main(sys.argv[1], sys.argv[2:], '1.14', False)

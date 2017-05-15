@@ -1,4 +1,4 @@
-trimming_parameter: "40"
+trimming_parameter: "native"
 
 fastqs:
   - class: File

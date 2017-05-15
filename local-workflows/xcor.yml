@@ -1,6 +1,6 @@
 bam_file:
   class: File
-  path: /Users/idan/Desktop/pipeline-container/local-workflows/read1-crop-pairedread2-crop-paired.raw.srt.filt.srt.bam
+  path: /Users/idan/Desktop/pipeline-container/local-workflows/read1read2.raw.srt.filt.srt.bam
 fastq_files:
   - class: File
     path: /Users/idan/Documents/dockerFiles/elegans/read1.fastq.gz
