@@ -30,7 +30,7 @@ SPP_VERSION_MAP = {
     "1.14":  '/image_software/pipeline-container/phantompeakqualtools/spp-1.14.tar.gz'
 }
 
-SPP_TOOLS = '../phantompeakqualtools'
+SPP_TOOLS = '/image_software/pipeline-container/phantompeakqualtools'
 
 def xcor_parse(fname):
     with open(fname, 'r') as xcor_file:
