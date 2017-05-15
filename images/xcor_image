@@ -10,7 +10,7 @@ RUN cd /image_software && mkdir samtools_0_1_19 && cd samtools_0_1_19 && git clo
 RUN cd /image_software/samtools_0_1_19/samtools/ && make
 RUN cd /image_software && git clone --branch v2.26.0 https://github.com/arq5x/bedtools2.git
 RUN cd /image_software/bedtools2 && make && cp -a /image_software/bedtools2/bin/. /usr/local/bin/
-ARG CACHE_DATE=pppp
+ARG CACHE_DATE=pppp11
 RUN cd /image_software && git clone https://github.com/ENCODE-DCC/pipeline-container.git && cd /image_software/pipeline-container && git checkout dissection-idan
 RUN cd /image_software/pipeline-container && git fetch && git pull
 

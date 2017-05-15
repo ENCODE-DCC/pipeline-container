@@ -26,8 +26,8 @@ logger.setLevel(logging.INFO)
 SAMTOOLS_PATH = "/image_software/samtools_0_1_19/samtools/samtools"
 
 SPP_VERSION_MAP = {
-    "1.10.1": '../phantompeakqualtools/spp_1.10.1.tar.gz',
-    "1.14":  '../phantompeakqualtools/spp-1.14.tar.gz'
+    "1.10.1": '/image_software/pipeline-container/phantompeakqualtools/spp_1.10.1.tar.gz',
+    "1.14":  '/image_software/pipeline-container/phantompeakqualtools/spp-1.14.tar.gz'
 }
 
 SPP_TOOLS = '../phantompeakqualtools'
@@ -163,7 +163,7 @@ def main(input_bam, fastqs, spp_version, debug):
     # install spp
 
     #subprocess.check_output(shlex.split('cp ' + SPP_TOOLS + '/.Renviron /private/var/spool/cwl'))
-    subprocess.check_output(shlex.split('R CMD INSTALL -l /private/var/spool/cwl %s' % (spp_tarball)))
+    subprocess.check_output(shlex.split('R CMD INSTALL -l ~ %s' % (spp_tarball)))
 
     # run spp
     run_spp_command = SPP_TOOLS+'/run_spp_nodups.R'
