@@ -163,7 +163,7 @@ def main(input_bam, fastqs, spp_version, debug):
     # install spp
 
     subprocess.check_output(shlex.split('cp ' + SPP_TOOLS + '/.Renviron ~'))
-    subprocess.check_output(shlex.split('R CMD INSTALL -l ~ %s' % (spp_tarball)))
+    #subprocess.check_output(shlex.split('R CMD INSTALL -l ~ %s' % (spp_tarball)))
 
     # run spp
     run_spp_command = SPP_TOOLS+'/run_spp_nodups.R'
