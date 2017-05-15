@@ -1,10 +1,6 @@
-reference_file:
-  class: File
-  path: /Users/idan/Documents/dockerFiles/elegans/elegans.tar
+trimming_parameter: "native"
 
-trimming_length: "45"
-
-fastq_files:
+fastqs:
   - class: File
     path: /Users/idan/Documents/dockerFiles/elegans/read1.fastq.gz
     nameroot: fastq_file_1
@@ -12,7 +8,6 @@ fastq_files:
     path: /Users/idan/Documents/dockerFiles/elegans/read2.fastq.gz
     nameroot: fastq_file_2
 
-
-
-
-
+reference:
+  class: File
+  path: /Users/idan/Documents/dockerFiles/elegans/elegans.tar

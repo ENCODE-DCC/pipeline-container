@@ -2,12 +2,10 @@ trimming_parameter: "native"
 
 fastqs:
   - class: File
-    path: /Users/idan/Documents/dockerFiles/elegans/read1.fastq.gz
+    path: /Users/idan/Documents/dockerFiles/mapping/ENCFF000VON.fastq.gz
     nameroot: fastq_file_1
-  - class: File
-    path: /Users/idan/Documents/dockerFiles/elegans/read2.fastq.gz
-    nameroot: fastq_file_2
+
 
 reference:
   class: File
-  path: /Users/idan/Documents/dockerFiles/elegans/elegans.tar
+  path: /Users/idan/Documents/dockerFiles/mapping/ENCFF643CGH.tar.gz

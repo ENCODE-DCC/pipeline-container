@@ -25,10 +25,10 @@ logger.setLevel(logging.INFO)
 
 SAMTOOLS_PATH = "/image_software/samtools_0_1_19/samtools/samtools"
 
-SPP_VERSION_MAP = {
-    "1.10.1": '/image_software/pipeline-container/phantompeakqualtools/spp_1.10.1.tar.gz',
-    "1.14":  '/image_software/pipeline-container/phantompeakqualtools/spp-1.14.tar.gz'
-}
+#SPP_VERSION_MAP = {
+#    "1.10.1": '/image_software/pipeline-container/phantompeakqualtools/spp_1.10.1.tar.gz',
+#    "1.14":  '/image_software/pipeline-container/phantompeakqualtools/spp-1.14.tar.gz'
+#}
 
 SPP_TOOLS = '/image_software/pipeline-container/phantompeakqualtools'
 
@@ -71,7 +71,7 @@ def xcor_parse(fname):
     return xcor_qc
 
 
-def main(input_bam, fastqs, spp_version, debug):
+def main(input_bam, fastqs, debug):
     # create a file handler
     if len(fastqs) > 1:
         paired_end = True
@@ -158,12 +158,12 @@ def main(input_bam, fastqs, spp_version, debug):
     # relPhantomPeakCoef <tab>
     # QualityTag
 
-    spp_tarball = SPP_VERSION_MAP.get(spp_version)
-    assert spp_tarball, "spp version %s is not supported" % (spp_version)
+    #spp_tarball = SPP_VERSION_MAP.get(spp_version)
+    #assert spp_tarball, "spp version %s is not supported" % (spp_version)
     # install spp
 
-    subprocess.check_output(shlex.split('cp ' + SPP_TOOLS + '/.Renviron /private/var/spool/cwl/.Renviron'))
-    subprocess.check_output(shlex.split('R CMD INSTALL -l ~ %s' % (spp_tarball)))
+    #subprocess.check_output(shlex.split('cp ' + SPP_TOOLS + '/.Renviron /private/var/spool/cwl/.Renviron'))
+    #subprocess.check_output(shlex.split('R CMD INSTALL -l ~ %s' % (spp_tarball)))
 
     # run spp
     run_spp_command = SPP_TOOLS+'/run_spp_nodups.R'
@@ -201,4 +201,4 @@ def main(input_bam, fastqs, spp_version, debug):
     return output
     return
 
-main(sys.argv[1], sys.argv[2:], '1.14', False)
+main(sys.argv[1], sys.argv[2:], False)
