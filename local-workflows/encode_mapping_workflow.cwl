@@ -18,9 +18,9 @@ outputs:
   unfiltered_bam:
     type: File
     outputSource: post_processing/unfiltered_bam
-  filtered_bams:
-    type: File[]
-    outputSource: filter_qc/filtered_bams
+  filtered_bam:
+    type: File
+    outputSource: filter_qc/filtered_bam
   unfiltered_flagstat:
     type: File
     outputSource: post_processing/unfiltered_flagstats
@@ -81,7 +81,7 @@ steps:
     run: filter_qc.cwl
     in:
       bam_file: post_processing/unfiltered_bam
-    out: [filtered_bam, filtered_bam_bai, filtered_map_stats, dup_file_qc, pbc_file_qc, filter_qc_log]
+    out: [filtered_bams, filtered_bam_bai, filtered_map_stats, dup_file_qc, pbc_file_qc, filter_qc_log]
 
   xcor:
     run: xcor.cwl

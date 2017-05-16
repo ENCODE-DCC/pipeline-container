@@ -12,18 +12,18 @@ inputs:
       position: 1
 
 outputs:
-    filtered_bams:
-        type: File[]
+    filtered_bam:
+        type: File
         outputBinding:
-          glob: "*.bam"
+          glob: "*final.bam"
     filtered_bam_bai:
         type: File
         outputBinding:
-          glob: "*.bai"
+          glob: "*final.bai"
     filtered_map_stats:
         type: File
         outputBinding:
-          glob: "*.flagstat.qc"
+          glob: "*final.flagstat.qc"
     dup_file_qc:
         type: File
         outputBinding:

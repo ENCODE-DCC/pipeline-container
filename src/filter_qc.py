@@ -181,9 +181,9 @@ def main(input_bam, paired_end, samtools_params, debug):
     os.rename(tmp_filt_bam_filename, filt_bam_filename)
 
     if paired_end:
-        final_bam_prefix = raw_bam_basename + ".filt.srt.nodup"
+        final_bam_prefix = raw_bam_basename + ".filt.srt.nodup.final"
     else:
-        final_bam_prefix = raw_bam_basename + ".filt.nodup.srt"
+        final_bam_prefix = raw_bam_basename + ".filt.nodup.srt.final"
     final_bam_filename = final_bam_prefix + ".bam"  # To be stored
     final_bam_index_filename = final_bam_filename + ".bai"  # To be stored
     # QC file

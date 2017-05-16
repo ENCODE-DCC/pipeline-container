@@ -103,7 +103,7 @@ expression: |
     files.push(inputs.dup_qc)
     files.push(inputs.filtered_flagstat)
     files.push(inputs.unfiltered_flagstat)
-    files.push(inputs.filtered_bam)
+    
     files.push(inputs.unfiltered_bam)
     for (var i = 0; i < files.length; i++){
       folder.listing.push(files[i])
