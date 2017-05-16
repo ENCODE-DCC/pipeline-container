@@ -19,7 +19,7 @@ outputs:
     filtered_bam_bai:
         type: File
         outputBinding:
-          glob: "*final.bai"
+          glob: "*final.bam.bai"
     filtered_map_stats:
         type: File
         outputBinding:
