@@ -3,7 +3,7 @@ class: CommandLineTool
 
 hints:
   - class: DockerRequirement
-    dockerImageId: xcor:latest
+    dockerPull: quay.io/gabdank/xcor:latest
 
 inputs:
   bam_file:

@@ -18,9 +18,9 @@ outputs:
   unfiltered_bam:
     type: File
     outputSource: post_processing/unfiltered_bam
-  filtered_bam:
-    type: File
-    outputSource: filter_qc/filtered_bam
+  filtered_bams:
+    type: File[]
+    outputSource: filter_qc/filtered_bams
   unfiltered_flagstat:
     type: File
     outputSource: post_processing/unfiltered_flagstats

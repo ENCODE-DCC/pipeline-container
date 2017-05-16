@@ -3,7 +3,7 @@ class: CommandLineTool
 
 hints:
   - class: DockerRequirement
-    dockerImageId: post_mapping:latest
+    dockerPull: quay.io/gabdank/post_mapping:latest
 
 inputs:
   trimming_length:

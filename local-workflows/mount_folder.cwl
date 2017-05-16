@@ -10,8 +10,8 @@ inputs:
     type: File
     inputBinding:
       position: 1
-  filtered_bam:
-    type: File
+  filtered_bams:
+    type: File[]
     inputBinding:
       position: 2
   unfiltered_flagstat:
@@ -85,6 +85,13 @@ expression: |
       files.push (inputs.tag_align)
     } else {
       files = inputs.tag_align
+    }
+    if (!Array.isArray(inputs.filtered_bams)){
+      files.push (inputs.filtered_bams)
+    } else {
+      for (var i = 0; i < inputs.filtered_bams.length; i++){
+        files.push(inputs.filtered_bams[i])
+      }
     }
     files.push(inputs.cc_pdf)
     files.push(inputs.cc)

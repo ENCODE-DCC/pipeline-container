@@ -3,7 +3,7 @@ class: CommandLineTool
 
 hints:
   - class: DockerRequirement
-    dockerImageId: filter:latest
+    dockerPull: quay.io/gabdank/filter:latest
 
 inputs:
   bam_file:
@@ -12,26 +12,26 @@ inputs:
       position: 1
 
 outputs:
-    filtered_bam:
-        type: File
+    filtered_bams:
+        type: File[]
         outputBinding:
-          glob: "*.raw.srt.filt.srt.bam"
+          glob: "*.bam"
     filtered_bam_bai:
         type: File
         outputBinding:
-          glob: "*.filt.nodup.srt.bam.bai"
+          glob: "*.bai"
     filtered_map_stats:
         type: File
         outputBinding:
-          glob: "*.raw.srt.filt.nodup.srt.flagstat.qc"
+          glob: "*.flagstat.qc"
     dup_file_qc:
         type: File
         outputBinding:
-          glob: "*.raw.srt.dup.qc"
+          glob: "*.dup.qc"
     pbc_file_qc:
         type: File
         outputBinding:
-          glob: "*.nodup.srt.pbc.qc"
+          glob: "*.pbc.qc"
     filter_qc_log:
         type: File
         outputBinding:
