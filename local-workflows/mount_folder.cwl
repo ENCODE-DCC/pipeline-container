@@ -10,8 +10,8 @@ inputs:
     type: File
     inputBinding:
       position: 1
-  filtered_bams:
-    type: File[]
+  filtered_bam:
+    type: File
     inputBinding:
       position: 2
   unfiltered_flagstat:
@@ -86,13 +86,6 @@ expression: |
     } else {
       files = inputs.tag_align
     }
-    if (!Array.isArray(inputs.filtered_bams)){
-      files.push (inputs.filtered_bams)
-    } else {
-      for (var i = 0; i < inputs.filtered_bams.length; i++){
-        files.push(inputs.filtered_bams[i])
-      }
-    }
     files.push(inputs.cc_pdf)
     files.push(inputs.cc)
     files.push(inputs.xcor_log)
@@ -103,7 +96,7 @@ expression: |
     files.push(inputs.dup_qc)
     files.push(inputs.filtered_flagstat)
     files.push(inputs.unfiltered_flagstat)
-    
+    files.push(inputs.filtered_bam)
     files.push(inputs.unfiltered_bam)
     for (var i = 0; i < files.length; i++){
       folder.listing.push(files[i])

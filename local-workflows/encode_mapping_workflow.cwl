@@ -81,7 +81,7 @@ steps:
     run: filter_qc.cwl
     in:
       bam_file: post_processing/unfiltered_bam
-    out: [filtered_bams, filtered_bam_bai, filtered_map_stats, dup_file_qc, pbc_file_qc, filter_qc_log]
+    out: [filtered_bam, filtered_bam_bai, filtered_map_stats, dup_file_qc, pbc_file_qc, filter_qc_log]
 
   xcor:
     run: xcor.cwl
