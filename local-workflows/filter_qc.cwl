@@ -10,6 +10,12 @@ inputs:
     type: File
     inputBinding:
       position: 1
+  fastq_files:
+    type:
+      type: array
+      items: File
+    inputBinding:
+      position: 2
 
 outputs:
     filtered_bam:

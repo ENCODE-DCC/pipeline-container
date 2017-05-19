@@ -75,7 +75,12 @@ def pbc_parse(fname):
     return pbc_qc
 
 
-def main(input_bam, paired_end, samtools_params, debug):
+def main(input_bam, fastqs, samtools_params, debug):
+
+    if len(fastqs) > 1:
+        paired_end = True
+    else:
+        paired_end = False
 
     # create a file handler
     handler = logging.FileHandler('filter_qc.log')
@@ -290,4 +295,4 @@ def main(input_bam, paired_end, samtools_params, debug):
     logger.info("Exiting with output:\n%s" % (pformat(output)))
     return output
 
-main(sys.argv[1], False, '-q 30', False)
+main(sys.argv[1], sys.argv[2:], '-q 30', False)
