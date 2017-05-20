@@ -101,3 +101,5 @@ ENV/
 *.gz
 
 *.pdf
+
+.DS_Store
