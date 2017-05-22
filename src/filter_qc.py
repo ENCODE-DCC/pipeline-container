@@ -160,7 +160,7 @@ def main(input_bam, fastqs, samtools_params, debug):
         with open(filt_bam_filename, 'w') as fh:
             samtools_filter_command = (
                 "samtools view -F 1804 %s -b %s"
-                % (samtools_params, input_bam)
+                % (samtools_params, raw_bam_basename)
                 )
             logger.info(samtools_filter_command)
             subprocess.check_call(
