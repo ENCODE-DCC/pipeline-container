@@ -167,6 +167,9 @@ def main(input_bam, fastqs, samtools_params, debug):
                 shlex.split(samtools_filter_command),
                 stdout=fh)
 
+
+    subprocess.check_output('set -x; ls -l', shell=True)
+
     # ========================
     # Mark duplicates
     # ======================
@@ -183,8 +186,15 @@ def main(input_bam, fastqs, samtools_params, debug):
         ])
     logger.info(picard_string)
     subprocess.check_output(shlex.split(picard_string))
+
+
+    subprocess.check_output('set -x; ls -l', shell=True)
+
     os.rename(tmp_filt_bam_filename, filt_bam_filename)
 
+
+    subprocess.check_output('set -x; ls -l', shell=True)
+    
     if paired_end:
         final_bam_prefix = raw_bam_basename + ".filt.srt.nodup.final"
     else:
