@@ -91,7 +91,7 @@ def main(input_bam, fastqs, samtools_params, debug):
         handler.setLevel(logging.INFO)
     logger.addHandler(handler)
 
-    logger.info(samtools_params)
+    #logger.info(samtools_params)
 
     # input_json is no longer used
     # # if there is input_JSON, it over-rides any explicit parameters
@@ -139,7 +139,7 @@ def main(input_bam, fastqs, samtools_params, debug):
 
         logger.info("samtools view -F 1804 -f 2 %s -u %s" % (samtools_params, input_bam))
         logger.info("samtools sort -n - %s" % (tmp_filt_bam_prefix))
-
+        logger.info(err)
         if err:
             logger.error("samtools error: %s" % (err))
         # Remove orphan reads (pair was removed)
@@ -156,6 +156,11 @@ def main(input_bam, fastqs, samtools_params, debug):
             "samtools view -F 1804 -f 2 -u -",
             # produce the coordinate-sorted BAM
             "samtools sort - %s" % (filt_bam_prefix)])
+
+        logger.info("samtools fixmate -r %s -" % (tmp_filt_bam_filename))
+        logger.info("samtools view -F 1804 -f 2 -u -")
+        logger.info("samtools sort - %s" % (filt_bam_prefix))
+        logger.info(err)
         subprocess.check_output('set -x; ls -l', shell=True)
     else:  # single-end data
         # =============================
@@ -199,7 +204,6 @@ def main(input_bam, fastqs, samtools_params, debug):
 
     os.rename(tmp_filt_bam_filename, filt_bam_filename)
 
-
     subprocess.check_output('set -x; ls -l', shell=True)
     
     if paired_end:
@@ -213,7 +217,7 @@ def main(input_bam, fastqs, samtools_params, debug):
 
     if paired_end:
         samtools_dedupe_command = \
-            "samtools view -F 1804 -f2 -b %s" % (filt_bam_filename)
+            "samtools view -F 1804 -f 2 -b %s" % (filt_bam_filename)
     else:
         samtools_dedupe_command = \
             "samtools view -F 1804 -b %s" % (filt_bam_filename)
