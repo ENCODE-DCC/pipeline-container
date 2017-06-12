@@ -15,6 +15,7 @@ RUN apt-get update && apt-get install -y wget unzip
 RUN cd /image_software && mkdir spp && cd spp && wget https://github.com/hms-dbmi/spp/archive/1.14.tar.gz
 RUN cd /image_software/spp && ls && R CMD INSTALL 1.14.tar.gz
 
-RUN cd /image_software && git clone https://github.com/ENCODE-DCC/pipeline-container.git
+RUN cd /image_software && git clone https://github.com/ENCODE-DCC/pipeline-container.git && cd /image_software/pipeline-container && git checkout dissection-idan
+RUN cd /image_software/pipeline-container && git fetch && git pull
 
 ENTRYPOINT ["python", "/image_software/pipeline-container/src/xcor.py"]
