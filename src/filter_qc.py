@@ -76,9 +76,7 @@ def pbc_parse(fname):
 
 
 def main(input_bam, fastqs, samtools_params, debug):
-    print ('...')
-    print (samtools_params)
-    print ('....')
+
     if len(fastqs) > 1:
         paired_end = True
     else:
@@ -92,6 +90,9 @@ def main(input_bam, fastqs, samtools_params, debug):
     else:
         handler.setLevel(logging.INFO)
     logger.addHandler(handler)
+
+    logger.info(samtools_params)
+
     # input_json is no longer used
     # # if there is input_JSON, it over-rides any explicit parameters
     # if input_JSON:
@@ -135,6 +136,10 @@ def main(input_bam, fastqs, samtools_params, debug):
             # out to specified filename
             # Will produce name sorted BAM
             "samtools sort -n - %s" % (tmp_filt_bam_prefix)])
+
+        logger.info("samtools view -F 1804 -f 2 %s -u %s" % (samtools_params, input_bam))
+        logger.info("samtools sort -n - %s" % (tmp_filt_bam_prefix))
+
         if err:
             logger.error("samtools error: %s" % (err))
         # Remove orphan reads (pair was removed)
