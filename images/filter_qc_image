@@ -11,7 +11,7 @@ RUN easy_install pip
 RUN pip install common
 RUN pip install python-dateutil
 
-ARG CACHE_DATE=2016-01-04rr
+ARG CACHE_DATE=2016-01-04rrA
 
 
 RUN cd /image_software && git clone https://github.com/ENCODE-DCC/pipeline-container.git && cd /image_software/pipeline-container && git checkout dissection-idan

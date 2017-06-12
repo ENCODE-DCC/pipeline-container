@@ -83,7 +83,7 @@ def main(input_bam, fastqs, samtools_params, debug):
         paired_end = False
 
     # create a file handler
-    handler = logging.FileHandler('filter_qc.log')
+    handler = logging.FileHandler('a_filter_qc.log')
 
     if debug:
         handler.setLevel(logging.DEBUG)
