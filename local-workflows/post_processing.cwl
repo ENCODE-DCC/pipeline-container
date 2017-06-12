@@ -4,6 +4,11 @@ class: CommandLineTool
 hints:
   - class: DockerRequirement
     dockerPull: quay.io/gabdank/post_mapping:latest
+  - class: ResourceRequirement
+    coresMin: 1
+    ramMin: 4092 #"the process requires at least 4G of RAM
+    outdirMin: 512000
+    tmpdirMin: 512000
 
 inputs:
   trimming_length:

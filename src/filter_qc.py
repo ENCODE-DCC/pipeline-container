@@ -76,7 +76,9 @@ def pbc_parse(fname):
 
 
 def main(input_bam, fastqs, samtools_params, debug):
-
+    print ('...')
+    print (samtools_params)
+    print ('....')
     if len(fastqs) > 1:
         paired_end = True
     else:
