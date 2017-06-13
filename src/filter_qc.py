@@ -83,7 +83,7 @@ def main(input_bam, fastqs, samtools_params, debug):
         paired_end = False
 
     # create a file handler
-    handler = logging.FileHandler('a_filter_qc.log')
+    handler = logging.FileHandler('filter_qc.log')
 
     if debug:
         handler.setLevel(logging.DEBUG)
@@ -137,9 +137,9 @@ def main(input_bam, fastqs, samtools_params, debug):
             # Will produce name sorted BAM
             "samtools sort -n - %s" % (tmp_filt_bam_prefix)])
 
-        logger.info("samtools view -F 1804 -f 2 %s -u %s" % (samtools_params, input_bam))
-        logger.info("samtools sort -n - %s" % (tmp_filt_bam_prefix))
-        logger.info(err)
+        #logger.info("samtools view -F 1804 -f 2 %s -u %s" % (samtools_params, input_bam))
+        #logger.info("samtools sort -n - %s" % (tmp_filt_bam_prefix))
+        #logger.info(err)
         if err:
             logger.error("samtools error: %s" % (err))
         # Remove orphan reads (pair was removed)
@@ -157,10 +157,10 @@ def main(input_bam, fastqs, samtools_params, debug):
             # produce the coordinate-sorted BAM
             "samtools sort - %s" % (filt_bam_prefix)])
 
-        logger.info("samtools fixmate -r %s -" % (tmp_filt_bam_filename))
-        logger.info("samtools view -F 1804 -f 2 -u -")
-        logger.info("samtools sort - %s" % (filt_bam_prefix))
-        logger.info(err)
+        #logger.info("samtools fixmate -r %s -" % (tmp_filt_bam_filename))
+        #logger.info("samtools view -F 1804 -f 2 -u -")
+        #logger.info("samtools sort - %s" % (filt_bam_prefix))
+        #logger.info(err)
         subprocess.check_output('set -x; ls -l', shell=True)
     else:  # single-end data
         # =============================
@@ -178,7 +178,6 @@ def main(input_bam, fastqs, samtools_params, debug):
             subprocess.check_call(
                 shlex.split(samtools_filter_command),
                 stdout=fh)
-
 
     subprocess.check_output('set -x; ls -l', shell=True)
 
@@ -199,13 +198,12 @@ def main(input_bam, fastqs, samtools_params, debug):
     logger.info(picard_string)
     subprocess.check_output(shlex.split(picard_string))
 
-
     subprocess.check_output('set -x; ls -l', shell=True)
 
     os.rename(tmp_filt_bam_filename, filt_bam_filename)
 
     subprocess.check_output('set -x; ls -l', shell=True)
-    
+
     if paired_end:
         final_bam_prefix = raw_bam_basename + ".filt.srt.nodup.final"
     else:
