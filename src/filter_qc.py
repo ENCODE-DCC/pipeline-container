@@ -76,9 +76,7 @@ def pbc_parse(fname):
 
 
 def main(input_bam, fastqs, samtools_params, debug):
-    print ('...')
-    print (samtools_params)
-    print ('....')
+
     if len(fastqs) > 1:
         paired_end = True
     else:
@@ -92,6 +90,9 @@ def main(input_bam, fastqs, samtools_params, debug):
     else:
         handler.setLevel(logging.INFO)
     logger.addHandler(handler)
+
+    #logger.info(samtools_params)
+
     # input_json is no longer used
     # # if there is input_JSON, it over-rides any explicit parameters
     # if input_JSON:
@@ -135,6 +136,10 @@ def main(input_bam, fastqs, samtools_params, debug):
             # out to specified filename
             # Will produce name sorted BAM
             "samtools sort -n - %s" % (tmp_filt_bam_prefix)])
+
+        #logger.info("samtools view -F 1804 -f 2 %s -u %s" % (samtools_params, input_bam))
+        #logger.info("samtools sort -n - %s" % (tmp_filt_bam_prefix))
+        #logger.info(err)
         if err:
             logger.error("samtools error: %s" % (err))
         # Remove orphan reads (pair was removed)
@@ -151,6 +156,11 @@ def main(input_bam, fastqs, samtools_params, debug):
             "samtools view -F 1804 -f 2 -u -",
             # produce the coordinate-sorted BAM
             "samtools sort - %s" % (filt_bam_prefix)])
+
+        #logger.info("samtools fixmate -r %s -" % (tmp_filt_bam_filename))
+        #logger.info("samtools view -F 1804 -f 2 -u -")
+        #logger.info("samtools sort - %s" % (filt_bam_prefix))
+        #logger.info(err)
         subprocess.check_output('set -x; ls -l', shell=True)
     else:  # single-end data
         # =============================
@@ -168,7 +178,6 @@ def main(input_bam, fastqs, samtools_params, debug):
             subprocess.check_call(
                 shlex.split(samtools_filter_command),
                 stdout=fh)
-
 
     subprocess.check_output('set -x; ls -l', shell=True)
 
@@ -189,14 +198,12 @@ def main(input_bam, fastqs, samtools_params, debug):
     logger.info(picard_string)
     subprocess.check_output(shlex.split(picard_string))
 
-
     subprocess.check_output('set -x; ls -l', shell=True)
 
     os.rename(tmp_filt_bam_filename, filt_bam_filename)
 
-
     subprocess.check_output('set -x; ls -l', shell=True)
-    
+
     if paired_end:
         final_bam_prefix = raw_bam_basename + ".filt.srt.nodup.final"
     else:
@@ -208,7 +215,7 @@ def main(input_bam, fastqs, samtools_params, debug):
 
     if paired_end:
         samtools_dedupe_command = \
-            "samtools view -F 1804 -f2 -b %s" % (filt_bam_filename)
+            "samtools view -F 1804 -f 2 -b %s" % (filt_bam_filename)
     else:
         samtools_dedupe_command = \
             "samtools view -F 1804 -b %s" % (filt_bam_filename)
