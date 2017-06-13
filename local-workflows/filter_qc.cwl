@@ -46,5 +46,5 @@ outputs:
     filter_qc_log:
         type: File
         outputBinding:
-         glob: "filter_qc.log"    
+         glob: "*ilter_qc.log"    
 
