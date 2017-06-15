@@ -175,9 +175,10 @@ def process(reads_file, reference_tar, bwa_aln_params, debug):
     logger.info("Returning from process with %s" % (output))
     return output
 
+
 # always only read1, because each end is mapped independently
 # probbaly should update code accordingly
-def main( crop_length, reference_tar,
+def main(crop_length, reference_tar,
          bwa_aln_params, samtools_version, debug, reads1, reads2):
     # Main entry-point.  Parameter defaults assumed to come from dxapp.json.
     # reads1, reference_tar, reads2 are links to DNAnexus files or None

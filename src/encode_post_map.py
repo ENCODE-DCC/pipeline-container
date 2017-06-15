@@ -102,8 +102,34 @@ def special_sort(reads_files):
                 sorting_result.append(x)
                 break
     return sorting_result
-#def postprocess(indexed_reads, unmapped_reads, crop_length, reference_tar,
-#                bwa_version, samtools_version, debug):
+
+
+def figure_out_sort(reads_files, unmapped_reads, indexed_reads):
+    initial_order_flag = False
+    initial_files = []
+    unmapped_not_sorted = []
+    sai_not_sorted = []
+    for entry in reads_files:
+        if entry.endswith('.sai'):
+            initial_order_flag = True
+            sai_not_sorted.append(entry)
+        if (not entry.endswith('.sai')) and initial_order_flag:
+            initial_files.append(entry)
+        if (not entry.endswith('.sai')) and (not initial_order_flag):
+            unmapped_not_sorted.append(entry)
+    for entry in initial_files:
+        prefix = entry.split('/')[-1].split('.')[:-2]
+        for path in unmapped_not_sorted:
+            if path.find(prefix) != -1:
+                unmapped_reads.append(path)
+                break
+        for path in sai_not_sorted:
+            if path.find(prefix) != -1 and path.find('crop-unpaired') == -1:
+                unmapped_reads.append(path)
+                break
+    return
+
+
 def postprocess(crop_length, reference_tar,
                 bwa_version, samtools_version, debug, reads_files):
 
@@ -124,14 +150,13 @@ def postprocess(crop_length, reference_tar,
     indexed_reads = []
     unmapped_reads = []
 
-    prefixes = []
-    for file_name in special_sort(reads_files):
+    '''for file_name in special_sort(reads_files):
         if file_name.endswith('.sai'):
             indexed_reads.append(file_name)
-            prefixes.append(file_name[:-4])
         else:
             unmapped_reads.append(file_name)
-
+    '''
+    figure_out_sort(reads_files, unmapped_reads, indexed_reads)
     print (indexed_reads)
     print (unmapped_reads)
     indexed_reads_filenames = []

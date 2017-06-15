@@ -70,11 +70,11 @@ steps:
   post_processing:
     run: post_processing.cwl
     in:
-     
       trimming_length: trimming_parameter
       reference_file: reference
       unmapped_fastqs: mapper/unmapped_files
       sai_files: mapper/sai_files
+      initial_fastqs: fastqs
     out: [unfiltered_bam, unfiltered_flagstats, post_mapping_log]
 
   filter_qc:

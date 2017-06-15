@@ -27,7 +27,10 @@ inputs:
     type: File[]
     inputBinding:
       position: 4
-
+  initial_fastqs:
+    type: File[]
+    inputBinding:
+      position: 5
 
 outputs:
   unfiltered_bam:
