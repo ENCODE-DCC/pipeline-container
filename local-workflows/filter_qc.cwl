@@ -3,7 +3,7 @@ class: CommandLineTool
 
 hints:
   - class: DockerRequirement
-    dockerPull: quay.io/gabdank/filter:latest
+    dockerPull: quay.io/gabdank/filter:0613.1
   - class: ResourceRequirement
     coresMin: 1
     ramMin: 4092 #"the process requires at least 4G of RAM
