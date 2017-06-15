@@ -3,7 +3,7 @@ class: CommandLineTool
 
 hints:
   - class: DockerRequirement
-    dockerPull: quay.io/gabdank/xcor:latest
+    dockerPull: quay.io/gabdank/xcor:0613.2
   - class: ResourceRequirement
     coresMin: 1
     ramMin: 4092 #"the process requires at least 4G of RAM
@@ -38,4 +38,4 @@ outputs:
   tag_align:
     type: File[]
     outputBinding:
-      glob: "*.tagAlign.gz"
+      glob: "*tag*"
