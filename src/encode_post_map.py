@@ -126,7 +126,7 @@ def figure_out_sort(reads_files, unmapped_reads, indexed_reads):
                 break
         for path in sai_not_sorted:
             if path.find(prefix) != -1 and path.find('crop-unpaired') == -1:
-                unmapped_reads.append(path)
+                indexed_reads.append(path)
                 break
     return
 
@@ -172,6 +172,8 @@ def postprocess(crop_length, reference_tar,
         logger.info("unmapped reads %d: %s" % (read_pair_number, unmapped))
         unmapped_reads_filenames.append(unmapped)
 
+    print (indexed_reads_filenames)
+    print (unmapped_reads_filenames)
     reference_tar_filename = reference_tar
     logger.info("reference_tar: %s" % (reference_tar_filename))
     # extract the reference files from the tar

@@ -12,6 +12,9 @@ RUN cd /image_software/samtools_1_0/samtools/ && make
 RUN cd /image_software && mkdir bwa_0_7_10
 RUN cd /image_software/bwa_0_7_10 && git clone --branch 0.7.10 https://github.com/lh3/bwa.git
 RUN cd /image_software/bwa_0_7_10/bwa && make
+
+ARG CACHE_DATE=x2016-01-044-1-a
+
 RUN cd /image_software && git clone https://github.com/ENCODE-DCC/pipeline-container.git 
 RUN cd /image_software/pipeline-container && git fetch && git pull
 
