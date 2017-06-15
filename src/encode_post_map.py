@@ -117,8 +117,9 @@ def figure_out_sort(reads_files, unmapped_reads, indexed_reads):
             initial_files.append(entry)
         if (not entry.endswith('.sai')) and (not initial_order_flag):
             unmapped_not_sorted.append(entry)
+
     for entry in initial_files:
-        prefix = entry.split('/')[-1].split('.')[:-2]
+        prefix = '.'.join(entry.split('/')[-1].split('.')[:-2])
         for path in unmapped_not_sorted:
             if path.find(prefix) != -1:
                 unmapped_reads.append(path)
