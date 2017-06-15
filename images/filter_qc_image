@@ -10,9 +10,6 @@ RUN cd /image_software/picard && ant -Ddist=/picard -lib lib/ant package-command
 RUN easy_install pip
 RUN pip install common
 RUN pip install python-dateutil
-
-ARG CACHE_DATE=2016-01-044-1-a
-
 RUN cd /image_software && git clone https://github.com/ENCODE-DCC/pipeline-container.git
 RUN cd /image_software/pipeline-container && git fetch && git pull
 
