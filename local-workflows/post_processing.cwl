@@ -3,7 +3,7 @@ class: CommandLineTool
 
 hints:
   - class: DockerRequirement
-    dockerPull: quay.io/gabdank/post_mapping:0615.2
+    dockerPull: quay.io/gabdank/post_mapping:0615.3
   - class: ResourceRequirement
     coresMin: 1
     ramMin: 4092 #"the process requires at least 4G of RAM
