@@ -1,0 +1,89 @@
+{
+  "class": "CommandLineTool",
+  "label": "Map",
+  "description": "This tool is mapping FASTQ files to a reference genome using BWA",
+  "hints": [
+    {
+      "class": "DockerRequirement",
+      "dockerPull": "quay.io/gabdank/mapping:0622.1"
+    },
+    {
+      "class":"ResourceRequirement",
+      "coresMin": 1,
+      "ramMin": 8184
+    }
+  ],
+  "inputs": [
+    {
+      "description": "Genome reference index file",
+      "inputBinding": {
+        "position": 1,
+        "separate": true
+      },
+      "id": "#reference_file",
+      "type": [
+        "File"
+      ]
+    },
+    {
+      "description": "Trimming length specification, either 'native' or the desired read length",
+      "inputBinding": {
+        "position": 2,
+        "separate": true
+      },
+      "id": "#trimming_length",
+      "type": [
+        "string"
+      ]
+    },
+    {
+      "description": "Fastq file(s) to map",
+      "inputBinding": {
+        "position": 3,
+        "separate": true
+      },
+      "id": "#fastq_files",
+      "type": [
+        {
+          "type": "array",
+          "items": "File"
+        }
+      ]
+    } 
+  ],
+  "outputs": [
+    {
+      "outputBinding": {
+        "glob": "*.gz"
+      },
+      "id": "#unmapped_files",
+      "type": [
+        {
+          "type": "array",
+          "items": "File"
+        }
+      ]
+    },
+    {
+      "outputBinding": {
+        "glob": "*.sai"
+      },
+      "id": "#sai_files",
+      "type": [
+        {
+          "type": "array",
+          "items": "File"
+        }
+      ]
+    },
+    {
+      "outputBinding": {
+        "glob": "mapping.log"
+      },
+      "id": "#sai_files",
+      "type": [
+          "File"
+      ]
+    }
+  ]
+}
