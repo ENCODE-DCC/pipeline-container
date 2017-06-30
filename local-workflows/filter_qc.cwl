@@ -48,3 +48,4 @@ outputs:
         outputBinding:
          glob: "*ilter_qc.log"    
 
+baseCommand: []
