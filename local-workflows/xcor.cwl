@@ -1,4 +1,10 @@
+dct:creator:
+  "@id": "http://orcid.org/0000-0001-5025-5886"
+  foaf:name: Idan Gabdank
+  foaf:mbox: "mailto:gabdank@stanford.edu"
+
 cwlVersion: v1.0
+
 class: CommandLineTool
 
 hints:
