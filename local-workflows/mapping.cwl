@@ -55,3 +55,5 @@ outputs:
     type: File
     outputBinding:
       glob: "mapping.log"
+
+baseCommand: []

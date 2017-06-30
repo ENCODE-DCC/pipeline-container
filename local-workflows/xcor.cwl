@@ -45,3 +45,5 @@ outputs:
     type: File[]
     outputBinding:
       glob: "*tag*"
+
+baseCommand: []

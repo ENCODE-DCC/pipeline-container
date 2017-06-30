@@ -51,3 +51,5 @@ outputs:
       type: File
       outputBinding:
         glob: "post_mapping.log"  
+
+baseCommand: []
