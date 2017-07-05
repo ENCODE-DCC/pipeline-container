@@ -3,6 +3,8 @@ dct:creator:
   foaf:name: Idan Gabdank
   foaf:mbox: "mailto:gabdank@stanford.edu"
 
+description: "ENCODE ChIP-seq mapping pipeline workflow."
+
 cwlVersion: v1.0
 
 class: Workflow
