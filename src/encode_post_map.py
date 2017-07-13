@@ -15,12 +15,10 @@ logger.propagate = False
 logger.setLevel(logging.INFO)
 
 SAMTOOLS_PATH = {
-    "0.1.19": "/image_software/samtools_0_1_19/samtools/samtools",
     "1.0": "/image_software/samtools_1_0/samtools/samtools"
 }
 
 BWA_PATH = {
-
     "0.7.10": "/image_software/bwa_0_7_10/bwa/bwa"
 }
 # the order of this list is important.
@@ -157,9 +155,10 @@ def postprocess(crop_length, reference_tar,
         else:
             unmapped_reads.append(file_name)
     '''
+    print ("reads_files: %s" % (reads_files))
     figure_out_sort(reads_files, unmapped_reads, indexed_reads)
-    print (indexed_reads)
-    print (unmapped_reads)
+    print ("indexed_reads: %s" % (indexed_reads))
+    print ("unmapped_reads: %s" % (unmapped_reads))
     indexed_reads_filenames = []
     unmapped_reads_filenames = []
 
@@ -172,8 +171,8 @@ def postprocess(crop_length, reference_tar,
         logger.info("unmapped reads %d: %s" % (read_pair_number, unmapped))
         unmapped_reads_filenames.append(unmapped)
 
-    print (indexed_reads_filenames)
-    print (unmapped_reads_filenames)
+    print ("indexed_reads_filenames: %s" % (indexed_reads_filenames))
+    print ("unmapped_reads_filenames: %s" % (unmapped_reads_filenames))
     reference_tar_filename = reference_tar
     logger.info("reference_tar: %s" % (reference_tar_filename))
     # extract the reference files from the tar
@@ -231,16 +230,10 @@ def postprocess(crop_length, reference_tar,
             % (bwa, reference_filename,
                reads_filename, unmapped_reads_filename)]
 
-    if samtools_version == "0.1.9":
-        steps.extend([
-            "%s view -Su -" % (samtools),
-            "%s sort - %s"
-            % (samtools, raw_bam_filename.rstrip('.bam'))])  # samtools adds .bam
-    else:
-        steps.extend([
-            "%s view -@%d -Su -" % (samtools, cpu_count()),
-            "%s sort -@%d - %s"
-            % (samtools, cpu_count(), raw_bam_filename.rstrip('.bam'))])  # samtools adds .bam
+    steps.extend([
+        "%s view -@%d -Su -" % (samtools, cpu_count()),
+        "%s sort -@%d - %s"
+        % (samtools, cpu_count(), raw_bam_filename.rstrip('.bam'))])  # samtools adds .bam
 
     logger.info("Running pipe: %s" % (steps))
     out, err = common.run_pipe(steps)
@@ -270,6 +263,8 @@ def postprocess(crop_length, reference_tar,
     logger.info("Returning from postprocess with output: %s" % (output))
     return output
 
+print("sys.argv[3:]: %s" % (sys.argv[3:]))
+
 postprocess(sys.argv[1],
             sys.argv[2],
-            '0.7.10', '0.1.19', False, sys.argv[3:])
+            '0.7.10', '1.0', False, sys.argv[3:])
