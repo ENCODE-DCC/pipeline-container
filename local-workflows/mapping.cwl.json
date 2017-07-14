@@ -5,7 +5,7 @@
   "hints": [
     {
       "class": "DockerRequirement",
-      "dockerPull": "quay.io/gabdank/mapping:0622.1"
+      "dockerPull": "quay.io/gabdank/mapping:0713.1"
     },
     {
       "class":"ResourceRequirement",

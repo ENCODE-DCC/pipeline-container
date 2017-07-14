@@ -30,9 +30,10 @@ RUN pip install python-dateutil
 
 RUN mkdir image_software
 
-# Install samtools 0.1.19
-RUN cd /image_software && git clone --branch 0.1.19 https://github.com/samtools/samtools.git
-RUN cd /image_software/samtools && make && cp /image_software/samtools/samtools /usr/local/bin/samtools
+# Install samtools 1.0
+RUN cd /image_software && mkdir samtools_1_0 && cd samtools_1_0 && git clone --branch 1.0 https://github.com/samtools/samtools.git
+RUN cd /image_software/samtools_1_0 && git clone --branch 1.0 git://github.com/samtools/htslib.git
+RUN cd /image_software/samtools_1_0/samtools/ && make
 
 # Install bedtools 2.26.0
 RUN cd /image_software && git clone --branch v2.26.0 https://github.com/arq5x/bedtools2.git
