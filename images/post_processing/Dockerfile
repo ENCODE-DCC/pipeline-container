@@ -41,7 +41,9 @@ RUN cd /image_software/bwa_0_7_10 && git clone --branch 0.7.10 https://github.co
 RUN cd /image_software/bwa_0_7_10/bwa && make
 
 # Get ENCODE pipeline container repository
-RUN cd /image_software && git clone --branch fix_samtools_versions https://github.com/ENCODE-DCC/pipeline-container.git 
+ARG COMMIT=none
+ARG BRANCH=master
+RUN cd /image_software && git clone --branch $BRANCH https://github.com/ENCODE-DCC/pipeline-container.git 
 RUN cd /image_software/pipeline-container && git fetch && git pull
 
 ENTRYPOINT ["python", "/image_software/pipeline-container/src/encode_post_map.py"]
