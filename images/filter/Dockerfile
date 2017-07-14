@@ -44,7 +44,7 @@ RUN cd /image_software && git clone --branch 1.92 https://github.com/broadinstit
 RUN cd /image_software/picard && ant -Ddist=/picard -lib lib/ant package-commands
 
 # Get ENCODE pipeline container repository
-RUN cd /image_software && git clone --branch fix_samtools_vesions https://github.com/ENCODE-DCC/pipeline-container.git
+RUN cd /image_software && git clone --branch fix_samtools_versions https://github.com/ENCODE-DCC/pipeline-container.git
 RUN cd /image_software/pipeline-container && git fetch && git pull
 
 ENTRYPOINT ["python", "/image_software/pipeline-container/src/filter_qc.py"]
