@@ -157,10 +157,7 @@ def postprocess(crop_length, reference_tar,
         else:
             unmapped_reads.append(file_name)
     '''
-    print ("reads_files: %s" % (reads_files))
     figure_out_sort(reads_files, unmapped_reads, indexed_reads)
-    print ("indexed_reads: %s" % (indexed_reads))
-    print ("unmapped_reads: %s" % (unmapped_reads))
     indexed_reads_filenames = []
     unmapped_reads_filenames = []
 
@@ -173,8 +170,6 @@ def postprocess(crop_length, reference_tar,
         logger.info("unmapped reads %d: %s" % (read_pair_number, unmapped))
         unmapped_reads_filenames.append(unmapped)
 
-    print ("indexed_reads_filenames: %s" % (indexed_reads_filenames))
-    print ("unmapped_reads_filenames: %s" % (unmapped_reads_filenames))
     reference_tar_filename = reference_tar
     logger.info("reference_tar: %s" % (reference_tar_filename))
     # extract the reference files from the tar
@@ -264,8 +259,6 @@ def postprocess(crop_length, reference_tar,
     }
     logger.info("Returning from postprocess with output: %s" % (output))
     return output
-
-print("sys.argv[3:]: %s" % (sys.argv[3:]))
 
 postprocess(sys.argv[1],
             sys.argv[2],
