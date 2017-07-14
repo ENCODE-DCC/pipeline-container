@@ -250,6 +250,7 @@ def main(crop_length, reference_tar,
     logger.info("Exiting mapping with output: %s" % (output))
     return output
 
+
 if len(sys.argv) == 4:
     main(sys.argv[2], sys.argv[1], "-q 5 -l 32 -k 2", "1.0", False, sys.argv[3], None)
 else:
