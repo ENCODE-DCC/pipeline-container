@@ -15,13 +15,13 @@ logger.propagate = False
 logger.setLevel(logging.INFO)
 
 SAMTOOLS_PATH = {
-    # "1.0": "/image_software/samtools_1_0/samtools/samtools"
-    "1.0": "samtools"
+    "1.0": "/image_software/samtools_1_0/samtools/samtools"
+    # "1.0": "samtools"
 }
 
 BWA_PATH = {
-    # "0.7.10": "/image_software/bwa_0_7_10/bwa/bwa"
-    "0.7.10": "bwa"
+    "0.7.10": "/image_software/bwa_0_7_10/bwa/bwa"
+    # "0.7.10": "bwa"
 }
 # the order of this list is important.
 # strip_extensions strips from the right inward, so
