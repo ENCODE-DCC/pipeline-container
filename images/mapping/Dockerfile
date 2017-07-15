@@ -37,7 +37,7 @@ RUN cd /image_software/bwa_0_7_10/bwa && make
 
 # Get ENCODE pipeline container repository
 ARG COMMIT=none
-ARG BRANCH=master
+ARG BRANCH=fix_samtools_versions
 RUN cd /image_software && git clone --branch $BRANCH https://github.com/ENCODE-DCC/pipeline-container.git
 RUN cd /image_software/pipeline-container && git fetch && git pull
 
