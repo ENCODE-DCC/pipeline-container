@@ -13,16 +13,16 @@ MAINTAINER Idan Gabdank
 # Update the repository sources list
 # Install base packages: git, python, java
 RUN apt-get update && apt-get install -y \
-    git \
+    ant \
     build-essential \
-    zlib1g-dev \
+    git \
     libncurses5-dev \
     libncursesw5-dev \
+    openjdk-7-jdk \
     python-dev \
     python-setuptools \
-    ant \
-    openjdk-7-jdk \
-    wget
+    wget \
+    zlib1g-dev
 
 # Install pip and python packages: common and python-dateutils
 RUN easy_install pip
@@ -53,10 +53,13 @@ RUN git clone --branch 1.5 https://github.com/samtools/samtools.git
 RUN git clone --branch 1.5 git://github.com/samtools/htslib.git
 RUN cd samtools && make && make install
 
+# Set up the user directory
+RUN groupadd -r encode && useradd --no-log-init -r -g encode encode
+WORKDIR ~encode
 # Get ENCODE pipeline container repository
 ARG COMMIT=none
 ARG BRANCH=fix_samtools_versions
-RUN cd /image_software && git clone --branch fix_samtools_versions https://github.com/ENCODE-DCC/pipeline-container.git
-RUN cd /image_software/pipeline-container && git fetch && git pull
+RUN git clone --branch $BRANCH https://github.com/ENCODE-DCC/pipeline-container.git
+RUN cd pipeline-container && git fetch && git pull
 
-ENTRYPOINT ["python", "/image_software/pipeline-container/src/filter_qc.py"]
+ENTRYPOINT ["python", "pipeline-container/src/filter_qc.py"]

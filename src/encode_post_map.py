@@ -14,15 +14,9 @@ logger = logging.getLogger(__name__)
 logger.propagate = False
 logger.setLevel(logging.INFO)
 
-SAMTOOLS_PATH = {
-    "1.0": "/image_software/samtools_1_0/samtools/samtools"
-    # "1.0": "samtools"
-}
+SAMTOOLS_PATH = 'samtools'
+BWA_PATH = 'bwa'
 
-BWA_PATH = {
-    "0.7.10": "/image_software/bwa_0_7_10/bwa/bwa"
-    # "0.7.10": "bwa"
-}
 # the order of this list is important.
 # strip_extensions strips from the right inward, so
 # the expected right-most extensions should appear first (like .gz)
@@ -132,7 +126,7 @@ def figure_out_sort(reads_files, unmapped_reads, indexed_reads):
 
 
 def postprocess(crop_length, reference_tar,
-                bwa_version, samtools_version, debug, reads_files):
+                debug, reads_files):
 
     handler = logging.FileHandler('post_mapping.log')
 
@@ -142,10 +136,8 @@ def postprocess(crop_length, reference_tar,
         handler.setLevel(logging.INFO)
     logger.addHandler(handler)
 
-    samtools = SAMTOOLS_PATH.get(samtools_version)
-    assert samtools, "samtools version %s is not supported" % (samtools_version)
-    bwa = BWA_PATH.get(bwa_version)
-    assert bwa, "BWA version %s is not supported" % (bwa_version)
+    samtools = SAMTOOLS_PATH
+    bwa = BWA_PATH
     logger.info("In postprocess with samtools %s and bwa %s" % (samtools, bwa))
 
     indexed_reads = []
@@ -262,4 +254,4 @@ def postprocess(crop_length, reference_tar,
 
 postprocess(sys.argv[1],
             sys.argv[2],
-            '0.7.10', '1.0', False, sys.argv[3:])
+            False, sys.argv[3:])

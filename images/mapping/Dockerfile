@@ -5,7 +5,7 @@
 ############################################################
 
 # Set the base image to Ubuntu
-FROM ubuntu
+FROM ubuntu:14.04
 
 # File Author / Maintainer
 MAINTAINER Idan Gabdank
@@ -13,16 +13,15 @@ MAINTAINER Idan Gabdank
 # Update the repository sources list
 # Install base packages: java, git, wget, python
 RUN apt-get update && apt-get install -y \
-    wget \
-    unzip \
-    git \
     build-essential \
-    zlib1g-dev \
+    git \
     libncurses5-dev \
     libncursesw5-dev \
     python-dev \
     python-setuptools \
-    openjdk-8-jdk
+    unzip \
+    wget \
+    zlib1g-dev
 
 RUN mkdir /image_software
 WORKDIR /image_software
@@ -32,16 +31,16 @@ RUN wget http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/Trimmoma
 RUN unzip Trimmomatic-0.36.zip && ls Trimmomatic-0.36
 
 # Install BWA 0.7.10
-# RUN cd /image_software && mkdir bwa_0_7_10
-# RUN cd /image_software/bwa_0_7_10 && git clone --branch 0.7.10 https://github.com/lh3/bwa.git
-# RUN cd /image_software/bwa_0_7_10/bwa && make
 RUN git clone --branch 0.7.10 https://github.com/lh3/bwa.git
 RUN cd bwa && make && cp bwa /usr/local/bin/
 
+# Set up the user directory
+RUN groupadd -r encode && useradd --no-log-init -r -g encode encode
+WORKDIR ~encode
 # Get ENCODE pipeline container repository
 ARG COMMIT=none
 ARG BRANCH=fix_samtools_versions
-RUN cd /image_software && git clone --branch $BRANCH https://github.com/ENCODE-DCC/pipeline-container.git
-RUN cd /image_software/pipeline-container && git fetch && git pull
+RUN git clone --branch $BRANCH https://github.com/ENCODE-DCC/pipeline-container.git
+RUN cd pipeline-container && git fetch && git pull
 
-ENTRYPOINT ["python", "/image_software/pipeline-container/src/encode_map.py"]
+ENTRYPOINT ["python", "pipeline-container/src/encode_map.py"]
