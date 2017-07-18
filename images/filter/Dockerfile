@@ -37,12 +37,6 @@ RUN git clone --branch v2.26.0 https://github.com/arq5x/bedtools2.git
 # RUN cd bedtools2 && make && cp -a /image_software/bedtools2/bin/. /usr/local/bin/
 RUN cd bedtools2 && make && make install
 
-# Install picard 1.92
-# RUN git clone --branch 1.92 https://github.com/broadinstitute/picard.git
-# RUN cd picard && ant -Ddist=/picard -lib lib/ant package-commands
-RUN wget https://github.com/broadinstitute/picard/releases/download/2.10.2/picard.jar
-ENV CLASSPATH /image_software/
-
 # Install samtools dependencies
 RUN wget http://zlib.net/zlib-1.2.11.tar.gz && tar -xvf zlib-1.2.11.tar.gz
 RUN cd zlib-1.2.11 && ./configure && make && make install
@@ -56,8 +50,12 @@ RUN git clone --branch 1.5 git://github.com/samtools/htslib.git
 RUN cd samtools && make && make install
 
 # Set up the user directory
-RUN groupadd -r encode && useradd --no-log-init -r -g encode encode
-WORKDIR ~encode
+RUN groupadd -r encode && useradd --no-log-init -r -m -d /home/encode/ -g encode encode
+USER encode
+WORKDIR /home/encode
+
+# Install Picard 2.10.2
+RUN wget https://github.com/broadinstitute/picard/releases/download/2.10.2/picard.jar
 # Get ENCODE pipeline container repository
 ARG COMMIT=none
 ARG BRANCH=fix_samtools_versions
