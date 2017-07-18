@@ -13,7 +13,8 @@ logger = logging.getLogger(__name__)
 logger.propagate = False
 logger.setLevel(logging.INFO)
 
-BWA_PATH = "/image_software/bwa_0_7_10/bwa/bwa"
+# BWA_PATH = "/image_software/bwa_0_7_10/bwa/bwa"
+BWA_PATH = "bwa"
 TRIMMOMATIC_PATH = "/image_software/Trimmomatic-0.36/trimmomatic-0.36.jar"
 
 # the order of this list is important.

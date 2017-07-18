@@ -24,16 +24,19 @@ RUN apt-get update && apt-get install -y \
     python-setuptools \
     openjdk-8-jdk
 
-RUN mkdir image_software
+RUN mkdir /image_software
+WORKDIR /image_software
 
 # Install Trimmomatic 0.36
-RUN cd /image_software && wget http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/Trimmomatic-0.36.zip
-RUN cd /image_software && unzip Trimmomatic-0.36.zip && cd Trimmomatic-0.36 && ls
+RUN wget http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/Trimmomatic-0.36.zip
+RUN unzip Trimmomatic-0.36.zip && ls Trimmomatic-0.36
 
 # Install BWA 0.7.10
-RUN cd /image_software && mkdir bwa_0_7_10
-RUN cd /image_software/bwa_0_7_10 && git clone --branch 0.7.10 https://github.com/lh3/bwa.git
-RUN cd /image_software/bwa_0_7_10/bwa && make
+# RUN cd /image_software && mkdir bwa_0_7_10
+# RUN cd /image_software/bwa_0_7_10 && git clone --branch 0.7.10 https://github.com/lh3/bwa.git
+# RUN cd /image_software/bwa_0_7_10/bwa && make
+RUN git clone --branch 0.7.10 https://github.com/lh3/bwa.git
+RUN cd bwa && make && cp bwa /usr/local/bin/
 
 # Get ENCODE pipeline container repository
 ARG COMMIT=none
