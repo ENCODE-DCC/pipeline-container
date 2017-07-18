@@ -187,7 +187,7 @@ def main(input_bam, fastqs, samtools_params, debug):
     tmp_filt_bam_filename = raw_bam_basename + ".dupmark.bam"
     dup_file_qc_filename = raw_bam_basename + ".dup.qc"
     picard_string = ' '.join([
-        "java -Xmx4G -jar picard.jar MarkDuplicates",
+        "java -Xmx4G picard.jar MarkDuplicates",
         "INPUT=%s" % (filt_bam_filename),
         "OUTPUT=%s" % (tmp_filt_bam_filename),
         "METRICS_FILE=%s" % (dup_file_qc_filename),
