@@ -108,7 +108,8 @@ def crop(reads1_file, reads2_file, crop_length, debug):
             'CROP:%s' % (crop_length)]
             if s])
 
-        logger.info("Cropping with: %s" % (crop_command))
+        # logger.info("Cropping with: %s" % (crop_command))
+        print("Cropping with: %s" % (crop_command))
         print(subprocess.check_output(shlex.split(crop_command)))
         print(subprocess.check_output(shlex.split('ls -l')))
 
