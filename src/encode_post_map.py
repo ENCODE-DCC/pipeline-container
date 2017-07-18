@@ -221,8 +221,8 @@ def postprocess(crop_length, reference_tar,
 
     steps.extend([
         "%s view -@%d -Su -" % (samtools, cpu_count()),
-        "%s sort -@%d - %s"
-        % (samtools, cpu_count(), raw_bam_filename.rstrip('.bam'))])  # samtools adds .bam
+        "%s sort -@%d -o %s"
+        % (samtools, cpu_count(), raw_bam_filename)])  # samtools adds .bam
 
     logger.info("Running pipe: %s" % (steps))
     out, err = common.run_pipe(steps)

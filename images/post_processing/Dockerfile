@@ -38,7 +38,7 @@ RUN wget http://bzip.org/1.0.6/bzip2-1.0.6.tar.gz && tar -xvf bzip2-1.0.6.tar.gz
 RUN cd bzip2-1.0.6 && make && make install
 RUN wget https://tukaani.org/xz/xz-5.2.3.tar.gz && tar -xvf xz-5.2.3.tar.gz
 RUN cd xz-5.2.3 && ./configure && make && make install
-# Install samtools 1.0
+# Install samtools 1.5
 RUN git clone --branch 1.5 https://github.com/samtools/samtools.git
 RUN git clone --branch 1.5 git://github.com/samtools/htslib.git
 RUN cd samtools && make && make install
