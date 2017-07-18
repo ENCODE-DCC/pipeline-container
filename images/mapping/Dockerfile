@@ -19,9 +19,19 @@ RUN apt-get update && apt-get install -y \
     libncursesw5-dev \
     python-dev \
     python-setuptools \
+    software-properties-common \
     unzip \
     wget \
     zlib1g-dev
+
+# Install Java 8 for Trimmomatic
+RUN echo debconf shared/accepted-oracle-license-v1-1 select true | \
+    sudo debconf-set-selections
+RUN echo debconf shared/accepted-oracle-license-v1-1 seen true | \
+    sudo debconf-set-selections
+RUN add-apt-repository ppa:webupd8team/java
+RUN apt-get update && apt-get install -y \
+    oracle-java8-installer
 
 RUN mkdir /image_software
 WORKDIR /image_software
