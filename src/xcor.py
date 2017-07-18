@@ -186,6 +186,6 @@ def main(input_bam, fastqs, debug):
         output.update({"BEDPE_file": BEDPE_file})
 
     return output
-    return
+
 
 main(sys.argv[1], sys.argv[2:], False)
