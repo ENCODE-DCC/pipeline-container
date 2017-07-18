@@ -75,4 +75,4 @@ ARG BRANCH=fix_samtools_versions
 RUN git clone --branch $BRANCH https://github.com/ENCODE-DCC/pipeline-container.git
 RUN cd pipeline-container && git fetch && git pull
 
-ENTRYPOINT ["python", "pipeline-container/src/xcor.py"]
+ENTRYPOINT ["python", "/home/encode/pipeline-container/src/xcor.py"]
