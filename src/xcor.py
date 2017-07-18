@@ -24,7 +24,7 @@ logger.propagate = False
 logger.setLevel(logging.INFO)
 
 SAMTOOLS_PATH = "samtools"
-SPP_TOOLS_PATH = 'phantompeakqualtools/run_spp.R'
+SPP_TOOL_PATH = 'phantompeakqualtools/run_spp.R'
 
 
 def xcor_parse(fname):

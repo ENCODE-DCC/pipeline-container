@@ -67,7 +67,7 @@ USER encode
 WORKDIR /home/encode
 
 # Get phantompeakqualtools
-RUN git clone --branch v1.0 https://github.com/kundajelab/phantompeakqualtools.git
+RUN git clone --branch 1.0 https://github.com/kundajelab/phantompeakqualtools.git
 
 # Get ENCODE pipeline container repository
 ARG COMMIT=none
