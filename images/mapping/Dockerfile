@@ -26,10 +26,6 @@ RUN apt-get update && apt-get install -y \
 RUN mkdir /image_software
 WORKDIR /image_software
 
-# Install Trimmomatic 0.36
-RUN wget http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/Trimmomatic-0.36.zip
-RUN unzip Trimmomatic-0.36.zip && ls Trimmomatic-0.36
-
 # Install BWA 0.7.10
 RUN git clone --branch 0.7.10 https://github.com/lh3/bwa.git
 RUN cd bwa && make && cp bwa /usr/local/bin/
@@ -38,6 +34,10 @@ RUN cd bwa && make && cp bwa /usr/local/bin/
 RUN groupadd -r encode && useradd --no-log-init -r -m -d /home/encode/ -g encode encode
 USER encode
 WORKDIR /home/encode
+
+# Install Trimmomatic 0.36
+RUN wget http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/Trimmomatic-0.36.zip
+RUN unzip Trimmomatic-0.36.zip && ls Trimmomatic-0.36
 
 # Get ENCODE pipeline container repository
 ARG COMMIT=none
