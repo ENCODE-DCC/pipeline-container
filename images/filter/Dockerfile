@@ -64,6 +64,7 @@ WORKDIR /home/encode
 
 # Install Picard 2.10.2
 RUN wget https://github.com/broadinstitute/picard/releases/download/2.10.2/picard.jar
+
 # Get ENCODE pipeline container repository
 ARG COMMIT=none
 ARG BRANCH=fix_samtools_versions

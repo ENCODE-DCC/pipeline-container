@@ -35,8 +35,10 @@ RUN git clone --branch 0.7.10 https://github.com/lh3/bwa.git
 RUN cd bwa && make && cp bwa /usr/local/bin/
 
 # Set up the user directory
-RUN groupadd -r encode && useradd --no-log-init -r -g encode encode
-WORKDIR ~encode
+RUN groupadd -r encode && useradd --no-log-init -r -m -d /home/encode/ -g encode encode
+USER encode
+WORKDIR /home/encode
+
 # Get ENCODE pipeline container repository
 ARG COMMIT=none
 ARG BRANCH=fix_samtools_versions
