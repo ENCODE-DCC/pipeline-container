@@ -13,45 +13,66 @@ MAINTAINER Idan Gabdank
 # Update the repository sources list
 # Install base packages: git, python, wget, unzip, R
 RUN apt-get update && apt-get install -y \
-    r-base \
-    r-base-dev \
-    r-bioc-rsamtools \
-    git \
     build-essential \
-    zlib1g-dev \
+    git \
+    libboost-dev \
     libncurses5-dev \
     libncursesw5-dev \
     python-dev \
     python-setuptools \
-    libboost-dev \
-    wget \
-    unzip 
-
-RUN su - -c "R -e \"install.packages('caTools', repos = 'http://cran.rstudio.com/')\""
-RUN su - -c "R -e \"install.packages('snow', repos = 'http://cran.rstudio.com/')\""
+    r-base \
+    r-base-dev \
+    r-bioc-rsamtools \
+    zlib1g-dev \
+    unzip \ 
+    wget
 
 # Install pip and python packages: common and python-dateutils
 RUN easy_install pip
 RUN pip install common
 RUN pip install python-dateutil
 
-RUN mkdir image_software
+RUN mkdir /image_software
+WORKDIR /image_software
 
-# Install samtools 1.0
-RUN cd /image_software && mkdir samtools_1_0 && cd samtools_1_0 && git clone --branch 1.0 https://github.com/samtools/samtools.git
-RUN cd /image_software/samtools_1_0 && git clone --branch 1.0 git://github.com/samtools/htslib.git
-RUN cd /image_software/samtools_1_0/samtools/ && make
+# Install samtools dependencies
+RUN wget http://zlib.net/zlib-1.2.11.tar.gz && tar -xvf zlib-1.2.11.tar.gz
+RUN cd zlib-1.2.11 && ./configure && make && make install
+RUN wget http://bzip.org/1.0.6/bzip2-1.0.6.tar.gz && tar -xvf bzip2-1.0.6.tar.gz
+RUN cd bzip2-1.0.6 && make && make install
+RUN wget https://tukaani.org/xz/xz-5.2.3.tar.gz && tar -xvf xz-5.2.3.tar.gz
+RUN cd xz-5.2.3 && ./configure && make && make install
+# Install samtools 1.5
+RUN git clone --branch 1.5 https://github.com/samtools/samtools.git
+RUN git clone --branch 1.5 git://github.com/samtools/htslib.git
+RUN cd samtools && make && make install
 
 # Install bedtools 2.26.0
-RUN cd /image_software && git clone --branch v2.26.0 https://github.com/arq5x/bedtools2.git
-RUN cd /image_software/bedtools2 && make && cp -a /image_software/bedtools2/bin/. /usr/local/bin/
+RUN git clone --branch v2.26.0 https://github.com/arq5x/bedtools2.git
+RUN cd bedtools2 && make && make install
 
-# Install SPP 1.14
-RUN cd /image_software && mkdir spp && cd spp && wget https://github.com/hms-dbmi/spp/archive/1.14.tar.gz
-RUN cd /image_software/spp && ls && R CMD INSTALL 1.14.tar.gz
+# Install R packages and spp needed for phantompeakqualtools
+RUN wget -O spp_1.14.tar.gz https://github.com/hms-dbmi/spp/archive/1.14.tar.gz 
+RUN R -e "install.packages('bitops', repos='http://cran.us.r-project.org'); \
+          install.packages('caTools', repos = 'http://cran.rstudio.com/'); \
+          install.packages('snow', repos = 'http://cran.rstudio.com/'); \
+          install.packages('snowfall', repos='http://cran.us.r-project.org'); \
+          source('http://bioconductor.org/biocLite.R'); \
+          biocLite('Rsamtools',suppressUpdates=TRUE); \
+          install.packages('./spp_1.14.tar.gz')"
+
+# Set up the user directory
+RUN groupadd -r encode && useradd --no-log-init -r -m -d /home/encode/ -g encode encode
+USER encode
+WORKDIR /home/encode
+
+# Get phantompeakqualtools
+RUN git clone --branch v1.0 https://github.com/kundajelab/phantompeakqualtools.git
 
 # Get ENCODE pipeline container repository
-RUN cd /image_software && git clone --branch fix_samtools_versions https://github.com/ENCODE-DCC/pipeline-container.git
-RUN cd /image_software/pipeline-container && git fetch && git pull
+ARG COMMIT=none
+ARG BRANCH=fix_samtools_versions
+RUN git clone --branch $BRANCH https://github.com/ENCODE-DCC/pipeline-container.git
+RUN cd pipeline-container && git fetch && git pull
 
-ENTRYPOINT ["python", "/image_software/pipeline-container/src/xcor.py"]
+ENTRYPOINT ["python", "pipeline-container/src/xcor.py"]
