@@ -11,6 +11,7 @@
 # DNAnexus Python Bindings (dxpy) documentation:
 #   http://autodoc.dnanexus.com/bindings/python/current/
 
+import os
 import subprocess
 import shlex
 from multiprocessing import cpu_count
@@ -24,7 +25,10 @@ logger.propagate = False
 logger.setLevel(logging.INFO)
 
 SAMTOOLS_PATH = "samtools"
-SPP_TOOL_PATH = 'phantompeakqualtools/run_spp.R'
+SPP_TOOL_PATH = "/".join([
+    os.getenv('PHANTOMPEAKQUALTOOLS_HOME', "."),
+    "run_spp.R"
+])
 
 
 def xcor_parse(fname):

@@ -61,18 +61,18 @@ RUN R -e "install.packages('bitops', repos='http://cran.us.r-project.org'); \
           biocLite('Rsamtools',suppressUpdates=TRUE); \
           install.packages('./spp_1.14.tar.gz')"
 
-# Set up the user directory
-RUN groupadd -r encode && useradd --no-log-init -r -m -d /home/encode/ -g encode encode
-USER encode
-WORKDIR /home/encode
-
 # Get phantompeakqualtools
 RUN git clone --branch 1.0 https://github.com/kundajelab/phantompeakqualtools.git
+ENV PHANTOMPEAKQUALTOOLS_HOME /image_software/phantompeakqualtools/
 
 # Get ENCODE pipeline container repository
 ARG COMMIT=none
 ARG BRANCH=fix_samtools_versions
 RUN git clone --branch $BRANCH https://github.com/ENCODE-DCC/pipeline-container.git
-RUN cd pipeline-container && git fetch && git pull
 
-ENTRYPOINT ["python", "/home/encode/pipeline-container/src/xcor.py"]
+# Set up the user directory
+RUN groupadd -r encode && useradd --no-log-init -r -m -d /home/encode/ -g encode encode
+USER encode
+WORKDIR /home/encode
+
+ENTRYPOINT ["python", "/image_software/pipeline-container/src/xcor.py"]

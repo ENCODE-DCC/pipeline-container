@@ -57,18 +57,18 @@ RUN git clone --branch 1.5 https://github.com/samtools/samtools.git
 RUN git clone --branch 1.5 git://github.com/samtools/htslib.git
 RUN cd samtools && make && make install
 
-# Set up the user directory
-RUN groupadd -r encode && useradd --no-log-init -r -m -d /home/encode/ -g encode encode
-USER encode
-WORKDIR /home/encode
-
 # Install Picard 2.10.2
 RUN wget https://github.com/broadinstitute/picard/releases/download/2.10.2/picard.jar
+ENV PICARD_HOME /image_software/
 
 # Get ENCODE pipeline container repository
 ARG COMMIT=none
 ARG BRANCH=fix_samtools_versions
 RUN git clone --branch $BRANCH https://github.com/ENCODE-DCC/pipeline-container.git
-RUN cd pipeline-container && git fetch && git pull
 
-ENTRYPOINT ["python", "/home/encode/pipeline-container/src/filter_qc.py"]
+# Set up the user directory
+RUN groupadd -r encode && useradd --no-log-init -r -m -d /home/encode/ -g encode encode
+USER encode
+WORKDIR /home/encode
+
+ENTRYPOINT ["python", "/image_software/pipeline-container/src/filter_qc.py"]
