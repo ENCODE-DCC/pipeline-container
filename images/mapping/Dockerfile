@@ -40,14 +40,10 @@ WORKDIR /image_software
 RUN git clone --branch 0.7.10 https://github.com/lh3/bwa.git
 RUN cd bwa && make && cp bwa /usr/local/bin/
 
-# Set up the user directory
-RUN groupadd -r encode && useradd --no-log-init -r -m -d /home/encode/ -g encode encode
-USER encode
-WORKDIR /home/encode
-
 # Install Trimmomatic 0.36
 RUN wget http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/Trimmomatic-0.36.zip
 RUN unzip Trimmomatic-0.36.zip && cp Trimmomatic-0.36/trimmomatic-0.36.jar .
+ENV TRIMMOMATIC_HOME /image_software/Trimmomatic-0.36/
 
 # Get ENCODE pipeline container repository
 ARG COMMIT=none
@@ -55,4 +51,9 @@ ARG BRANCH=fix_samtools_versions
 RUN git clone --branch $BRANCH https://github.com/ENCODE-DCC/pipeline-container.git
 RUN cd pipeline-container && git fetch && git pull
 
-ENTRYPOINT ["python", "/home/encode/pipeline-container/src/encode_map.py"]
+# Set up the user directory
+RUN groupadd -r encode && useradd --no-log-init -r -m -d /home/encode/ -g encode encode
+USER encode
+WORKDIR /home/encode
+
+ENTRYPOINT ["python", "/image_software/pipeline-container/src/encode_map.py"]
