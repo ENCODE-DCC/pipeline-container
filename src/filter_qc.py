@@ -12,51 +12,40 @@
 #   http://autodoc.dnanexus.com/bindings/python/current/
 
 import os
+import sys
 import subprocess
 import shlex
 import common
-import dxpy
 import logging
-from pprint import pprint
+from pprint import pprint, pformat
 
 logger = logging.getLogger(__name__)
-logger.addHandler(dxpy.DXLogHandler())
 logger.propagate = False
 logger.setLevel(logging.INFO)
 
 
 def dup_parse(fname):
-    print ('??????????')
-
-    print ('DEDUP ' + fname)
-    print ('???????????')
     with open(fname, 'r') as dup_file:
         if not dup_file:
             return None
-
         lines = iter(dup_file.read().splitlines())
-
         for line in lines:
             if line.startswith('## METRICS CLASS'):
                 headers = lines.next().rstrip('\n').lower()
                 metrics = lines.next().rstrip('\n')
                 break
-
         headers = headers.split('\t')
         metrics = metrics.split('\t')
         headers.pop(0)
         metrics.pop(0)
 
         dup_qc = dict(zip(headers, metrics))
+
     return dup_qc
 
 
 def pbc_parse(fname):
 
-    print ('??????????')
-
-    print ('PBC ' + fname)
-    print ('???????????')
     with open(fname, 'r') as pbc_file:
         if not pbc_file:
             return None
@@ -82,16 +71,27 @@ def pbc_parse(fname):
         metrics = line.split('\t')
 
         pbc_qc = dict(zip(headers, metrics))
+
     return pbc_qc
 
 
-@dxpy.entry_point('main')
-def main(input_bam, paired_end, samtools_params, debug):
+def main(input_bam, fastqs, samtools_params, debug):
+
+    if len(fastqs) > 1:
+        paired_end = True
+    else:
+        paired_end = False
+
+    # create a file handler
+    handler = logging.FileHandler('filter_qc.log')
 
     if debug:
-        logger.setLevel(logging.DEBUG)
+        handler.setLevel(logging.DEBUG)
     else:
-        logger.setLevel(logging.INFO)
+        handler.setLevel(logging.INFO)
+    logger.addHandler(handler)
+
+    #logger.info(samtools_params)
 
     # input_json is no longer used
     # # if there is input_JSON, it over-rides any explicit parameters
@@ -109,10 +109,7 @@ def main(input_bam, paired_end, samtools_params, debug):
     #     raise Exception
     # assert paired_end is not None, 'paired_end is required, explicitly or in input_JSON'
 
-    raw_bam_file = dxpy.DXFile(input_bam)
-    raw_bam_filename = raw_bam_file.name
-    raw_bam_basename = raw_bam_file.name.rstrip('.bam')
-    dxpy.download_dxfile(raw_bam_file.get_id(), raw_bam_filename)
+    raw_bam_basename = (input_bam.rstrip('.bam')).split('/')[-1]
 
     subprocess.check_output('set -x; ls -l', shell=True)
 
@@ -134,11 +131,15 @@ def main(input_bam, paired_end, samtools_params, debug):
             # exclude FLAG 1804: unmapped, next segment unmapped, secondary
             # alignments, not passing platform q, PCR or optical duplicates
             # require FLAG 2: properly aligned
-            "samtools view -F 1804 -f 2 %s -u %s" % (samtools_params, raw_bam_filename),
+            "samtools view -F 1804 -f 2 %s -u %s" % (samtools_params, input_bam),
             # sort:  -n sort by name; - take input from stdin;
             # out to specified filename
             # Will produce name sorted BAM
             "samtools sort -n - %s" % (tmp_filt_bam_prefix)])
+
+        #logger.info("samtools view -F 1804 -f 2 %s -u %s" % (samtools_params, input_bam))
+        #logger.info("samtools sort -n - %s" % (tmp_filt_bam_prefix))
+        #logger.info(err)
         if err:
             logger.error("samtools error: %s" % (err))
         # Remove orphan reads (pair was removed)
@@ -155,6 +156,11 @@ def main(input_bam, paired_end, samtools_params, debug):
             "samtools view -F 1804 -f 2 -u -",
             # produce the coordinate-sorted BAM
             "samtools sort - %s" % (filt_bam_prefix)])
+
+        #logger.info("samtools fixmate -r %s -" % (tmp_filt_bam_filename))
+        #logger.info("samtools view -F 1804 -f 2 -u -")
+        #logger.info("samtools sort - %s" % (filt_bam_prefix))
+        #logger.info(err)
         subprocess.check_output('set -x; ls -l', shell=True)
     else:  # single-end data
         # =============================
@@ -166,12 +172,14 @@ def main(input_bam, paired_end, samtools_params, debug):
         with open(filt_bam_filename, 'w') as fh:
             samtools_filter_command = (
                 "samtools view -F 1804 %s -b %s"
-                % (samtools_params, raw_bam_filename)
+                % (samtools_params, input_bam)
                 )
             logger.info(samtools_filter_command)
             subprocess.check_call(
                 shlex.split(samtools_filter_command),
                 stdout=fh)
+
+    subprocess.check_output('set -x; ls -l', shell=True)
 
     # ========================
     # Mark duplicates
@@ -189,12 +197,17 @@ def main(input_bam, paired_end, samtools_params, debug):
         ])
     logger.info(picard_string)
     subprocess.check_output(shlex.split(picard_string))
+
+    subprocess.check_output('set -x; ls -l', shell=True)
+
     os.rename(tmp_filt_bam_filename, filt_bam_filename)
 
+    subprocess.check_output('set -x; ls -l', shell=True)
+
     if paired_end:
-        final_bam_prefix = raw_bam_basename + ".filt.srt.nodup"
+        final_bam_prefix = raw_bam_basename + ".filt.srt.nodup.final"
     else:
-        final_bam_prefix = raw_bam_basename + ".filt.nodup.srt"
+        final_bam_prefix = raw_bam_basename + ".filt.nodup.srt.final"
     final_bam_filename = final_bam_prefix + ".bam"  # To be stored
     final_bam_index_filename = final_bam_filename + ".bai"  # To be stored
     # QC file
@@ -202,7 +215,7 @@ def main(input_bam, paired_end, samtools_params, debug):
 
     if paired_end:
         samtools_dedupe_command = \
-            "samtools view -F 1804 -f2 -b %s" % (filt_bam_filename)
+            "samtools view -F 1804 -f 2 -b %s" % (filt_bam_filename)
     else:
         samtools_dedupe_command = \
             "samtools view -F 1804 -b %s" % (filt_bam_filename)
@@ -216,6 +229,7 @@ def main(input_bam, paired_end, samtools_params, debug):
         subprocess.check_call(
             shlex.split(samtools_dedupe_command),
             stdout=fh)
+
     # Index final bam file
     samtools_index_command = \
         "samtools index %s %s" % (final_bam_filename, final_bam_index_filename)
@@ -236,6 +250,7 @@ def main(input_bam, paired_end, samtools_params, debug):
     # sort by position and strand
     # Obtain unique count statistics
     pbc_file_qc_filename = final_bam_prefix + ".pbc.qc"
+
     # PBC File output
     # TotalReadPairs [tab]
     # DistinctReadPairs [tab]
@@ -266,12 +281,18 @@ def main(input_bam, paired_end, samtools_params, debug):
         logger.error("PBC file error: %s" % (err))
 
     logger.info("Uploading results files to the project")
-    filtered_bam = dxpy.upload_local_file(final_bam_filename)
-    filtered_bam_index = dxpy.upload_local_file(final_bam_index_filename)
-    filtered_mapstats = \
-        dxpy.upload_local_file(final_bam_file_mapstats_filename)
-    dup_file = dxpy.upload_local_file(dup_file_qc_filename)
-    pbc_file = dxpy.upload_local_file(pbc_file_qc_filename)
+
+    print (final_bam_filename)
+    print (final_bam_index_filename)
+    print (dup_file_qc_filename)
+    print (pbc_file_qc_filename)
+    #filtered_bam = dxpy.upload_local_file(final_bam_filename)
+    #filtered_bam_index = dxpy.upload_local_file(final_bam_index_filename)
+    #filtered_mapstats = \
+    #    dxpy.upload_local_file(final_bam_file_mapstats_filename)
+    #dup_file = dxpy.upload_local_file(dup_file_qc_filename)
+    #pbc_file = dxpy.upload_local_file(pbc_file_qc_filename)
+    
     dup_qc = dup_parse(dup_file_qc_filename)
     pbc_qc = pbc_parse(pbc_file_qc_filename)
     logger.info("dup_qc: %s" % (dup_qc))
@@ -279,18 +300,18 @@ def main(input_bam, paired_end, samtools_params, debug):
 
     # Return links to the output files
     output = {
-        "filtered_bam": dxpy.dxlink(filtered_bam),
-        "filtered_bam_index": dxpy.dxlink(filtered_bam_index),
-        "filtered_mapstats": dxpy.dxlink(filtered_mapstats),
-        "dup_file_qc": dxpy.dxlink(dup_file),
-        "pbc_file_qc": dxpy.dxlink(pbc_file),
+        #"filtered_bam": dxpy.dxlink(filtered_bam),
+        #"filtered_bam_index": dxpy.dxlink(filtered_bam_index),
+        #"filtered_mapstats": dxpy.dxlink(filtered_mapstats),
+        #"dup_file_qc": dxpy.dxlink(dup_file),
+        #"pbc_file_qc": dxpy.dxlink(pbc_file),
         "paired_end": paired_end,
         "NRF": pbc_qc.get('NRF'),
         "PBC1": pbc_qc.get('PBC1'),
         "PBC2": pbc_qc.get('PBC2'),
         "duplicate_fraction": dup_qc.get('percent_duplication')
     }
-    logger.info("Exiting with output:\n%s" % (pprint(output)))
+    logger.info("Exiting with output:\n%s" % (pformat(output)))
     return output
 
-dxpy.run()
+main(sys.argv[1], sys.argv[2:], '-q 30', False)
