@@ -18,9 +18,9 @@ RUN apt-get update && apt-get install -y \
     git \
     libncurses5-dev \
     libncursesw5-dev \
-    openjdk-7-jdk \
     python-dev \
     python-setuptools \
+    software-properties-common \
     wget \
     zlib1g-dev
 
@@ -29,12 +29,20 @@ RUN easy_install pip
 RUN pip install common
 RUN pip install python-dateutil
 
+# Install Java 8 for picard
+RUN echo debconf shared/accepted-oracle-license-v1-1 select true | \
+    sudo debconf-set-selections
+RUN echo debconf shared/accepted-oracle-license-v1-1 seen true | \
+    sudo debconf-set-selections
+RUN add-apt-repository ppa:webupd8team/java
+RUN apt-get update && apt-get install -y \
+	oracle-java8-installer
+
 RUN mkdir /image_software
 WORKDIR /image_software
 
 # Install bedtools 2.26.0
 RUN git clone --branch v2.26.0 https://github.com/arq5x/bedtools2.git
-# RUN cd bedtools2 && make && cp -a /image_software/bedtools2/bin/. /usr/local/bin/
 RUN cd bedtools2 && make && make install
 
 # Install samtools dependencies
