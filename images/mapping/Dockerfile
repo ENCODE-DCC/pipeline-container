@@ -47,7 +47,7 @@ WORKDIR /home/encode
 
 # Install Trimmomatic 0.36
 RUN wget http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/Trimmomatic-0.36.zip
-RUN unzip Trimmomatic-0.36.zip && ls Trimmomatic-0.36
+RUN unzip Trimmomatic-0.36.zip && cp Trimmomatic-0.36/trimmomatic-0.36.jar .
 
 # Get ENCODE pipeline container repository
 ARG COMMIT=none
