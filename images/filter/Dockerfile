@@ -63,7 +63,7 @@ ENV PICARD_HOME /image_software/
 
 # Get ENCODE pipeline container repository
 ARG COMMIT=none
-ARG BRANCH=fix_samtools_versions
+ARG BRANCH=master
 RUN git clone --branch $BRANCH https://github.com/ENCODE-DCC/pipeline-container.git
 
 # Set up the user directory
