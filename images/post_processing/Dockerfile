@@ -6,7 +6,7 @@
 ############################################################
 
 # Set the base image to Ubuntu
-FROM ubuntu
+FROM ubuntu:14.04
 
 # File Author / Maintainer
 MAINTAINER Idan Gabdank
@@ -14,36 +14,47 @@ MAINTAINER Idan Gabdank
 # Update the repository sources list
 # Install base packages: git, python
 RUN apt-get update && apt-get install -y \
-    git \
     build-essential \
-    zlib1g-dev \
+    git \
     libncurses5-dev \
     libncursesw5-dev \
     python-dev \
-    python-setuptools
+    python-setuptools \
+    wget \
+    zlib1g-dev
 
 # Install pip and python packages: common and python-dateutils
 RUN easy_install pip
 RUN pip install common
 RUN pip install python-dateutil
 
+RUN mkdir /image_software
+WORKDIR /image_software
 
-RUN mkdir image_software
-
-# Install samtools 0.1.19 and 1.0
-RUN cd /image_software && mkdir samtools_0_1_19 && cd samtools_0_1_19 && git clone --branch 0.1.19 https://github.com/samtools/samtools.git
-RUN cd /image_software && mkdir samtools_1_0 && cd samtools_1_0 && git clone --branch 1.0 https://github.com/samtools/samtools.git
-RUN cd /image_software/samtools_0_1_19/samtools/ && make
-RUN cd /image_software/samtools_1_0 && git clone --branch 1.0 git://github.com/samtools/htslib.git
-RUN cd /image_software/samtools_1_0/samtools/ && make
+# Install samtools dependencies
+RUN wget http://zlib.net/zlib-1.2.11.tar.gz && tar -xvf zlib-1.2.11.tar.gz
+RUN cd zlib-1.2.11 && ./configure && make && make install
+RUN wget http://bzip.org/1.0.6/bzip2-1.0.6.tar.gz && tar -xvf bzip2-1.0.6.tar.gz
+RUN cd bzip2-1.0.6 && make && make install
+RUN wget https://tukaani.org/xz/xz-5.2.3.tar.gz && tar -xvf xz-5.2.3.tar.gz
+RUN cd xz-5.2.3 && ./configure && make && make install
+# Install samtools 1.5
+RUN git clone --branch 1.5 https://github.com/samtools/samtools.git
+RUN git clone --branch 1.5 git://github.com/samtools/htslib.git
+RUN cd samtools && make && make install
 
 # Install BWA 0.7.10
-RUN cd /image_software && mkdir bwa_0_7_10
-RUN cd /image_software/bwa_0_7_10 && git clone --branch 0.7.10 https://github.com/lh3/bwa.git
-RUN cd /image_software/bwa_0_7_10/bwa && make
+RUN git clone --branch 0.7.10 https://github.com/lh3/bwa.git
+RUN cd bwa && make && cp bwa /usr/local/bin/
 
 # Get ENCODE pipeline container repository
-RUN cd /image_software && git clone https://github.com/ENCODE-DCC/pipeline-container.git 
-RUN cd /image_software/pipeline-container && git fetch && git pull
+ARG COMMIT=none
+ARG BRANCH=fix_samtools_versions
+RUN git clone --branch $BRANCH https://github.com/ENCODE-DCC/pipeline-container.git
+
+# Set up the user directory
+RUN groupadd -r encode && useradd --no-log-init -r -m -d /home/encode/ -g encode encode
+USER encode
+WORKDIR /home/encode
 
 ENTRYPOINT ["python", "/image_software/pipeline-container/src/encode_post_map.py"]

@@ -13,8 +13,11 @@ logger = logging.getLogger(__name__)
 logger.propagate = False
 logger.setLevel(logging.INFO)
 
-BWA_PATH = "/image_software/bwa_0_7_10/bwa/bwa"
-TRIMMOMATIC_PATH = "/image_software/Trimmomatic-0.36/trimmomatic-0.36.jar"
+BWA_PATH = "bwa"
+TRIMMOMATIC_PATH = "/".join([
+    os.getenv('TRIMMOMATIC_HOME', "."),
+    "trimmomatic-0.36.jar"
+])
 
 # the order of this list is important.
 # strip_extensions strips from the right inward, so
@@ -107,7 +110,9 @@ def crop(reads1_file, reads2_file, crop_length, debug):
             'CROP:%s' % (crop_length)]
             if s])
 
-        logger.info("Cropping with: %s" % (crop_command))
+        # logger.info("Cropping with: %s" % (crop_command))
+        #
+        print("Cropping with: %s" % (crop_command))
         print(subprocess.check_output(shlex.split(crop_command)))
         print(subprocess.check_output(shlex.split('ls -l')))
 
@@ -249,6 +254,7 @@ def main(crop_length, reference_tar,
 
     logger.info("Exiting mapping with output: %s" % (output))
     return output
+
 
 if len(sys.argv) == 4:
     main(sys.argv[2], sys.argv[1], "-q 5 -l 32 -k 2", "1.0", False, sys.argv[3], None)

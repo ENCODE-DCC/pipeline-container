@@ -13,37 +13,62 @@ MAINTAINER Idan Gabdank
 # Update the repository sources list
 # Install base packages: git, python, java
 RUN apt-get update && apt-get install -y \
-    git \
+    ant \
     build-essential \
-    zlib1g-dev \
+    git \
     libncurses5-dev \
     libncursesw5-dev \
     python-dev \
     python-setuptools \
-    ant \
-    openjdk-7-jdk
+    software-properties-common \
+    wget \
+    zlib1g-dev
 
 # Install pip and python packages: common and python-dateutils
 RUN easy_install pip
 RUN pip install common
 RUN pip install python-dateutil
 
-RUN mkdir image_software
+# Install Java 8 for picard
+RUN echo debconf shared/accepted-oracle-license-v1-1 select true | \
+    sudo debconf-set-selections
+RUN echo debconf shared/accepted-oracle-license-v1-1 seen true | \
+    sudo debconf-set-selections
+RUN add-apt-repository ppa:webupd8team/java
+RUN apt-get update && apt-get install -y \
+	oracle-java8-installer
 
-# Install samtools 0.1.19
-RUN cd /image_software && git clone --branch 0.1.19 https://github.com/samtools/samtools.git
-RUN cd /image_software/samtools && make && cp /image_software/samtools/samtools /usr/local/bin/samtools
+RUN mkdir /image_software
+WORKDIR /image_software
 
 # Install bedtools 2.26.0
-RUN cd /image_software && git clone --branch v2.26.0 https://github.com/arq5x/bedtools2.git
-RUN cd /image_software/bedtools2 && make && cp -a /image_software/bedtools2/bin/. /usr/local/bin/
+RUN git clone --branch v2.26.0 https://github.com/arq5x/bedtools2.git
+RUN cd bedtools2 && make && make install
 
-# Install picard 1.92
-RUN cd /image_software && git clone --branch 1.92 https://github.com/broadinstitute/picard.git
-RUN cd /image_software/picard && ant -Ddist=/picard -lib lib/ant package-commands
+# Install samtools dependencies
+RUN wget http://zlib.net/zlib-1.2.11.tar.gz && tar -xvf zlib-1.2.11.tar.gz
+RUN cd zlib-1.2.11 && ./configure && make && make install
+RUN wget http://bzip.org/1.0.6/bzip2-1.0.6.tar.gz && tar -xvf bzip2-1.0.6.tar.gz
+RUN cd bzip2-1.0.6 && make && make install
+RUN wget https://tukaani.org/xz/xz-5.2.3.tar.gz && tar -xvf xz-5.2.3.tar.gz
+RUN cd xz-5.2.3 && ./configure && make && make install
+# Install samtools 1.5
+RUN git clone --branch 1.5 https://github.com/samtools/samtools.git
+RUN git clone --branch 1.5 git://github.com/samtools/htslib.git
+RUN cd samtools && make && make install
+
+# Install Picard 2.10.2
+RUN wget https://github.com/broadinstitute/picard/releases/download/2.10.2/picard.jar
+ENV PICARD_HOME /image_software/
 
 # Get ENCODE pipeline container repository
-RUN cd /image_software && git clone https://github.com/ENCODE-DCC/pipeline-container.git
-RUN cd /image_software/pipeline-container && git fetch && git pull
+ARG COMMIT=none
+ARG BRANCH=fix_samtools_versions
+RUN git clone --branch $BRANCH https://github.com/ENCODE-DCC/pipeline-container.git
+
+# Set up the user directory
+RUN groupadd -r encode && useradd --no-log-init -r -m -d /home/encode/ -g encode encode
+USER encode
+WORKDIR /home/encode
 
 ENTRYPOINT ["python", "/image_software/pipeline-container/src/filter_qc.py"]

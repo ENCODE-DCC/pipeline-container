@@ -9,7 +9,7 @@ class: CommandLineTool
 
 hints:
   - class: DockerRequirement
-    dockerPull: quay.io/gabdank/xcor:0622.1
+    dockerPull: quay.io/jseth/xcor:fix_samtools_versions
   - class: ResourceRequirement
     coresMin: 1
     ramMin: 4092 #"the process requires at least 4G of RAM

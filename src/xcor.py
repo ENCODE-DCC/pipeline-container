@@ -11,6 +11,7 @@
 # DNAnexus Python Bindings (dxpy) documentation:
 #   http://autodoc.dnanexus.com/bindings/python/current/
 
+import os
 import subprocess
 import shlex
 from multiprocessing import cpu_count
@@ -23,9 +24,12 @@ logger = logging.getLogger(__name__)
 logger.propagate = False
 logger.setLevel(logging.INFO)
 
-SAMTOOLS_PATH = "/image_software/samtools_0_1_19/samtools/samtools"
+SAMTOOLS_PATH = "samtools"
+SPP_TOOL_PATH = "/".join([
+    os.getenv('PHANTOMPEAKQUALTOOLS_HOME', "."),
+    "run_spp.R"
+])
 
-SPP_TOOLS = '/image_software/pipeline-container/phantompeakqualtools'
 
 def xcor_parse(fname):
     with open(fname, 'r') as xcor_file:
@@ -154,10 +158,9 @@ def main(input_bam, fastqs, debug):
     # QualityTag
 
     # run spp
-    run_spp_command = SPP_TOOLS+'/run_spp_nodups.R'
     out, err = common.run_pipe([
         "Rscript %s -c=%s -p=%d -filtchr=chrM -savp=%s -out=%s"
-        % (run_spp_command, subsampled_TA_filename, cpu_count(),
+        % (SPP_TOOL_PATH, subsampled_TA_filename, cpu_count(),
            CC_plot_filename, CC_scores_filename)])
     out, err = common.run_pipe([
         r"""sed -r  's/,[^\t]+//g' %s""" % (CC_scores_filename)],
@@ -187,6 +190,6 @@ def main(input_bam, fastqs, debug):
         output.update({"BEDPE_file": BEDPE_file})
 
     return output
-    return
+
 
 main(sys.argv[1], sys.argv[2:], False)
