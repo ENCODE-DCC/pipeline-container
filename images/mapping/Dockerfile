@@ -46,9 +46,11 @@ RUN unzip Trimmomatic-0.36.zip
 ENV TRIMMOMATIC_HOME /image_software/Trimmomatic-0.36/
 
 # Get ENCODE pipeline container repository
-ARG COMMIT=none
-ARG BRANCH=master
-RUN git clone --branch $BRANCH https://github.com/ENCODE-DCC/pipeline-container.git
+# ARG COMMIT=none
+# ARG BRANCH=master
+# RUN git clone --branch $BRANCH https://github.com/ENCODE-DCC/pipeline-container.git
+RUN mkdir pipeline-container
+COPY / pipeline-container
 
 # Set up the user directory
 RUN groupadd -r encode && useradd --no-log-init -r -m -d /home/encode/ -g encode encode
