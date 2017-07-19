@@ -37,7 +37,7 @@ task filter_qc {
     }
 
     runtime {
-        docker: 'quay.io/gabdank/filter:0622.1'
+        docker: 'quay.io/jseth/filter:latest'
         cpu: '1'
         memory: '4092 MB'
         disks: 'local-disk 512 HDD'
@@ -65,7 +65,7 @@ task mapping {
     }
 
     runtime {
-        docker: 'quay.io/gabdank/mapping:0622.1'
+        docker: 'quay.io/jseth/mapping:latest'
         cpu: '1'
         memory: '4092 MB'
         disks: 'local-disk 512 HDD'
@@ -92,7 +92,7 @@ task xcor {
     }
 
     runtime {
-        docker: 'quay.io/gabdank/xcor:0622.1'
+        docker: 'quay.io/jseth/xcor:latest'
         cpu: '1'
         memory: '4092 MB'
         disks: 'local-disk 512 HDD'
@@ -124,7 +124,7 @@ task post_processing {
     }
 
     runtime {
-        docker: 'quay.io/gabdank/post_mapping:0622.1'
+        docker: 'quay.io/jseth/post_mapping:latest'
         cpu: '1'
         memory: '4092 MB'
         disks: 'local-disk 512 HDD'
