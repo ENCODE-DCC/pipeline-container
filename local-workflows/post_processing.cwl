@@ -51,5 +51,9 @@ outputs:
       type: File
       outputBinding:
         glob: "post_mapping.log"  
+  output_json:
+    type: File
+    outputBinding:
+      glob: "post_mapping.json"
 
 baseCommand: []

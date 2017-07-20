@@ -9,6 +9,7 @@ from multiprocessing import cpu_count
 import common
 import logging
 import sys
+import json
 
 logger = logging.getLogger(__name__)
 logger.propagate = False
@@ -249,6 +250,8 @@ def postprocess(crop_length, reference_tar,
         "crop_length": crop_length,
         "paired_end": paired_end
     }
+    with open('post_mapping.json', 'w') as f:
+        json.dump(output, f)
     logger.info("Returning from postprocess with output: %s" % (output))
     return output
 

@@ -18,6 +18,7 @@ import shlex
 import common
 import logging
 from pprint import pprint, pformat
+import json
 
 logger = logging.getLogger(__name__)
 logger.propagate = False
@@ -300,6 +301,8 @@ def main(input_bam, fastqs, samtools_params, debug):
         "PBC2": pbc_qc.get('PBC2'),
         "duplicate_fraction": dup_qc.get('percent_duplication')
     }
+    with open('filter_qc.json', 'w') as f:
+        json.dump(output, f)
     logger.info("Exiting with output:\n%s" % (pformat(output)))
     return output
 

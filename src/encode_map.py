@@ -248,6 +248,7 @@ def main(crop_length, reference_tar,
         process(reads, reference_tar, bwa_aln_params, debug)
 
     output = {
+        "reference": reference_tar,
         "reads1_file": reads1,
         "reads2_file": reads2,
         "crop_length": crop_length,

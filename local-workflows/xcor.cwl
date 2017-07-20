@@ -45,5 +45,9 @@ outputs:
     type: File[]
     outputBinding:
       glob: "*tagAlign.gz"
+  output_json:
+    type: File
+    outputBinding:
+      glob: "xcor.json"
 
 baseCommand: []
