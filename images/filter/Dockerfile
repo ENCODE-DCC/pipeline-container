@@ -62,9 +62,10 @@ RUN wget https://github.com/broadinstitute/picard/releases/download/2.10.2/picar
 ENV PICARD_HOME /image_software/
 
 # Get ENCODE pipeline container repository
-ARG COMMIT=none
-ARG BRANCH=master
-RUN git clone --branch $BRANCH https://github.com/ENCODE-DCC/pipeline-container.git
+# This COPY asumes the build context is the root of the pipeline-container repo
+# and it gets whatever is checked out plus local modifications
+RUN mkdir pipeline-container
+COPY / pipeline-container
 
 # Set up the user directory
 RUN groupadd -r encode && useradd --no-log-init -r -m -d /home/encode/ -g encode encode
