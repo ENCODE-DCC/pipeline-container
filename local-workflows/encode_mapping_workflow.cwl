@@ -1,5 +1,3 @@
-description: "ENCODE ChIP-seq mapping pipeline workflow."
-
 cwlVersion: v1.0
 
 class: Workflow
