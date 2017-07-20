@@ -44,6 +44,6 @@ outputs:
   tag_align:
     type: File[]
     outputBinding:
-      glob: "*tag*"
+      glob: "*tagAlign.gz"
 
 baseCommand: []

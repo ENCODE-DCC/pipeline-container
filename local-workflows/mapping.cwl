@@ -56,4 +56,9 @@ outputs:
     outputBinding:
       glob: "mapping.log"
 
+  output_json:
+    type: File
+    outputBinding:
+      glob: "mapping.json"
+
 baseCommand: []
