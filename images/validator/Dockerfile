@@ -16,9 +16,11 @@ RUN apt-get update && apt-get install -y \
     python
 
 RUN mkdir image_software
+WORKDIR /image_software
 
 # Get ENCODE pipeline container repository
-RUN cd /image_software && git clone https://github.com/ENCODE-DCC/pipeline-container.git 
-RUN cd /image_software/pipeline-container && git fetch && git pull
+ARG COMMIT=none
+ARG BRANCH=master
+RUN git clone --branch $BRANCH https://github.com/ENCODE-DCC/pipeline-container.git
 
 ENTRYPOINT ["python", "/image_software/pipeline-container/src/validate_output.py"]
