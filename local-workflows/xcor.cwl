@@ -9,7 +9,7 @@ class: CommandLineTool
 
 hints:
   - class: DockerRequirement
-    dockerPull: quay.io/jseth/xcor:latest
+    dockerPull: quay.io/encode-dcc/xcor
   - class: ResourceRequirement
     coresMin: 1
     ramMin: 4092 #"the process requires at least 4G of RAM
