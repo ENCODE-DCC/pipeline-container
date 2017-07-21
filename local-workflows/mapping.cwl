@@ -43,16 +43,19 @@ outputs:
       items: File
     outputBinding:
       glob: "*.gz"
+  
   sai_files:
     type:
       type: array
       items: File
     outputBinding:
       glob: "*.sai"  
+  
   mapping_log:
     type: File
     outputBinding:
       glob: "mapping.log"
+  
   output_json:
     type: File
     outputBinding:

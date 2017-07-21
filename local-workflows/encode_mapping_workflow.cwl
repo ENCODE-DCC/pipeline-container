@@ -119,7 +119,7 @@ steps:
       cc: xcor/cc_file
       cc_pdf: xcor/cc_plot
       mapping_json: mapper/output_json
-      post_processing_json: post_processing/output_json
+      post_mapping_json: post_processing/output_json
       filter_json: filter_qc/output_json
       xcor_json: xcor/output_json
       tag_align: xcor/tag_align
