@@ -3,18 +3,18 @@ import hashlib
 import glob
 import sys
 
-KNOWN_FILES_MD5 = {
-    'rep1_ENCFF000VOL_chr21.raw.srt.bam.flagstat.qc':
-        '13557cf731440268fc780bb0f17bb8ba',
-    'rep1_ENCFF000VOL_chr21.raw.srt.filt.nodup.srt.final.pbc.qc':
-        'fffb748b255a44f00c79c9a676575420',
-    'rep1_ENCFF000VOL_chr21.raw.srt.filt.nodup.srt.final.flagstat.qc':
-        '13557cf731440268fc780bb0f17bb8ba',
-    'rep1_ENCFF000VOL_chr21.raw.srt.filt.nodup.srt.final.filt.nodup.sample.15.SE.tagAlign.gz.cc.qc':
-        '9b373f2d5bb5a73cb74b24cf4f9bb132',
-    'rep1_ENCFF000VOL_chr21.raw.srt.dup.qc':
-        'eef880e26bbae594766e32e470a7d01e'}
-
+KNOWN_OUTPUT_VALUES = {
+    'crop_length': 'native',
+    'paired_end': False,
+    'n_mapped_reads': 159120,
+    'PBC1': '1.000000',
+    'PBC2': 'inf',
+    'NRF': '1.000000',
+    'duplicate_fraction': '0',
+    'NSC': 1.37277,
+    'RSC': 2.010693,
+    'est_frag_len': 120.0
+}
 
 def calculatemd5FromFile(filepath, chunksize=4096):
     '''calculate md5sum of a file in filepath.
@@ -30,23 +30,100 @@ def calculatemd5FromFile(filepath, chunksize=4096):
 
 def main():
     output_md5 = dict()
-    for filepath in glob.glob(sys.argv[1]+'/*.qc'):
-        filename = filepath.strip().split('/')[-1]
-        print (filename)
-        if filename in KNOWN_FILES_MD5:
-            output_md5[filename] = calculatemd5FromFile(filepath)
+    path_to_output_folder = sys.argv[1]
 
-    result = {key: 'Match' if
-                   output_md5[key] == KNOWN_FILES_MD5[key] else
-                   'Not match' for key in output_md5}
-    overall = all(
-        [output_md5[key] == KNOWN_FILES_MD5[key] for key in output_md5])
+    mapping_output_json = 'mapping.json'
+    post_mapping_output_json = 'post_mapping.json'
+    filter_output_json = 'filter_qc.json'
+    xcor_output_json = 'xcor.json'
 
-    pass_status = 'PASS' if overall and output_md5 else 'FAIL'
-    result['Overall'] = pass_status
+    mapping_dict = {}
+    post_mapping_dict = {}
+    filter_dict = {}
+    xcor_dict = {}
+    with open(sys.argv[1]+'/' + mapping_output_json) as data:
+        mapping_dict = json.loads(data)
+    with open(sys.argv[1]+'/' + post_mapping_output_json) as data:
+        post_mapping_dict = json.loads(data)
+    with open(sys.argv[1]+'/' + filter_output_json) as data:
+        filter_dict = json.loads(data)
+    with open(sys.argv[1]+'/' + xcor_output_json) as data:
+        xcor_dict = json.loads(data)
+
+    result_dict = {'steps': {}, 'overall': True}
+    keep_examination = True
+    if not mapping_dict:
+        result_dict['steps']['mapping_step'] = False
+        keep_examination = False
+    if not post_mapping_dict:
+        result_dict['steps']['post_mapping_step'] = False
+        keep_examination = False
+    if not filter_dict:
+        result_dict['steps']['filtering_step'] = False
+        keep_examination = False
+    if not xcor_dict:
+        result_dict['steps']['xcor_step'] = False
+        keep_examination = False
+    
+
+    if not keep_examination:
+        result_dict['overall'] = False
+        with open('results.json', 'w') as f:
+            json.dump(result_dict, f)
+    else:
+        result_dict['steps']['mapping_step'] = {}
+        result_dict['steps']['post_mapping_step'] = {}
+        result_dict['steps']['filtering_step'] = {}
+        result_dict['steps']['xcor_step'] = {}
+        
+        if mapping_dict.get('crop_length') == KNOWN_OUTPUT_VALUES['crop_length']:
+            result_dict['steps']['mapping_step']['crop_length'] = True
+        else
+            result_dict['overall'] = False
+        
+        if mapping_dict.get('paired_end') == KNOWN_OUTPUT_VALUES['paired_end']:
+            result_dict['steps']['mapping_step']['paired_end'] = True
+        else
+            result_dict['overall'] = False
+
+        if post_mapping_dict.get('n_mapped_reads') == KNOWN_OUTPUT_VALUES['n_mapped_reads']:
+            result_dict['steps']['post_mapping_step']['n_mapped_reads'] = True
+        else
+            result_dict['overall'] = False
+
+        if filter_dict.get('PBC1') == KNOWN_OUTPUT_VALUES['PBC1']:
+            result_dict['steps']['filtering_step']['PBC1'] = True
+        else
+            result_dict['overall'] = False
+        if filter_dict.get('PBC2') == KNOWN_OUTPUT_VALUES['PBC2']:
+            result_dict['steps']['filtering_step']['PBC2'] = True
+        else
+            result_dict['overall'] = False
+        if filter_dict.get('NRF') == KNOWN_OUTPUT_VALUES['NRF']:
+            result_dict['steps']['filtering_step']['NRF'] = True
+        else
+            result_dict['overall'] = False
+        if filter_dict.get('duplicate_fraction') == KNOWN_OUTPUT_VALUES['duplicate_fraction']:
+            result_dict['steps']['filtering_step']['duplicate_fraction'] = True
+        else
+            result_dict['overall'] = False
+
+
+        if xcor_dict.get('NSC') == KNOWN_OUTPUT_VALUES['NSC']:
+            result_dict['steps']['xcor_step']['NSC'] = True
+        else
+            result_dict['overall'] = False        
+        if xcor_dict.get('RSC') == KNOWN_OUTPUT_VALUES['RSC']:
+            result_dict['steps']['xcor_step']['RSC'] = True
+        else
+            result_dict['overall'] = False 
+        if xcor_dict.get('est_frag_len') == KNOWN_OUTPUT_VALUES['est_frag_len']:
+            result_dict['steps']['xcor_step']['est_frag_len'] = True
+        else
+            result_dict['overall'] = False
+
     with open('results.json', 'w') as f:
-        json.dump(result, f)
-
+        json.dump(result_dict, f)
 
 if __name__ == "__main__":
     main()
