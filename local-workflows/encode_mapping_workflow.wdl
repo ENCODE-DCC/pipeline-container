@@ -37,7 +37,7 @@ task filter_qc {
     }
 
     runtime {
-        docker: 'quay.io/gabdank/filter:0622.1'
+        docker: 'quay.io/encode-dcc/filter:v0.3'
         cpu: '1'
         memory: '4092 MB'
         disks: 'local-disk 512 HDD'
@@ -65,7 +65,7 @@ task mapping {
     }
 
     runtime {
-        docker: 'quay.io/gabdank/mapping:0622.1'
+        docker: 'quay.io/encode-dcc/mapping:v0.3'
         cpu: '1'
         memory: '4092 MB'
         disks: 'local-disk 512 HDD'
@@ -92,7 +92,7 @@ task xcor {
     }
 
     runtime {
-        docker: 'quay.io/gabdank/xcor:0622.1'
+        docker: 'quay.io/encode-dcc/xcor:v0.3'
         cpu: '1'
         memory: '4092 MB'
         disks: 'local-disk 512 HDD'
@@ -124,7 +124,7 @@ task post_processing {
     }
 
     runtime {
-        docker: 'quay.io/gabdank/post_mapping:0622.1'
+        docker: 'quay.io/encode-dcc/post_mapping:v0.3'
         cpu: '1'
         memory: '4092 MB'
         disks: 'local-disk 512 HDD'

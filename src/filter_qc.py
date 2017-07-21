@@ -23,6 +23,11 @@ logger = logging.getLogger(__name__)
 logger.propagate = False
 logger.setLevel(logging.INFO)
 
+PICARD_PATH = "/".join([
+    os.getenv('PICARD_HOME', "."),
+    "picard.jar"
+])
+
 
 def dup_parse(fname):
     with open(fname, 'r') as dup_file:
@@ -90,24 +95,6 @@ def main(input_bam, fastqs, samtools_params, debug):
     else:
         handler.setLevel(logging.INFO)
     logger.addHandler(handler)
-
-    #logger.info(samtools_params)
-
-    # input_json is no longer used
-    # # if there is input_JSON, it over-rides any explicit parameters
-    # if input_JSON:
-    #     if 'input_bam' in input_JSON:
-    #         input_bam = input_JSON['input_bam']
-    #     if 'paired_end' in input_JSON:
-    #         paired_end = input_JSON['paired_end']
-    #     if 'samtools_params' in input_JSON:
-    #         samtools_params = input_JSON['samtools_params']
-
-    # this is now handled by the platform input validator
-    # if not input_bam:
-    #     logger.error('input_bam is required')
-    #     raise Exception
-    # assert paired_end is not None, 'paired_end is required, explicitly or in input_JSON'
 
     raw_bam_basename = (input_bam.rstrip('.bam')).split('/')[-1]
 
@@ -187,7 +174,9 @@ def main(input_bam, fastqs, samtools_params, debug):
     tmp_filt_bam_filename = raw_bam_basename + ".dupmark.bam"
     dup_file_qc_filename = raw_bam_basename + ".dup.qc"
     picard_string = ' '.join([
-        "java -Xmx4G -jar /picard/MarkDuplicates.jar",
+        "java -Xmx4G -jar",
+        PICARD_PATH,
+        "MarkDuplicates",
         "INPUT=%s" % (filt_bam_filename),
         "OUTPUT=%s" % (tmp_filt_bam_filename),
         "METRICS_FILE=%s" % (dup_file_qc_filename),
