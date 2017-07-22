@@ -17,6 +17,7 @@ import subprocess
 import shlex
 import common
 import logging
+import re
 from pprint import pprint, pformat
 import json
 
