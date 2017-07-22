@@ -184,7 +184,7 @@ def main(input_bam, fastqs, debug):
         "paired_end": paired_end,
         "RSC": float(xcor_qc.get('relPhantomPeakCoef')),
         "NSC": float(xcor_qc.get('phantomPeakCoef')),
-        "est_frag_len": float(xcor_qc.get('estFragLen'))
+        "est_frag_len": int(xcor_qc.get('estFragLen'))
     }
     with open('xcor.json', 'w') as f:
         json.dump(output, f)

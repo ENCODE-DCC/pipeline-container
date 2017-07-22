@@ -8,13 +8,14 @@ KNOWN_OUTPUT_VALUES = {
     'crop_length': 'native',
     'paired_end': False,
     'n_mapped_reads': 159120,
+    'n_filtered_mapped_reads': 123,
     'PBC1': '1.000000',
     'PBC2': 'inf',
     'NRF': '1.000000',
     'duplicate_fraction': '0',
     'NSC': 1.37277,
     'RSC': 2.010693,
-    'est_frag_len': 120.0
+    'est_frag_len': 120
 }
 
 def calculatemd5FromFile(filepath, chunksize=4096):
@@ -122,6 +123,14 @@ def main():
             result_dict['messages'] += 'Reported Non-Redindant Fraction \'{}\' '.format(mapping_dict.get('NRF')) + \
                                        'is different from the expected value of \'{}\'. '.format(KNOWN_OUTPUT_VALUES['NRF'])
             result_dict['overall'] = False
+        if filter_dict.get('n_filtered_mapped_reads') == KNOWN_OUTPUT_VALUES['n_filtered_mapped_reads']:
+            result_dict['steps']['filtering_step']['n_filtered_mapped_reads'] = True
+        else:
+            result_dict['messages'] += 'Reported number of filtered mapped reads \'{}\' '.format(mapping_dict.get('n_filtered_mapped_reads')) + \
+                                       'is different from the expected number of filtered mapped reads \'{}\'. '.format(KNOWN_OUTPUT_VALUES['n_filtered_mapped_reads'])
+            result_dict['overall'] = False
+        
+        
         if filter_dict.get('duplicate_fraction') == KNOWN_OUTPUT_VALUES['duplicate_fraction']:
             result_dict['steps']['filtering_step']['duplicate_fraction'] = True
         else:
