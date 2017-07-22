@@ -7,15 +7,15 @@ from pprint import pprint
 KNOWN_OUTPUT_VALUES = {
     'crop_length': 'native',
     'paired_end': False,
-    'n_mapped_reads': 159120,
-    'n_filtered_mapped_reads': 123,
-    'PBC1': '1.000000',
-    'PBC2': 'inf',
-    'NRF': '1.000000',
-    'duplicate_fraction': '0',
-    'NSC': 1.37277,
-    'RSC': 2.010693,
-    'est_frag_len': 120
+    'n_mapped_reads': 159120, # 30274746
+    'n_filtered_mapped_reads': 123, # 21871835
+    'PBC1': '1.000000', # 0.952926
+    'PBC2': 'inf', #?
+    'NRF': '1.000000', # 0.951122
+    'duplicate_fraction': '0', #?
+    'NSC': 1.37277, # 1.237846
+    'RSC': 2.010693, # 1.994183
+    'est_frag_len': 120 # 125
 }
 
 def calculatemd5FromFile(filepath, chunksize=4096):
