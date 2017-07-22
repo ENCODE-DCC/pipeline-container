@@ -60,10 +60,28 @@ inputs:
     type: File
     inputBinding:
       position: 12
+  mapping_json:
+    type: File
+    inputBinding:
+      position: 13
+  post_mapping_json:
+    type: File
+    inputBinding:
+      position: 14
+  filter_json:
+    type: File
+    inputBinding:
+      position: 15
+  xcor_json:
+    type: File
+    inputBinding:
+      position: 16
   tag_align:
     type: File[]
     inputBinding:
-      position: 13
+      position: 17
+
+
 
 outputs:
   folder: Directory
@@ -104,6 +122,10 @@ expression: |
     files.push(inputs.unfiltered_flagstat)
     files.push(inputs.filtered_bam)
     files.push(inputs.unfiltered_bam)
+    files.push(inputs.mapping_json)
+    files.push(inputs.post_mapping_json)
+    files.push(inputs.filter_json)
+    files.push(inputs.xcor_json)
     for (var i = 0; i < files.length; i++){
       folder.listing.push(files[i])
     }

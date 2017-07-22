@@ -17,7 +17,9 @@ import subprocess
 import shlex
 import common
 import logging
+import re
 from pprint import pprint, pformat
+import json
 
 logger = logging.getLogger(__name__)
 logger.propagate = False
@@ -28,6 +30,39 @@ PICARD_PATH = "/".join([
     "picard.jar"
 ])
 
+def flagstat_parse(fname):
+    with open(fname, 'r') as flagstat_file:
+        if not flagstat_file:
+            return None
+        flagstat_lines = flagstat_file.read().splitlines()
+
+    qc_dict = {
+        # values are regular expressions,
+        # will be replaced with scores [hiq, lowq]
+        'in_total': 'in total',
+        'duplicates': 'duplicates',
+        'mapped': 'mapped',
+        'paired_in_sequencing': 'paired in sequencing',
+        'read1': 'read1',
+        'read2': 'read2',
+        'properly_paired': 'properly paired',
+        'with_self_mate_mapped': 'with itself and mate mapped',
+        'singletons': 'singletons',
+        # i.e. at the end of the line
+        'mate_mapped_different_chr': 'with mate mapped to a different chr$',
+        # RE so must escape
+        'mate_mapped_different_chr_hiQ':
+            'with mate mapped to a different chr \(mapQ>=5\)'
+    }
+
+    for (qc_key, qc_pattern) in qc_dict.items():
+        qc_metrics = next(re.split(qc_pattern, line)
+                          for line in flagstat_lines
+                          if re.search(qc_pattern, line))
+        (hiq, lowq) = qc_metrics[0].split(' + ')
+        qc_dict[qc_key] = [int(hiq.rstrip()), int(lowq.rstrip())]
+
+    return qc_dict
 
 def dup_parse(fname):
     with open(fname, 'r') as dup_file:
@@ -282,6 +317,8 @@ def main(input_bam, fastqs, samtools_params, debug):
     #dup_file = dxpy.upload_local_file(dup_file_qc_filename)
     #pbc_file = dxpy.upload_local_file(pbc_file_qc_filename)
     
+    flagstat_qc = flagstat_parse(final_bam_file_mapstats_filename)
+
     dup_qc = dup_parse(dup_file_qc_filename)
     pbc_qc = pbc_parse(pbc_file_qc_filename)
     logger.info("dup_qc: %s" % (dup_qc))
@@ -295,11 +332,14 @@ def main(input_bam, fastqs, samtools_params, debug):
         #"dup_file_qc": dxpy.dxlink(dup_file),
         #"pbc_file_qc": dxpy.dxlink(pbc_file),
         "paired_end": paired_end,
+        'n_filtered_mapped_reads': flagstat_qc.get('mapped')[0],
         "NRF": pbc_qc.get('NRF'),
         "PBC1": pbc_qc.get('PBC1'),
         "PBC2": pbc_qc.get('PBC2'),
         "duplicate_fraction": dup_qc.get('percent_duplication')
     }
+    with open('filter_qc.json', 'w') as f:
+        json.dump(output, f)
     logger.info("Exiting with output:\n%s" % (pformat(output)))
     return output
 
