@@ -15,16 +15,31 @@ MAINTAINER Ulugbek Baymuradov
 # Install base packages: git, python
 RUN apt-get update && apt-get install -y \
     build-essential \
-    python3-{pip,dev,cffi} \
+    git \
+    python-pip \
+    python-dev \
+    python-cffi \
     libffi-dev \
     libssl-dev \
-    moreutils
+    moreutils 
 
 # Install cwl-runner
 RUN pip install cwlref-runner
 
+# Other dependencies
+RUN pip install cffi --upgrade
+RUN pip install pyopenssl 
+RUN pip install ndg-httpsclient
+
+# Set the locale
+RUN locale-gen en_US.UTF-8
+ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8'
+
 # Install aegea
 RUN pip install aegea
+
+RUN mkdir /image_software
+WORKDIR /image_software
 
 # Get ENCODE pipeline container repository
 # This COPY asumes the build context is the root of the pipeline-container repo
@@ -36,5 +51,3 @@ COPY / pipeline-container
 RUN groupadd -r encode && useradd --no-log-init -r -m -d /home/encode/ -g encode encode
 USER encode
 WORKDIR /home/encode
-
-ENTRYPOINT ["python", "/image_software/pipeline-container/src/encode_post_map.py"]
