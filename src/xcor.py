@@ -18,7 +18,7 @@ from multiprocessing import cpu_count
 import common
 import logging
 import sys
-
+import json
 
 logger = logging.getLogger(__name__)
 logger.propagate = False
@@ -184,8 +184,10 @@ def main(input_bam, fastqs, debug):
         "paired_end": paired_end,
         "RSC": float(xcor_qc.get('relPhantomPeakCoef')),
         "NSC": float(xcor_qc.get('phantomPeakCoef')),
-        "est_frag_len": float(xcor_qc.get('estFragLen'))
+        "est_frag_len": int(xcor_qc.get('estFragLen'))
     }
+    with open('xcor.json', 'w') as f:
+        json.dump(output, f)
     if paired_end:
         output.update({"BEDPE_file": BEDPE_file})
 

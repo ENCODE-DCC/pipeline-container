@@ -1,5 +1,3 @@
-description: "ENCODE ChIP-seq mapping pipeline workflow."
-
 cwlVersion: v1.0
 
 class: Workflow
@@ -56,6 +54,18 @@ outputs:
   tag_align:
     type: File[]
     outputSource: xcor/tag_align
+  mapping_json:
+    type: File
+    outputSource: mapper/output_json
+  post_mapping_json:
+    type: File
+    outputSource: post_processing/output_json
+  filter_json:
+    type: File
+    outputSource: filter_qc/output_json
+  xcor_json:
+    type: File
+    outputSource: xcor/output_json
   output_dir:
     type: Directory
     outputSource: output_folder/folder
@@ -67,7 +77,7 @@ steps:
       reference_file: reference
       trimming_length: trimming_parameter
       fastq_files: fastqs
-    out: [unmapped_files, sai_files, mapping_log]
+    out: [unmapped_files, sai_files, mapping_log, output_json]
 
   post_processing:
     run: post_processing.cwl
@@ -77,21 +87,21 @@ steps:
       unmapped_fastqs: mapper/unmapped_files
       sai_files: mapper/sai_files
       initial_fastqs: fastqs
-    out: [unfiltered_bam, unfiltered_flagstats, post_mapping_log]
+    out: [unfiltered_bam, unfiltered_flagstats, post_mapping_log, output_json]
 
   filter_qc:
     run: filter_qc.cwl
     in:
       bam_file: post_processing/unfiltered_bam
       fastq_files: fastqs
-    out: [filtered_bam, filtered_bam_bai, filtered_map_stats, dup_file_qc, pbc_file_qc, filter_qc_log]
+    out: [filtered_bam, filtered_bam_bai, filtered_map_stats, dup_file_qc, pbc_file_qc, filter_qc_log, output_json]
 
   xcor:
     run: xcor.cwl
     in:
       bam_file: filter_qc/filtered_bam
       fastq_files: fastqs
-    out: [cc_file, cc_plot, xcor_log, tag_align]
+    out: [cc_file, cc_plot, xcor_log, tag_align, output_json]
 
   output_folder:
     run: mount_folder.cwl
@@ -108,5 +118,10 @@ steps:
       xcor_log: xcor/xcor_log
       cc: xcor/cc_file
       cc_pdf: xcor/cc_plot
+      mapping_json: mapper/output_json
+      post_mapping_json: post_processing/output_json
+      filter_json: filter_qc/output_json
+      xcor_json: xcor/output_json
       tag_align: xcor/tag_align
+
     out: [folder]
