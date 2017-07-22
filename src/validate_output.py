@@ -8,11 +8,11 @@ KNOWN_OUTPUT_VALUES = {
     'crop_length': 'native',
     'paired_end': False,
     'n_mapped_reads': 159120, # 30274746
-    'n_filtered_mapped_reads': 123, # 21871835
+    'n_filtered_mapped_reads': 159120, # 21871835
     'PBC1': '1.000000', # 0.952926
-    'PBC2': 'inf', #?
+    'PBC2': 'inf', # 21.819143
     'NRF': '1.000000', # 0.951122
-    'duplicate_fraction': '0', #?
+    'duplicate_fraction': '0', # 0.0513
     'NSC': 1.37277, # 1.237846
     'RSC': 2.010693, # 1.994183
     'est_frag_len': 120 # 125
