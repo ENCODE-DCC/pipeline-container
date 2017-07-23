@@ -178,7 +178,7 @@ def main(input_bam, fastqs, samtools_params, debug):
             # repeat filtering after mate repair
             "samtools view -F 1804 -f 2 -u -",
             # produce the coordinate-sorted BAM
-            "samtools sort -o %s" % (filt_bam_filename)])
+            "samtools sort -@%d -o %s" % (cpu_count(), filt_bam_filename)])
 
         #logger.info("samtools fixmate -r %s -" % (tmp_filt_bam_filename))
         #logger.info("samtools view -F 1804 -f 2 -u -")
@@ -286,7 +286,7 @@ def main(input_bam, fastqs, samtools_params, debug):
     # PBC2=OnePair/TwoPair
     if paired_end:
         steps = [
-            "samtools sort -n %s" % (filt_bam_filename),
+            "samtools sort -n -@%d %s" % (cpu_count(), filt_bam_filename),
             "bamToBed -bedpe -i stdin",
             r"""awk 'BEGIN{OFS="\t"}{print $1,$2,$4,$6,$9,$10}'"""]
     else:
