@@ -113,7 +113,9 @@ def main(input_bam, fastqs, debug):
         # need namesorted bam to make BEDPE
         final_nmsrt_bam_prefix = input_bam_basename + ".nmsrt"
         final_nmsrt_bam_filename = final_nmsrt_bam_prefix + ".bam"
-        samtools_sort_command = "%s sort -n %s %s" % (samtools, input_bam_filename, final_nmsrt_bam_prefix)
+        samtools_sort_command = \
+            "%s sort -n -@%d -o %s %s" \
+            % (samtools, cpu_count(), final_nmsrt_bam_filename, input_bam_filename)
         logger.info(samtools_sort_command)
         subprocess.check_output(shlex.split(samtools_sort_command))
         out, err = common.run_pipe([

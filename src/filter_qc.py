@@ -19,6 +19,7 @@ import common
 import logging
 import re
 from pprint import pprint, pformat
+from multiprocessing import cpu_count
 import json
 
 logger = logging.getLogger(__name__)
@@ -157,7 +158,7 @@ def main(input_bam, fastqs, samtools_params, debug):
             # sort:  -n sort by name; - take input from stdin;
             # out to specified filename
             # Will produce name sorted BAM
-            "samtools sort -n - %s" % (tmp_filt_bam_prefix)])
+            "samtools sort -n -@%d -o %s" % (cpu_count(), tmp_filt_bam_filename)])
 
         #logger.info("samtools view -F 1804 -f 2 %s -u %s" % (samtools_params, input_bam))
         #logger.info("samtools sort -n - %s" % (tmp_filt_bam_prefix))
@@ -177,7 +178,7 @@ def main(input_bam, fastqs, samtools_params, debug):
             # repeat filtering after mate repair
             "samtools view -F 1804 -f 2 -u -",
             # produce the coordinate-sorted BAM
-            "samtools sort - %s" % (filt_bam_prefix)])
+            "samtools sort -@%d -o %s" % (cpu_count(), filt_bam_filename)])
 
         #logger.info("samtools fixmate -r %s -" % (tmp_filt_bam_filename))
         #logger.info("samtools view -F 1804 -f 2 -u -")
@@ -285,7 +286,7 @@ def main(input_bam, fastqs, samtools_params, debug):
     # PBC2=OnePair/TwoPair
     if paired_end:
         steps = [
-            "samtools sort -no %s -" % (filt_bam_filename),
+            "samtools sort -n -@%d %s" % (cpu_count(), filt_bam_filename),
             "bamToBed -bedpe -i stdin",
             r"""awk 'BEGIN{OFS="\t"}{print $1,$2,$4,$6,$9,$10}'"""]
     else:
