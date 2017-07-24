@@ -36,7 +36,7 @@ RUN locale-gen en_US.UTF-8
 ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8'
 
 # Install aegea
-RUN pip install aegea
+RUN pip install git+git://github.com/Bek/aegea.git@cwl_docker_as_image_argument
 
 RUN mkdir /image_software
 WORKDIR /image_software
