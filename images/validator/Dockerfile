@@ -19,8 +19,9 @@ RUN mkdir image_software
 WORKDIR /image_software
 
 # Get ENCODE pipeline container repository
-ARG COMMIT=none
-ARG BRANCH=master
-RUN git clone --branch $BRANCH https://github.com/ENCODE-DCC/pipeline-container.git
+# This COPY asumes the build context is the root of the pipeline-container repo
+# and it gets whatever is checked out plus local modifications
+RUN mkdir pipeline-container && cd pipeline-container && mkdir src
+COPY /src/validate_output.pyc pipeline-container/src/validate_output.pyc
 
-ENTRYPOINT ["python", "/image_software/pipeline-container/src/validate_output.py"]
+ENTRYPOINT ["python", "/image_software/pipeline-container/src/validate_output.pyc"]

@@ -7,7 +7,7 @@ import shlex
 from multiprocessing import cpu_count
 import logging
 import sys
-
+import json
 
 logger = logging.getLogger(__name__)
 logger.propagate = False
@@ -184,7 +184,7 @@ def process(reads_file, reference_tar, bwa_aln_params, debug):
 # always only read1, because each end is mapped independently
 # probbaly should update code accordingly
 def main(crop_length, reference_tar,
-         bwa_aln_params, samtools_version, debug, reads1, reads2):
+         bwa_aln_params, debug, reads1, reads2):
     # Main entry-point.  Parameter defaults assumed to come from dxapp.json.
     # reads1, reference_tar, reads2 are links to DNAnexus files or None
 
@@ -248,15 +248,19 @@ def main(crop_length, reference_tar,
         process(reads, reference_tar, bwa_aln_params, debug)
 
     output = {
+        "reference": reference_tar,
+        "reads1_file": reads1,
+        "reads2_file": reads2,
         "crop_length": crop_length,
-        "paired_end": paired_end,
+        "paired_end": paired_end
     }
-
+    with open('mapping.json', 'w') as f:
+        json.dump(output, f)
     logger.info("Exiting mapping with output: %s" % (output))
     return output
 
 
 if len(sys.argv) == 4:
-    main(sys.argv[2], sys.argv[1], "-q 5 -l 32 -k 2", "1.0", False, sys.argv[3], None)
+    main(sys.argv[2], sys.argv[1], "-q 5 -l 32 -k 2", False, sys.argv[3], None)
 else:
-    main(sys.argv[2], sys.argv[1], "-q 5 -l 32 -k 2", "1.0", False, sys.argv[3], sys.argv[4])
+    main(sys.argv[2], sys.argv[1], "-q 5 -l 32 -k 2", False, sys.argv[3], sys.argv[4])

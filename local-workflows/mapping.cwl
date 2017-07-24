@@ -9,7 +9,7 @@ class: CommandLineTool
 
 hints:
   - class: DockerRequirement
-    dockerPull: quay.io/encode-dcc/mapping:v0.3
+    dockerPull: quay.io/encode-dcc/mapping:v0.5
   - class: ResourceRequirement
     coresMin: 1
     ramMin: 4092 #"the process requires at least 4G of RAM
@@ -43,17 +43,22 @@ outputs:
       items: File
     outputBinding:
       glob: "*.gz"
-
+  
   sai_files:
     type:
       type: array
       items: File
     outputBinding:
-      glob: "*.sai"
+      glob: "*.sai"  
   
   mapping_log:
     type: File
     outputBinding:
       glob: "mapping.log"
+  
+  output_json:
+    type: File
+    outputBinding:
+      glob: "mapping.json"
 
 baseCommand: []

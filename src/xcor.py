@@ -18,7 +18,7 @@ from multiprocessing import cpu_count
 import common
 import logging
 import sys
-
+import json
 
 logger = logging.getLogger(__name__)
 logger.propagate = False
@@ -113,7 +113,9 @@ def main(input_bam, fastqs, debug):
         # need namesorted bam to make BEDPE
         final_nmsrt_bam_prefix = input_bam_basename + ".nmsrt"
         final_nmsrt_bam_filename = final_nmsrt_bam_prefix + ".bam"
-        samtools_sort_command = "%s sort -n %s %s" % (samtools, input_bam_filename, final_nmsrt_bam_prefix)
+        samtools_sort_command = \
+            "%s sort -n -@%d -o %s %s" \
+            % (samtools, cpu_count(), final_nmsrt_bam_filename, input_bam_filename)
         logger.info(samtools_sort_command)
         subprocess.check_output(shlex.split(samtools_sort_command))
         out, err = common.run_pipe([
@@ -184,8 +186,10 @@ def main(input_bam, fastqs, debug):
         "paired_end": paired_end,
         "RSC": float(xcor_qc.get('relPhantomPeakCoef')),
         "NSC": float(xcor_qc.get('phantomPeakCoef')),
-        "est_frag_len": float(xcor_qc.get('estFragLen'))
+        "est_frag_len": int(xcor_qc.get('estFragLen'))
     }
+    with open('xcor.json', 'w') as f:
+        json.dump(output, f)
     if paired_end:
         output.update({"BEDPE_file": BEDPE_file})
 
