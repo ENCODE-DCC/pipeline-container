@@ -40,7 +40,7 @@ task mapping {
         docker: 'quay.io/jseth/mapping:add_json_outputs_to_wdl'
         cpu: '32'
         memory: '244 GB'
-        disks: 'local-disk 640 SSD'
+        disks: 'local-disk 640 HDD'
     }
 }
 
@@ -220,7 +220,7 @@ workflow encode_mapping_workflow {
           filtered_bam = filter_qc.filtered_bam,
           filtered_flagstat = filter_qc.filtered_map_stats,
           mapping_log = mapping.mapping_log,
-          mapping_log = mapping.mapping_results,
+          mapping_results = mapping.mapping_results,
           pbc_qc = filter_qc.pbc_file_qc,
           post_mapping_log = post_processing.post_mapping_log,
           post_mapping_results = post_processing.post_mapping_results,
