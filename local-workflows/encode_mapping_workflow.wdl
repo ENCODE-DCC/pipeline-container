@@ -38,9 +38,9 @@ task mapping {
 
     runtime {
         docker: 'quay.io/jseth/mapping:add_json_outputs_to_wdl'
-        cpu: '32'
-        memory: '244 GB'
-        disks: 'local-disk 640 HDD'
+        cpu: '1'
+        memory: '4092 MB'
+        disks: 'local-disk 512 HDD'
     }
 }
 
@@ -71,8 +71,8 @@ task post_processing {
 
     runtime {
         docker: 'quay.io/jseth/post_mapping:add_json_outputs_to_wdl'
-        cpu: '2'
-        memory: '17.1 GB'
+        cpu: '1'
+        memory: '4092 MB'
         disks: 'local-disk 512 HDD'
     }
 }
@@ -101,8 +101,8 @@ task filter_qc {
 
     runtime {
         docker: 'quay.io/jseth/filter:add_json_outputs_to_wdl'
-        cpu: '2'
-        memory: '17.1 GB'
+        cpu: '1'
+        memory: '4092 MB'
         disks: 'local-disk 512 HDD'
     }
 }
@@ -129,8 +129,8 @@ task xcor {
 
     runtime {
         docker: 'quay.io/jseth/xcor:add_json_outputs_to_wdl'
-        cpu: '2'
-        memory: '17.1 GB'
+        cpu: '1'
+        memory: '4092 MB'
         disks: 'local-disk 512 HDD'
     }
 }
