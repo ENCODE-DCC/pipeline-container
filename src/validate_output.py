@@ -5,15 +5,15 @@ from pprint import pprint
 KNOWN_OUTPUT_VALUES = {
     'crop_length': 'native',
     'paired_end': False,
-    'n_mapped_reads': 159120, # 30274746
-    'n_filtered_mapped_reads': 159120, # 21871835
-    'PBC1': '1.000000', # 0.952926
-    'PBC2': 'inf', # 21.819143
-    'NRF': '1.000000', # 0.951122
-    'duplicate_fraction': '0', # 0.0513
-    'NSC': 1.37277, # 1.237846
-    'RSC': 2.010693, # 1.994183
-    'est_frag_len': 120 # 125
+    'n_mapped_reads': 30274746,
+    'n_filtered_mapped_reads': 21871835,
+    'PBC1': '0.952926',
+    'PBC2': '21.819143',
+    'NRF': '0.951122',
+    'duplicate_fraction': '0.0513',
+    'NSC': 1.237846,
+    'RSC': 1.994183,
+    'est_frag_len': 125
 }
 
 def main():
@@ -136,15 +136,15 @@ def main():
             result_dict['steps']['xcor_step']['NSC'] = True
         else:
             result_dict['steps']['xcor_step']['NSC'] = False
-            result_dict['messages'] += 'Reported Normalized Strand Cross-correlation coefficient \'{}\' '.format(xcor_dict.get('est_frag_len')) + \
-                                       'is different from the expected value of \'{}\'. '.format(KNOWN_OUTPUT_VALUES['est_frag_len'])
+            result_dict['messages'] += 'Reported Normalized Strand Cross-correlation coefficient \'{}\' '.format(xcor_dict.get('NSC')) + \
+                                       'is different from the expected value of \'{}\'. '.format(KNOWN_OUTPUT_VALUES['NSC'])
             result_dict['overall'] = False        
         if xcor_dict.get('RSC') == KNOWN_OUTPUT_VALUES['RSC']:
             result_dict['steps']['xcor_step']['RSC'] = True
         else:
             result_dict['steps']['xcor_step']['RSC'] = False
-            result_dict['messages'] += 'Reported Relative Strand Cross-correlation coefficient \'{}\' '.format(xcor_dict.get('est_frag_len')) + \
-                                       'is different from the expected value of \'{}\'. '.format(KNOWN_OUTPUT_VALUES['est_frag_len'])
+            result_dict['messages'] += 'Reported Relative Strand Cross-correlation coefficient \'{}\' '.format(xcor_dict.get('RSC')) + \
+                                       'is different from the expected value of \'{}\'. '.format(KNOWN_OUTPUT_VALUES['RSC'])
             result_dict['overall'] = False 
         if xcor_dict.get('est_frag_len') == KNOWN_OUTPUT_VALUES['est_frag_len']:
             result_dict['steps']['xcor_step']['est_frag_len'] = True
