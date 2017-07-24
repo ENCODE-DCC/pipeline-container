@@ -16,12 +16,18 @@ MAINTAINER Ulugbek Baymuradov
 RUN apt-get update && apt-get install -y \
     build-essential \
     git \
-    python-pip \
     python-dev \
+    python-setuptools \
     python-cffi \
     libffi-dev \
     libssl-dev \
     moreutils 
+
+# Install pip and python packages: common and python-dateutils
+RUN easy_install pip
+RUN pip install common
+RUN pip install python-dateutil
+
 
 # Install cwl-runner
 RUN pip install cwlref-runner
