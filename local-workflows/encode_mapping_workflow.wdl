@@ -91,7 +91,6 @@ task filter_qc {
 
     output {
         File dup_file_qc = glob('*.dup.qc')[0]
-        File filter_qc_log = glob('*ilter_qc.log')[0]
         File filtered_bam = glob('*final.bam')[0]
         File filtered_bam_bai = glob('*final.bam.bai')[0]
         File filtered_map_stats = glob('*final.flagstat.qc')[0]
@@ -123,7 +122,7 @@ task xcor {
     output {
         File cc_file = glob('*.cc.qc')[0]
         File cc_plot = glob('*.cc.plot.pdf')[0]
-        Array[File] tag_align = glob('*tag*')
+        Array[File] tag_align = glob('*tagAlign.gz')
         File xcor_log = glob('xcor.log')[0]
         File xcor_results = glob('xcor.json')[0]
     }
