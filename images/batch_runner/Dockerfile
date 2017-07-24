@@ -25,9 +25,7 @@ RUN apt-get update && apt-get install -y \
 
 # Install pip and python packages: common and python-dateutils
 RUN easy_install pip
-RUN pip install common
-RUN pip install python-dateutil
-
+RUN pip install setuptools --upgrade
 
 # Install cwl-runner
 RUN pip install cwlref-runner
