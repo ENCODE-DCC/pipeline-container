@@ -38,6 +38,7 @@ RUN pip install common
 RUN pip install python-dateutil
 
 # Requirements for setting up cwltool
+RUN easy_install -U setuptools
 RUN pip install ruamel.yaml==0.13.4 cwltool==1.0.20161227200419 dynamoq tractorbeam
 
 # Install Java 8 for picard
