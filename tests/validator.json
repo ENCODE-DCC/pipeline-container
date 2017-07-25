@@ -1,0 +1,6 @@
+{
+  "output_folder": {
+    "path": "/full-path-to-folder-with-output-jsons",
+    "class": "Directory"
+  }
+}
