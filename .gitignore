@@ -107,3 +107,6 @@ ENV/
 *.yml
 
 *.json
+
+src/common.pyc
+src/validate_output.py
