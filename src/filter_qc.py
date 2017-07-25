@@ -340,7 +340,7 @@ def main(input_bam, fastqs, samtools_params, debug):
         "duplicate_fraction": dup_qc.get('percent_duplication')
     }
     with open('filter_qc.json', 'w') as f:
-        json.dump(output, f)
+        json.dump(output, f, sort_keys=True, indent=4, separators=(',', ': '))
     logger.info("Exiting with output:\n%s" % (pformat(output)))
     return output
 
