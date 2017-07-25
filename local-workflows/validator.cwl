@@ -9,7 +9,7 @@ class: CommandLineTool
 
 hints:
   - class: DockerRequirement
-    dockerPull: quay.io/gabdank/validator:0721
+    dockerPull: quay.io/gabdank/validator:0724
 
 inputs:
 
