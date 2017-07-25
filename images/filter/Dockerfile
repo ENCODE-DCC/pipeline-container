@@ -24,11 +24,21 @@ RUN apt-get update && apt-get install -y \
     wget \
     zlib1g-dev
 
+# Requirements for setting up cwltool
+RUN apt-get install -qqy --no-install-suggests --no-install-recommends --force-yes \
+    python-requests \
+    python-yaml \
+    python-lockfile \
+    python-pyparsing \
+    awscli
+
 # Install pip and python packages: common and python-dateutils
 RUN easy_install pip
 RUN pip install common
 RUN pip install python-dateutil
-RUN pip install cwltool
+
+# Requirements for setting up cwltool
+RUN pip install ruamel.yaml==0.13.4 cwltool==1.0.20161227200419 dynamoq tractorbeam
 
 # Install Java 8 for picard
 RUN echo debconf shared/accepted-oracle-license-v1-1 select true | \
