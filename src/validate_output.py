@@ -1,6 +1,8 @@
 import json
 import sys
 from pprint import pprint
+import os.path
+
 
 KNOWN_OUTPUT_VALUES = {
     'crop_length': 'native',
@@ -29,15 +31,30 @@ def main():
     filter_dict = {}
     xcor_dict = {}
 
-    with open(sys.argv[1]+'/' + mapping_output_json) as data:
-        mapping_dict = json.load(data)
-    with open(sys.argv[1]+'/' + post_mapping_output_json) as data:
-        post_mapping_dict = json.load(data)
-    with open(sys.argv[1]+'/' + filter_output_json) as data:
-        filter_dict = json.load(data)
-    with open(sys.argv[1]+'/' + xcor_output_json) as data:
-        xcor_dict = json.load(data)
-
+    if os.path.exists(sys.argv[1]+'/' + mapping_output_json):
+        with open(sys.argv[1]+'/' + mapping_output_json) as data:
+            try:
+                mapping_dict = json.load(data)
+            except ValueError:
+                print ('Error reading ' + sys.argv[1]+'/' + mapping_output_json)
+    if os.path.exists(sys.argv[1]+'/' + post_mapping_output_json):
+        with open(sys.argv[1]+'/' + post_mapping_output_json) as data:
+            try:
+                post_mapping_dict = json.load(data)
+            except ValueError:
+                print ('Error reading ' + sys.argv[1]+'/' + post_mapping_output_json)
+    if os.path.exists(sys.argv[1]+'/' + filter_output_json):
+        with open(sys.argv[1]+'/' + filter_output_json) as data:
+            try:
+                filter_dict = json.load(data)
+            except ValueError:
+                print ('Error reading ' + sys.argv[1]+'/' + filter_output_json)
+    if os.path.exists(sys.argv[1]+'/' + xcor_output_json):
+        with open(sys.argv[1]+'/' + xcor_output_json) as data:
+            try:
+                xcor_dict = json.load(data)
+            except ValueError:
+                print ('Error reading ' + sys.argv[1]+'/' + xcor_output_json)
     result_dict = {'steps': {}, 'overall': True, 'messages': ''}
 
     keep_examination = True
