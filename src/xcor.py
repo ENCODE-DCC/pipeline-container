@@ -189,7 +189,7 @@ def main(input_bam, fastqs, debug):
         "est_frag_len": int(xcor_qc.get('estFragLen'))
     }
     with open('xcor.json', 'w') as f:
-        json.dump(output, f)
+        json.dump(output, f, sort_keys=True, indent=4, separators=(',', ': '))
     if paired_end:
         output.update({"BEDPE_file": BEDPE_file})
 

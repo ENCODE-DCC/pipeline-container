@@ -255,7 +255,7 @@ def main(crop_length, reference_tar,
         "paired_end": paired_end
     }
     with open('mapping.json', 'w') as f:
-        json.dump(output, f)
+        json.dump(output, f, sort_keys=True, indent=4, separators=(',', ': '))
     logger.info("Exiting mapping with output: %s" % (output))
     return output
 
