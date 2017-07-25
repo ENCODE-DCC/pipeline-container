@@ -27,6 +27,7 @@ RUN apt-get update && apt-get install -y \
 RUN easy_install pip
 RUN pip install common
 RUN pip install python-dateutil
+RUN pip install cwltool
 
 RUN mkdir /image_software
 WORKDIR /image_software

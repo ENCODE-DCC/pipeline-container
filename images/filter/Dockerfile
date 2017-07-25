@@ -28,6 +28,7 @@ RUN apt-get update && apt-get install -y \
 RUN easy_install pip
 RUN pip install common
 RUN pip install python-dateutil
+RUN pip install cwltool
 
 # Install Java 8 for picard
 RUN echo debconf shared/accepted-oracle-license-v1-1 select true | \

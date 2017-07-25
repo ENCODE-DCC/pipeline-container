@@ -15,6 +15,9 @@ RUN apt-get update && apt-get install -y \
     git \
     python
 
+RUN easy_install pip
+RUN pip install cwltool
+
 RUN mkdir image_software
 WORKDIR /image_software
 

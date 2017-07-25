@@ -24,6 +24,9 @@ RUN apt-get update && apt-get install -y \
     wget \
     zlib1g-dev
 
+RUN easy_install pip
+RUN pip install cwltool
+
 # Install Java 8 for Trimmomatic
 RUN echo debconf shared/accepted-oracle-license-v1-1 select true | \
     sudo debconf-set-selections
