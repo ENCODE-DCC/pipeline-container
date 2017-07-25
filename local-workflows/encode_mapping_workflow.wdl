@@ -1,9 +1,9 @@
 ## This WDL maps FASTQ file(s) using ENCODE ChIP-seq mapping pipeline
 ##
 ## Requirements/expectations :
-## - trimming length parameter (either "native" or lenght in string format)
+## - trimming length parameter (either "native" or length in string format)
 ## - fastq (either one SE or two PE fastq file(s))
-## - reference (BWA tar reference index file)
+## - reference (tar of reference files for bwa)
 ##
 ## example inputs.json would look like:
 ## {
@@ -15,35 +15,6 @@
 
 
 # TASK DEFINITIONS
-
-task filter_qc {
-    File bam_file
-    Array[File] fastq_files
-
-    command {
-
-        python /image_software/pipeline-container/src/filter_qc.py \
-         ${bam_file} \
-         ${sep=' ' fastq_files}
-    }
-
-    output {
-        File dup_file_qc = glob('*.dup.qc')[0]
-        File filter_qc_log = glob('*ilter_qc.log')[0]
-        File filtered_bam = glob('*final.bam')[0]
-        File filtered_bam_bai = glob('*final.bam.bai')[0]
-        File filtered_map_stats = glob('*final.flagstat.qc')[0]
-        File pbc_file_qc = glob('*.pbc.qc')[0]
-    }
-
-    runtime {
-        docker: 'quay.io/encode-dcc/filter:v0.5'
-        cpu: '1'
-        memory: '4092 MB'
-        disks: 'local-disk 512 HDD'
-    }
-}
-
 
 task mapping {
     Array[File] fastq_files
@@ -59,43 +30,17 @@ task mapping {
     }
 
     output {
-        File mapping_log = glob('mapping.log')[0]
         Array[File] sai_files = glob('*.sai')
         Array[File] unmapped_files = glob('*.gz')
+        File mapping_log = glob('mapping.log')[0]
+        File mapping_results = glob('mapping.json')[0]
     }
 
     runtime {
-        docker: 'quay.io/encode-dcc/mapping:v0.5'
-        cpu: '1'
-        memory: '4092 MB'
-        disks: 'local-disk 512 HDD'
-    }
-}
-
-
-task xcor {
-    File bam_file
-    Array[File] fastq_files
-
-    command {
-
-        python /image_software/pipeline-container/src/xcor.py \
-         ${bam_file} \
-         ${sep=' ' fastq_files}
-    }
-
-    output {
-        File cc_file = glob('*.cc.qc')[0]
-        File cc_plot = glob('*.cc.plot.pdf')[0]
-        Array[File] tag_align = glob('*tag*')
-        File xcor_log = glob('xcor.log')[0]
-    }
-
-    runtime {
-        docker: 'quay.io/encode-dcc/xcor:v0.5'
-        cpu: '1'
-        memory: '4092 MB'
-        disks: 'local-disk 512 HDD'
+        docker: 'quay.io/jseth/mapping:add_json_outputs_to_wdl'
+        cpu: '2'
+        memory: '17.1 GB'
+        disks: 'local-disk 420 HDD'
     }
 }
 
@@ -118,18 +63,78 @@ task post_processing {
     }
 
     output {
-        File post_mapping_log = glob('post_mapping.log')[0]
         File unfiltered_bam = glob('*.raw.srt.bam')[0]
         File unfiltered_flagstats = glob('*.raw.srt.bam.flagstat.qc')[0]
+        File post_mapping_log = glob('post_mapping.log')[0]
+        File post_mapping_results = glob('post_mapping.json')[0]
     }
 
     runtime {
-        docker: 'quay.io/encode-dcc/post_mapping:v0.5'
-        cpu: '1'
-        memory: '4092 MB'
-        disks: 'local-disk 512 HDD'
+        docker: 'quay.io/jseth/post_mapping:add_json_outputs_to_wdl'
+        cpu: '2'
+        memory: '17.1 GB'
+        disks: 'local-disk 420 HDD'
     }
 }
+
+
+task filter_qc {
+    File bam_file
+    Array[File] fastq_files
+
+    command {
+
+        python /image_software/pipeline-container/src/filter_qc.py \
+         ${bam_file} \
+         ${sep=' ' fastq_files}
+    }
+
+    output {
+        File dup_file_qc = glob('*.dup.qc')[0]
+        File filtered_bam = glob('*final.bam')[0]
+        File filtered_bam_bai = glob('*final.bam.bai')[0]
+        File filtered_map_stats = glob('*final.flagstat.qc')[0]
+        File pbc_file_qc = glob('*.pbc.qc')[0]
+        File filter_qc_log = glob('filter_qc.log')[0]
+        File filter_qc_results = glob('filter_qc.json')[0]
+    }
+
+    runtime {
+        docker: 'quay.io/jseth/filter:add_json_outputs_to_wdl'
+        cpu: '2'
+        memory: '17.1 GB'
+        disks: 'local-disk 420 HDD'
+    }
+}
+
+
+task xcor {
+    File bam_file
+    Array[File] fastq_files
+
+    command {
+
+        python /image_software/pipeline-container/src/xcor.py \
+         ${bam_file} \
+         ${sep=' ' fastq_files}
+    }
+
+    output {
+        File cc_file = glob('*.cc.qc')[0]
+        File cc_plot = glob('*.cc.plot.pdf')[0]
+        Array[File] tag_align = glob('*tagAlign.gz')
+        File xcor_log = glob('xcor.log')[0]
+        File xcor_results = glob('xcor.json')[0]
+    }
+
+    runtime {
+        docker: 'quay.io/jseth/xcor:add_json_outputs_to_wdl'
+        cpu: '2'
+        memory: '17.1 GB'
+        disks: 'local-disk 420 HDD'
+    }
+}
+
 
 task gather_the_outputs {
 
@@ -143,6 +148,10 @@ task gather_the_outputs {
     File post_mapping_log
     File filter_qc_log
     File xcor_log
+    File mapping_results
+    File post_mapping_results
+    File filter_qc_results
+    File xcor_results
     File cc
     File cc_pdf
     Array[File] tag_align
@@ -159,6 +168,10 @@ task gather_the_outputs {
         cp ${post_mapping_log} .
         cp ${filter_qc_log} .
         cp ${xcor_log} .
+        cp ${mapping_results} .
+        cp ${post_mapping_results} .
+        cp ${filter_qc_results} .
+        cp ${xcor_results} .
         cp ${cc} .
         cp ${cc_pdf} .
         cp ${sep=' ' tag_align} .
@@ -203,15 +216,19 @@ workflow encode_mapping_workflow {
           cc_pdf = xcor.cc_plot,
           dup_qc = filter_qc.dup_file_qc,
           filter_qc_log = filter_qc.filter_qc_log,
+          filter_qc_results = filter_qc.filter_qc_results,
           filtered_bam = filter_qc.filtered_bam,
           filtered_flagstat = filter_qc.filtered_map_stats,
           mapping_log = mapping.mapping_log,
+          mapping_results = mapping.mapping_results,
           pbc_qc = filter_qc.pbc_file_qc,
           post_mapping_log = post_processing.post_mapping_log,
+          post_mapping_results = post_processing.post_mapping_results,
           tag_align = xcor.tag_align,
           unfiltered_bam = post_processing.unfiltered_bam,
           unfiltered_flagstat = post_processing.unfiltered_flagstats,
-          xcor_log = xcor.xcor_log
+          xcor_log = xcor.xcor_log,
+          xcor_results = xcor.xcor_results
     }
 
 }
