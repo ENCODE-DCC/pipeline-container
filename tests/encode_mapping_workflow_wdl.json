@@ -1,5 +1,0 @@
-{
-  "encode_mapping_workflow.fastqs": ["rep1_ENCFF000VOL_chr21.fq.gz"],
-  "encode_mapping_workflow.trimming_parameter": "native",
-  "encode_mapping_workflow.reference": "GRCh38_chr21_bwa.tar.gz"
-}

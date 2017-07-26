@@ -7,9 +7,9 @@
 ##
 ## example inputs.json would look like:
 ## {
-##      "encode_mapping_workflow.fastqs": ["/.../Documents/dockerFiles/rep1-ENCFF000VOL-chr21.fq.gz"],
+##      "encode_mapping_workflow.fastqs": ["input_data/rep1-ENCFF000VOL-chr21.fq.gz"],
 ##      "encode_mapping_workflow.trimming_parameter": "native",
-##      "encode_mapping_workflow.reference": "/.../dockerFiles/GRCh38_chr21_bwa.tar.gz"
+##      "encode_mapping_workflow.reference": "input_data/GRCh38_chr21_bwa.tar.gz"
 ## }
 
 
