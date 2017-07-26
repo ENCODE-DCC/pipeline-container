@@ -1,0 +1,13 @@
+{
+  "trimming_parameter": "native",
+  "fastqs": [
+    {
+      "path": "input_data/ENCFF000VOL.fastq.gz",
+      "class": "File"
+    }
+  ],
+  "reference": {
+    "path": "input_data/reference/ENCFF643CGH_ENCODE_GRCh38_bwa.tar.gz",
+    "class": "File"
+  }
+}
