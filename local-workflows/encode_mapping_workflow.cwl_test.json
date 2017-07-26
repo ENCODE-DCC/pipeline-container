@@ -1,0 +1,13 @@
+{
+  "trimming_parameter": "native",
+  "fastqs": [
+    {
+      "path": "input_data/ENCFF000VOL_chr21.fq.gz",
+      "class": "File"
+    }
+  ],
+  "reference": {
+    "path": "input_data/reference/GRCh38_chr21_bwa.tar.gz",
+    "class": "File"
+  }
+}

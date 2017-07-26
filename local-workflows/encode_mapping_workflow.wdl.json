@@ -1,0 +1,5 @@
+{
+  "encode_mapping_workflow.fastqs": ["input_data/ENCFF000VOL.fastq.gz"],
+  "encode_mapping_workflow.trimming_parameter": "native",
+  "encode_mapping_workflow.reference": "input_data/reference/ENCFF643CGH_ENCODE_GRCh38_bwa.tar.gz"
+}
