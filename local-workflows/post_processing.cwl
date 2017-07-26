@@ -4,7 +4,7 @@ class: CommandLineTool
 
 hints:
   - class: DockerRequirement
-    dockerPull: quay.io/encode-dcc/post_mapping:v0.7
+    dockerPull: quay.io/encode-dcc/post_mapping:v1.0
   - class: ResourceRequirement
     coresMin: 1
     ramMin: 4092 #"the process requires at least 4G of RAM
