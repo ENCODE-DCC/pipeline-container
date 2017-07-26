@@ -25,7 +25,9 @@ RUN apt-get update && apt-get install -y \
     zlib1g-dev
 
 # Requirements for setting up cwltool
-RUN apt-get install -qqy --no-install-suggests --no-install-recommends --force-yes \
+RUN apt-get install -qqy --force-yes \
+    python-dev \
+    python-setuptools \
     python-requests \
     python-yaml \
     python-lockfile \
@@ -39,7 +41,7 @@ RUN pip install python-dateutil
 
 # Requirements for setting up cwltool
 RUN pip install setuptools --upgrade
-RUN pip install ruamel.yaml==0.13.4 cwltool==1.0.20161227200419 dynamoq tractorbeam
+RUN pip install ruamel.yaml==0.13.4 cwltool dynamoq tractorbeam
 
 # Install Java 8 for picard
 RUN echo debconf shared/accepted-oracle-license-v1-1 select true | \
@@ -84,4 +86,4 @@ RUN groupadd -r encode && useradd --no-log-init -r -m -d /home/encode/ -g encode
 USER encode
 WORKDIR /home/encode
 
-ENTRYPOINT ["python", "/image_software/pipeline-container/src/filter_qc.py"]
+# ENTRYPOINT ["python", "/image_software/pipeline-container/src/filter_qc.py"]
