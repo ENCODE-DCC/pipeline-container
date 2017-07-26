@@ -4,7 +4,7 @@ class: CommandLineTool
 
 hints:
   - class: DockerRequirement
-    dockerPull: quay.io/encode-dcc/validator:v0.6
+    dockerPull: quay.io/encode-dcc/validator:v0.7
 
 inputs:
 
