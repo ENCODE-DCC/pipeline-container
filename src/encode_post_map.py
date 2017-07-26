@@ -251,7 +251,7 @@ def postprocess(crop_length, reference_tar,
         "paired_end": paired_end
     }
     with open('post_mapping.json', 'w') as f:
-        json.dump(output, f)
+        json.dump(output, f, sort_keys=True, indent=4, separators=(',', ': '))
     logger.info("Returning from postprocess with output: %s" % (output))
     return output
 
