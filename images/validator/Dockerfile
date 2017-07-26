@@ -15,8 +15,22 @@ RUN apt-get update && apt-get install -y \
     git \
     python
 
+# Requirements for setting up cwltool
+RUN apt-get install -qqy --force-yes \
+    python-dev \
+    python-setuptools \
+    python-requests \
+    python-yaml \
+    python-lockfile \
+    python-pyparsing \
+    awscli 
+
 RUN easy_install pip
-RUN pip install cwltool
+
+
+# Requirements for setting up cwltool
+RUN pip install setuptools --upgrade
+RUN pip install ruamel.yaml==0.13.4 cwltool==1.0.20161227200419 dynamoq tractorbeam
 
 RUN mkdir image_software
 WORKDIR /image_software
