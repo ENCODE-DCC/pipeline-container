@@ -37,7 +37,7 @@ task mapping {
     }
 
     runtime {
-        docker: 'quay.io/jseth/mapping:add_json_outputs_to_wdl'
+        docker: 'quay.io/encode-dcc/mapping:v0.6'
         cpu: '2'
         memory: '17.1 GB'
         disks: 'local-disk 420 HDD'
@@ -70,7 +70,7 @@ task post_processing {
     }
 
     runtime {
-        docker: 'quay.io/jseth/post_mapping:add_json_outputs_to_wdl'
+        docker: 'quay.io/encode-dcc/post_mapping:v0.6'
         cpu: '2'
         memory: '17.1 GB'
         disks: 'local-disk 420 HDD'
@@ -100,7 +100,7 @@ task filter_qc {
     }
 
     runtime {
-        docker: 'quay.io/jseth/filter:add_json_outputs_to_wdl'
+        docker: 'quay.io/encode-dcc/filter:v0.6'
         cpu: '2'
         memory: '17.1 GB'
         disks: 'local-disk 420 HDD'
@@ -128,7 +128,7 @@ task xcor {
     }
 
     runtime {
-        docker: 'quay.io/jseth/xcor:add_json_outputs_to_wdl'
+        docker: 'quay.io/encode-dcc/xcor:v0.6'
         cpu: '2'
         memory: '17.1 GB'
         disks: 'local-disk 420 HDD'
