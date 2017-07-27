@@ -32,12 +32,17 @@ RUN apt-get install -qqy --force-yes \
     python-yaml \
     python-lockfile \
     python-pyparsing \
-    awscli
+    awscli \
+    libssl-dev \
+    libffi-dev
 
 # Install pip and python packages: common and python-dateutils
 RUN easy_install pip
+# For SSL related errors
+RUN pip install pyOpenSSL ndg-httpsclient pyasn1
 RUN pip install common
 RUN pip install python-dateutil
+
 
 # Requirements for setting up cwltool
 RUN pip install setuptools --upgrade
