@@ -4,7 +4,7 @@ class: CommandLineTool
 
 hints:
   - class: DockerRequirement
-    dockerPull: quay.io/encode-dcc/validator:v1.0
+    dockerPull: quay.io/encode-dcc/validator:v1.1
 
 inputs:
 
@@ -20,5 +20,11 @@ outputs:
     outputBinding:
       glob: results.json
     doc: A json file that contains the result of the test
+  messages_file:
+    type: File
+    outputBinding:
+      glob: log.txt
+    doc: A text file that contains additional information collected during the test
+
 
 baseCommand: []
