@@ -344,4 +344,6 @@ def main(input_bam, fastqs, samtools_params, debug):
     logger.info("Exiting with output:\n%s" % (pformat(output)))
     return output
 
-main(sys.argv[1], sys.argv[2:], '-q 30', False)
+
+if __name__ == "__main__":
+    main(sys.argv[1], sys.argv[2:], '-q 30', False)
