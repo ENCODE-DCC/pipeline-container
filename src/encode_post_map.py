@@ -255,6 +255,8 @@ def postprocess(crop_length, reference_tar,
     logger.info("Returning from postprocess with output: %s" % (output))
     return output
 
-postprocess(sys.argv[1],
-            sys.argv[2],
-            False, sys.argv[3:])
+
+if __name__ == '__main__':
+    postprocess(sys.argv[1],
+                sys.argv[2],
+                False, sys.argv[3:])
