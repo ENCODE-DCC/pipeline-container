@@ -11,10 +11,28 @@ class TestCommon(unittest.TestCase):
         pass
 
     def test_flat(self):
-        pass
+        # if input is not iterable, raise TypeError
+        self.assertRaises(TypeError, common.flat, 1)
+        # empties stay empty
+        self.assertEquals(common.flat(''), [])
+        self.assertEquals(common.flat([]), [])
+        # strings get split
+        self.assertEquals(common.flat('test'), ['t', 'e', 's', 't'])
+        # flat lists stay flat
+        self.assertEquals(common.flat(['a', 'ab']), ['a', 'ab'])
+        # nested iterables become flat lists
+        self.assertEquals(common.flat(['a', ('b', 'c')]), ['a', 'b', 'c'])
 
     def test_rstrips(self):
-        pass
+        # empty does not strip anything
+        self.assertEquals(common.rstrips('abc', ''), 'abc')
+        # stripping with the same string returns empty
+        a = 'abc'
+        self.assertEquals(common.rstrips(a, a), '')
+        # match strips
+        self.assertEquals(common.rstrips('abcd', 'cd'), 'ab')
+        # non-match does not strip
+        self.assertEquals(common.rstrips('abcd', 'dc'), 'abcd')
 
     def test_touch(self):
         pass
