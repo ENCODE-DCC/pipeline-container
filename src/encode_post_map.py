@@ -84,6 +84,7 @@ def flagstat_parse(fname):
 
     return qc_dict
 
+
 def special_sort(reads_files):
     to_sort = []
     for f in reads_files:

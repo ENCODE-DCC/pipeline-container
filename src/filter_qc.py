@@ -31,6 +31,7 @@ PICARD_PATH = "/".join([
     "picard.jar"
 ])
 
+
 def flagstat_parse(fname):
     with open(fname, 'r') as flagstat_file:
         if not flagstat_file:
@@ -64,6 +65,7 @@ def flagstat_parse(fname):
         qc_dict[qc_key] = [int(hiq.rstrip()), int(lowq.rstrip())]
 
     return qc_dict
+
 
 def dup_parse(fname):
     with open(fname, 'r') as dup_file:
