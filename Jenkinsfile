@@ -6,7 +6,7 @@ pipeline {
                 }
         stages {
 		stage('Unit-tests') {
-			steps {
+			steps { 
 				echo "Running unit tests.."
 				sh 'python src/test_common.py'
                                 sh 'python src/test_encode_map.py'
@@ -18,6 +18,7 @@ pipeline {
                 stage('Build-nonmaster') {
                         when { not { branch 'master' } }
                         steps { 
+                                slackSend "started job: ${env.JOB_NAME}, build number ${env.BUILD_NUMBER} on branch: ${env.BRANCH_NAME}."
                                 echo "$env.BRANCH_NAME"
                                 echo "Running non-master build steps."
                                 sh "docker login -u=ottojolanki -p=${QUAY_PASS} quay.io"
@@ -43,9 +44,11 @@ pipeline {
 	post {
                 success {
                         echo 'Post build actions that run on success'
+                        slackSend "Job ${env.JOB_NAME}, build number ${env.BUILD_NUMBER} on branch ${env.BRANCH_NAME} finished successfully."
                 }
                 failure {
                         echo 'Post build actions that run on failure'
+                        slackSend "Job ${env.JOB_NAME}, build number ${env.BUILD_NUMBER} on branch ${env.BRANCH_NAME} failed."
                 }
                 always {
                         echo 'Post build actions that run always'
