@@ -1,5 +1,13 @@
 import unittest
 import common
+from mock import patch, mock_open
+
+
+def give_fhs(x):
+    if x == 'correct':
+        return mock_open(read_data='1 2 3')
+    else:
+        return mock_open(read_data='a b c')
 
 
 class TestCommon(unittest.TestCase):
@@ -53,7 +61,12 @@ class TestCommon(unittest.TestCase):
         pass
 
     def test_xcor_fraglen(self):
-        pass
+        with patch('common.open', mock_open(read_data='1 2')) as _:
+            self.assertRaises(IndexError, common.xcor_fraglen, 'foo')
+        with patch('common.open', mock_open(read_data='1 2 3')) as _:
+            self.assertEquals(common.xcor_fraglen('foo'), 3)
+        with patch('common.open', mock_open(read_data='1 2 c')) as _:
+            self.assertRaises(ValueError, common.xcor_fraglen, 'foo')
 
     def test_frip(self):
         pass
