@@ -3,13 +3,6 @@ import common
 from mock import patch, mock_open
 
 
-def give_fhs(x):
-    if x == 'correct':
-        return mock_open(read_data='1 2 3')
-    else:
-        return mock_open(read_data='a b c')
-
-
 class TestCommon(unittest.TestCase):
 
     def setUp(self):
