@@ -58,11 +58,10 @@ def main(input_tags, prefix=None):
     # input will produce the same output
     # Produces two files named splits_prefix0n, n=1,2
     splits_prefix = 'temp_split'
-    # gshuf is for mac, change for linux
-    # omitted the -d from split and changed index to 'aa', 'ab' this works on both
+    # omitted the -d from split and changed index to 'aa', 'ab' this works on both mac and ubuntu, shuf only on ubuntu
     out, err = common.run_pipe([
         'gzip -dc %s' % (input_tags_filename),
-        'gshuf --random-source=%s' % (input_tags_filename),
+        'shuf --random-source=%s' % (input_tags_filename),
         'split -a 2 -l %d - %s' % (nlines, splits_prefix)])
     # Convert read pairs to reads into standard tagAlign file
     for i, index in enumerate(['aa', 'ab']):  # could be made multi-threaded
