@@ -19,6 +19,7 @@ import sys
 import re
 import os
 import gzip
+import json
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
@@ -295,8 +296,11 @@ def main(rep1_ta, ctl1_ta, rep1_paired_end,
         ppr2 = pool_pr2_subjob.get('pooled')
         output.update({'ppr1': ppr1,
                        'ppr2': ppr2})
-    print output
+    with open('pool_and_pseudoreplicate_outfiles.json', 'w') as f:
+        json.dump(output, f)
+
     return output
+
 
 if __name__ == '__main__':
     def true_or_false(truth):
