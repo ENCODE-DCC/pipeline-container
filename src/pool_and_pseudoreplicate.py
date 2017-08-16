@@ -133,6 +133,7 @@ def main(rep1_ta, ctl1_ta, rep1_paired_end,
     output = {'rep1_ta': rep1_ta_filename}
 
     simplicate_experiment = rep1_ta and not rep2_ta
+    output.update({'simplicate_experiment': simplicate_experiment})
     if simplicate_experiment:
         logger.info("No rep2 tags specified so processing as a simplicate experiment.")
     else:
@@ -261,9 +262,9 @@ def main(rep1_ta, ctl1_ta, rep1_paired_end,
     # should there be an indication of the simplicateness of the
     # experiment in the output json? this could be a good way to
     # direct the next step without putting too much logic into the
-    # workflow.
+    # workflow. ADDED.
     with open('pool_and_pseudoreplicate_outfiles.json', 'w') as f:
-        json.dump(output, f)
+        json.dump(output, f, sort_keys=True)
 
     return output
 
