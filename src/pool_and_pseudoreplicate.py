@@ -27,48 +27,6 @@ logger.propagate = False
 logger.setLevel(logging.INFO)
 
 
-def macs2(experiment, control, xcor_scores, chrom_sizes,
-          narrowpeak_as, gappedpeak_as, broadpeak_as, genomesize,
-          name="MACS2", prefix=None, fragment_length=None):
-        macs2_applet = dxpy.find_one_data_object(
-                classname='applet',
-                name='macs2',
-                project=dxpy.PROJECT_CONTEXT_ID,
-                zero_ok=False,
-                more_ok=False,
-                return_handler=True)
-        macs2_input = {
-            "experiment": experiment,
-            "control": control,
-            "xcor_scores_input": xcor_scores,
-            "chrom_sizes": chrom_sizes,
-            "narrowpeak_as": narrowpeak_as,
-            "gappedpeak_as": gappedpeak_as,
-            "broadpeak_as": broadpeak_as,
-            "genomesize": genomesize
-            }
-        if prefix:
-            macs2_input.update({'prefix': prefix})
-        if fragment_length is not None:
-            macs2_input.update({'fragment_length': fragment_length})
-        return macs2_applet.run(macs2_input, name=name)
-
-
-def xcor_only(tags, paired_end, name='xcor_only'):
-        xcor_only_applet = \
-            dxpy.find_one_data_object(
-                classname='applet',
-                name='xcor_only',
-                project=dxpy.PROJECT_CONTEXT_ID,
-                zero_ok=False,
-                more_ok=False,
-                return_handler=True)
-        return xcor_only_applet.run(
-            {"input_tagAlign": tags,
-             "paired_end": paired_end},
-            name=name)
-
-
 def pool(inputs, prefix=None):
 
     input_filenames = inputs
@@ -80,10 +38,12 @@ def pool(inputs, prefix=None):
     else:
         pooled_filename = \
             '-'.join([splitext(splitext(fn)[0])[0] for fn in input_filenames]) + "_pooled%s.gz" % (extension)
+    # outfile needs to be reduced to basename to direct cromwell
+    # output to the correct place
     out, err = common.run_pipe([
         'gzip -dc %s' % (' '.join(input_filenames)),
         'gzip -cn'],
-        outfile=pooled_filename)
+        outfile=pooled_filename.split('/')[-1])
 
     output = {
         "pooled": pooled_filename
@@ -144,7 +104,9 @@ def pseudoreplicator(input_tags, prefix=None):
         if paired_end:
             steps.extend([r"""awk 'BEGIN{OFS="\t"}{printf "%s\t%s\t%s\tN\t1000\t%s\n%s\t%s\t%s\tN\t1000\t%s\n",$1,$2,$3,$9,$4,$5,$6,$10}'"""])
         steps.extend(['gzip -cn'])
-        out, err = common.run_pipe(steps, outfile=pr_ta_filenames[i])
+        # outfile needs to be reduced to basename to direct cromwell
+        # output into correct place
+        out, err = common.run_pipe(steps, outfile=pr_ta_filenames[i].split('/')[-1])
         os.remove(splits_prefix + index)
 
     pseudoreplicate1_file = pr_ta_filenames[0]
@@ -296,6 +258,10 @@ def main(rep1_ta, ctl1_ta, rep1_paired_end,
         ppr2 = pool_pr2_subjob.get('pooled')
         output.update({'ppr1': ppr1,
                        'ppr2': ppr2})
+    # should there be an indication of the simplicateness of the
+    # experiment in the output json? this could be a good way to
+    # direct the next step without putting too much logic into the
+    # workflow.
     with open('pool_and_pseudoreplicate_outfiles.json', 'w') as f:
         json.dump(output, f)
 
