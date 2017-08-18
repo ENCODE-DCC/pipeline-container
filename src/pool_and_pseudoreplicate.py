@@ -38,7 +38,7 @@ def pool(inputs, prefix=None):
     out, err = common.run_pipe([
         'gzip -dc %s' % (' '.join(input_filenames)),
         'gzip -cn'],
-        outfile=pooled_filename.split('/')[-1])
+        outfile=os.path.basename(pooled_filename))
 
     output = {
         "pooled": pooled_filename
@@ -101,7 +101,7 @@ def pseudoreplicator(input_tags, prefix=None):
         steps.extend(['gzip -cn'])
         # outfile needs to be reduced to basename to direct cromwell
         # output into correct place
-        out, err = common.run_pipe(steps, outfile=pr_ta_filenames[i].split('/')[-1])
+        out, err = common.run_pipe(steps, outfile=os.path.basename(pr_ta_filenames[i]))
         os.remove(splits_prefix + index)
 
     pseudoreplicate1_file = pr_ta_filenames[0]
@@ -269,7 +269,7 @@ if __name__ == '__main__':
     if len(sys.argv) == 4:
         main(sys.argv[1], sys.argv[2], parse_true_or_false(sys.argv[3]))
     else:
-        main(sys.argv[1], sys.argv[2], parse_true_or_false(sys.argv[3]), sys.argv[4], sys.argv[5], true_or_false(sys.argv[6]))
+        main(sys.argv[1], sys.argv[2], parse_true_or_false(sys.argv[3]), sys.argv[4], sys.argv[5], parse_true_or_false(sys.argv[6]))
 
 # this needs to go to other image
 '''
