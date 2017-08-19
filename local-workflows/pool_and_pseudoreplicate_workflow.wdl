@@ -11,7 +11,7 @@ task pool_and_pseudoreplicate_complex {
 
     output {
         Array[File] out_files = glob('*.gz')
-        File results = glob('pool_and_pseudoreplicate_outfiles.json')[0]
+        File results = glob('pool_and_pseudoreplicate_outfiles.mapping')[0]
     }
 
     runtime {
@@ -32,7 +32,7 @@ task pool_and_pseudoreplicate_simple {
 
     output {
         Array[File] out_files = glob('*.gz')
-        File results = glob('pool_and_pseudoreplicate_outfiles.json')[0]
+        File results = glob('pool_and_pseudoreplicate_outfiles.mapping')[0]
     }
 
     runtime {
@@ -49,6 +49,11 @@ task pool_and_pseudoreplicate_simple {
 workflow pool_and_pseudoreplicate_workflow {
     Array[File] tags_rep1
     String paired_end
+    String genomesize
+    File chrom_sizes
+    File narrowpeak_as
+    File gappedpeak_as
+    File broadpeak_as
 
     if(length(tags_rep1)==4){
         call pool_and_pseudoreplicate_complex {

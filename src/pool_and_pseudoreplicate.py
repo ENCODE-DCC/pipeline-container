@@ -258,14 +258,16 @@ def main(rep1_ta, ctl1_ta, rep1_paired_end,
     # experiment in the output json? this could be a good way to
     # direct the next step without putting too much logic into the
     # workflow. ADDED.
-    with open('pool_and_pseudoreplicate_outfiles.json', 'w') as f:
-        json.dump(output, f, sort_keys=True)
+    # Turns out Cromwell does not support reading .json. Instead
+    # they have read_map function that accepts 2 column TSVs.
+    with open('pool_and_pseudoreplicate_outfiles.mapping', 'w') as f:
+        for key in output:
+            f.write('%s\t%s\n' % (key, output[key]))
 
     return output
 
 
 if __name__ == '__main__':
-    print len(sys.argv)
     if len(sys.argv) == 4:
         main(sys.argv[1], sys.argv[2], parse_true_or_false(sys.argv[3]))
     else:
