@@ -15,7 +15,7 @@ task pool_and_pseudoreplicate_complex {
     }
 
     runtime {
-        docker: 'quay.io/ottojolanki/pool_and_pseudoreplicate:v0.2'
+        docker: 'quay.io/ottojolanki/pool_and_pseudoreplicate:v1.11'
         cpu: '1'
         memory: '4.0 GB'
         disks: 'local-disk 30 HDD'
@@ -36,7 +36,7 @@ task pool_and_pseudoreplicate_simple {
     }
 
     runtime {
-        docker: 'quay.io/ottojolanki/pool_and_pseudoreplicate:v0.2'
+        docker: 'quay.io/ottojolanki/pool_and_pseudoreplicate:v1.11'
         cpu: '1'
         memory: '4.0 GB'
         disks: 'local-disk 30 HDD'
@@ -49,11 +49,11 @@ task pool_and_pseudoreplicate_simple {
 workflow pool_and_pseudoreplicate_workflow {
     Array[File] tags_rep1
     String paired_end
-    String genomesize
-    File chrom_sizes
-    File narrowpeak_as
-    File gappedpeak_as
-    File broadpeak_as
+    #String genomesize
+    #File chrom_sizes
+    #File narrowpeak_as
+    #File gappedpeak_as
+    #File broadpeak_as
 
     if(length(tags_rep1)==4){
         call pool_and_pseudoreplicate_complex {
