@@ -31,6 +31,7 @@ PICARD_PATH = "/".join([
     "picard.jar"
 ])
 
+
 def flagstat_parse(fname):
     with open(fname, 'r') as flagstat_file:
         if not flagstat_file:
@@ -64,6 +65,7 @@ def flagstat_parse(fname):
         qc_dict[qc_key] = [int(hiq.rstrip()), int(lowq.rstrip())]
 
     return qc_dict
+
 
 def dup_parse(fname):
     with open(fname, 'r') as dup_file:
@@ -344,4 +346,6 @@ def main(input_bam, fastqs, samtools_params, debug):
     logger.info("Exiting with output:\n%s" % (pformat(output)))
     return output
 
-main(sys.argv[1], sys.argv[2:], '-q 30', False)
+
+if __name__ == "__main__":
+    main(sys.argv[1], sys.argv[2:], '-q 30', False)

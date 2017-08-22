@@ -196,4 +196,5 @@ def main(input_bam, fastqs, debug):
     return output
 
 
-main(sys.argv[1], sys.argv[2:], False)
+if __name__ == '__main__':
+    main(sys.argv[1], sys.argv[2:], False)
