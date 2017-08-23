@@ -8,7 +8,7 @@
 FROM ubuntu:14.04
 
 # File Author / Maintainer
-MAINTAINER Idan Gabdank
+MAINTAINER Otto Jolanki
 
 # Update the repository sources list
 # Install base packages: git, python, wget, unzip, R
@@ -46,7 +46,7 @@ RUN R -e "install.packages('bitops', repos='http://cran.us.r-project.org'); \
 
 # Get phantompeakqualtools
 RUN git clone --branch 1.0 https://github.com/kundajelab/phantompeakqualtools.git
-ENV PHANTOMPEAKQUALTOOLS_HOME /image_software/phantompeakqualtools/
+ENV PHANTOMPEAKQUALTOOLS_HOME /image_software/phantompeakqualtools
 
 # Get ENCODE pipeline container repository
 # This COPY asumes the build context is the root of the pipeline-container repo

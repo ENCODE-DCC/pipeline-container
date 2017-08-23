@@ -65,10 +65,23 @@ task xcor {
     }
 
     runtime {
-        docker: 'quay.io/ottojolanki/xcor_only:v0.2'
+        docker: 'quay.io/ottojolanki/xcor_only:test1'
         cpu: '1'
         memory: '4.0GB'
         disks: 'local-disk 30 HDD'
+    }
+}
+
+task output_defined {
+    File is_this_def
+    File is_this_def2
+    String paired_end
+
+    command {
+        echo "the input is defined!"
+        echo ${is_this_def}
+        echo ${is_this_def2}
+        echo ${paired_end}
     }
 }
 
@@ -103,11 +116,15 @@ workflow pool_and_pseudoreplicate_workflow {
                     tags_ctrl1=tags_ctrl1,
                     rep1_paired_end=rep1_paired_end
         }
-
-        call xcor {
-            input:  tags = pool_and_pseudoreplicate_simple.rep1_pr1,
-                    paired_end = rep1_paired_end
-        }
+        call output_defined {
+            input: is_this_def=pool_and_pseudoreplicate_simple.rep1_pr1,
+                   is_this_def2=pool_and_pseudoreplicate_simple.rep1_pr2, 
+                   paired_end=rep1_paired_end
+                  }
+       # call xcor {
+       #     input:  tags = pool_and_pseudoreplicate_simple.rep1_pr1,
+       #             paired_end = rep1_paired_end
+       # }
     }
 
 }

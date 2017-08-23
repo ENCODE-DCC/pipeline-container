@@ -76,7 +76,7 @@ def main(input_tagAlign, paired_end):
     if paired_end:
         steps.extend([r"""awk 'BEGIN{OFS="\t"}{$4="N";$5="1000";print $0}'"""])
     steps.extend(['gzip -cn'])
-    out, err = common.run_pipe(steps, outfile=subsampled_TA_filename)
+    out, err = common.run_pipe(steps, outfile=os.path.basename(subsampled_TA_filename))
 
     # Calculate Cross-correlation QC scores
     CC_scores_filename = subsampled_TA_filename + ".cc.qc"
