@@ -65,7 +65,7 @@ task xcor {
     }
 
     runtime {
-        docker: 'quay.io/ottojolanki/xcor_only:test1'
+        docker: 'quay.io/ottojolanki/xcor_only:test4'
         cpu: '1'
         memory: '4.0GB'
         disks: 'local-disk 30 HDD'
@@ -82,6 +82,13 @@ task output_defined {
         echo ${is_this_def}
         echo ${is_this_def2}
         echo ${paired_end}
+    }
+
+    runtime {
+        docker: 'ubuntu:latest'
+        cpu: '1'
+        memory: '4.0GB'
+        disks: 'local-disk 30 HDD'
     }
 }
 
@@ -121,10 +128,10 @@ workflow pool_and_pseudoreplicate_workflow {
                    is_this_def2=pool_and_pseudoreplicate_simple.rep1_pr2, 
                    paired_end=rep1_paired_end
                   }
-       # call xcor {
-       #     input:  tags = pool_and_pseudoreplicate_simple.rep1_pr1,
-       #             paired_end = rep1_paired_end
-       # }
+        call xcor {
+            input:  tags = pool_and_pseudoreplicate_simple.rep1_pr1,
+                    paired_end = rep1_paired_end
+        }
     }
 
 }
