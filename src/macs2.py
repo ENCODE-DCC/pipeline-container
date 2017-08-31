@@ -29,22 +29,19 @@ def main(experiment,
 
     # Define the output filenames
 
-    peaks_dirname = 'peaks_macs'
-    if not os.path.exists(peaks_dirname):
-        os.makedirs(peaks_dirname)
     if not prefix:
         prefix = experiment
     if prefix.endswith('.gz'):
         prefix = prefix[:-3]
 
-    narrowPeak_fn = "%s/%s.narrowPeak" % (peaks_dirname, prefix)
-    gappedPeak_fn = "%s/%s.gappedPeak" % (peaks_dirname, prefix)
-    broadPeak_fn = "%s/%s.broadPeak" % (peaks_dirname, prefix)
+    narrowPeak_fn = "%s.narrowPeak" % prefix
+    gappedPeak_fn = "%s.gappedPeak" % prefix
+    broadPeak_fn = "%s.broadPeak" % prefix
     narrowPeak_gz_fn = narrowPeak_fn + ".gz"
     gappedPeak_gz_fn = gappedPeak_fn + ".gz"
     broadPeak_gz_fn = broadPeak_fn + ".gz"
-    fc_signal_fn = "%s/%s.fc_signal.bw" % (peaks_dirname, prefix)
-    pvalue_signal_fn = "%s/%s.pvalue_signal.bw" % (peaks_dirname, prefix)
+    fc_signal_fn = "%s.fc_signal.bw" % prefix
+    pvalue_signal_fn = "%s.pvalue_signal.bw" % prefix
 
     # Extract the fragment length estimate from column 3 of the
     # cross-correlation scores file
@@ -64,7 +61,7 @@ def main(experiment,
 
     command = 'macs2 callpeak ' + \
               '-t %s -c %s ' % (experiment, control) + \
-              '-f BED -n %s/%s ' % (peaks_dirname, prefix) + \
+              '-f BED -n %s ' % prefix + \
               '-g %s -p 1e-2 --nomodel --shift 0 --extsize %s --keep-dup all -B --SPMR' % (genomesize, fraglen)
     logger.info(command)
     returncode = common.block_on(command)
@@ -73,7 +70,7 @@ def main(experiment,
 
     # MACS2 sometimes calls features off the end of chromosomes.  Fix that.
     clipped_narrowpeak_fn = common.slop_clip(
-        '%s/%s_peaks.narrowPeak' % (peaks_dirname, prefix), chrom_sizes)
+        '%s_peaks.narrowPeak' % prefix, chrom_sizes)
 
     # Rescale Col5 scores to range 10-1000 to conform to narrowPeak.as format
     # (score must be <1000)
@@ -98,7 +95,7 @@ def main(experiment,
 
     command = 'macs2 callpeak ' + \
               '-t %s -c %s ' % (experiment, control) + \
-              '-f BED -n %s/%s ' % (peaks_dirname, prefix) + \
+              '-f BED -n %s ' % prefix + \
               '-g %s -p 1e-2 --broad --nomodel --shift 0 --extsize %s --keep-dup all' % (genomesize, fraglen)
     logger.info(command)
     returncode = common.block_on(command)
@@ -107,7 +104,7 @@ def main(experiment,
 
     # MACS2 sometimes calls features off the end of chromosomes.  Fix that.
     clipped_broadpeak_fn = common.slop_clip(
-        '%s/%s_peaks.broadPeak' % (peaks_dirname, prefix), chrom_sizes)
+        '%s_peaks.broadPeak' % prefix, chrom_sizes)
 
     # Rescale Col5 scores to range 10-1000 to conform to narrowPeak.as format
     # (score must be <1000)
@@ -125,7 +122,7 @@ def main(experiment,
 
     # MACS2 sometimes calls features off the end of chromosomes.  Fix that.
     clipped_gappedpeaks_fn = common.slop_clip(
-        '%s/%s_peaks.gappedPeak' % (peaks_dirname, prefix),
+        '%s_peaks.gappedPeak' % prefix,
         chrom_sizes,
         bed_type='gappedPeak')
 
@@ -150,11 +147,10 @@ def main(experiment,
 
     # This file is a tab delimited file with 2 columns Col1 (chromosome name),
     # Col2 (chromosome size in bp).
-
     command = 'macs2 bdgcmp ' + \
-              '-t %s/%s_treat_pileup.bdg ' % (peaks_dirname, prefix) + \
-              '-c %s/%s_control_lambda.bdg ' % (peaks_dirname, prefix) + \
-              '--outdir %s -o %s_FE.bdg ' % (peaks_dirname, prefix) + \
+              '-t %s_treat_pileup.bdg ' % prefix + \
+              '-c %s_control_lambda.bdg ' % prefix + \
+              '-o %s_FE.bdg ' % prefix + \
               '-m FE'
     logger.info(command)
     returncode = common.block_on(command)
@@ -163,10 +159,8 @@ def main(experiment,
 
     # Remove coordinates outside chromosome sizes (stupid MACS2 bug)
     pipe = [
-        'slopBed -i %s/%s_FE.bdg -g %s -b 0' % (peaks_dirname, prefix,
-                                                chrom_sizes),
-        'bedClip stdin %s %s/%s.fc.signal.bedgraph' % (chrom_sizes,
-                                                       peaks_dirname, prefix)
+        'slopBed -i %s_FE.bdg -g %s -b 0' % (prefix, chrom_sizes),
+        'bedClip stdin %s %s.fc.signal.bedgraph' % (chrom_sizes, prefix)
     ]
     out, err = common.run_pipe(pipe)
 
@@ -174,7 +168,7 @@ def main(experiment,
 
     # Convert bedgraph to bigwig
     command = 'bedGraphToBigWig ' + \
-              '%s/%s.fc.signal.bedgraph ' % (peaks_dirname, prefix) + \
+              '%s.fc.signal.bedgraph ' % prefix + \
               '%s ' % (chrom_sizes) + \
               '%s' % (fc_signal_fn)
     logger.info(command)
@@ -197,21 +191,18 @@ def main(experiment,
 
     logger.info("chipReads = %s, controlReads = %s, sval = %s" %
                 (chipReads, controlReads, sval))
-
     returncode = common.block_on(
-        'macs2 bdgcmp ' + '-t %s/%s_treat_pileup.bdg ' %
-        (peaks_dirname, prefix) + '-c %s/%s_control_lambda.bdg ' %
-        (peaks_dirname, prefix) + '--outdir %s -o %s_ppois.bdg ' %
-        (peaks_dirname, prefix) + '-m ppois -S %s' % (sval))
+        'macs2 bdgcmp ' + '-t %s_treat_pileup.bdg ' % prefix +
+        '-c %s_control_lambda.bdg ' % prefix +
+        '-o %s_ppois.bdg ' % prefix +
+        '-m ppois -S %s' % (sval))
     logger.info("MACS2 exited with returncode %d" % (returncode))
     assert returncode == 0, "MACS2 non-zero return"
 
     # Remove coordinates outside chromosome sizes (stupid MACS2 bug)
     pipe = [
-        'slopBed -i %s/%s_ppois.bdg -g %s -b 0' % (peaks_dirname, prefix,
-                                                   chrom_sizes),
-        'bedClip stdin %s %s/%s.pval.signal.bedgraph' % (chrom_sizes,
-                                                         peaks_dirname, prefix)
+        'slopBed -i %s_ppois.bdg -g %s -b 0' % (prefix, chrom_sizes),
+        'bedClip stdin %s %s.pval.signal.bedgraph' % (chrom_sizes, prefix)
     ]
     out, err = common.run_pipe(pipe)
 
@@ -219,7 +210,7 @@ def main(experiment,
 
     # Convert bedgraph to bigwig
     command = 'bedGraphToBigWig ' + \
-              '%s/%s.pval.signal.bedgraph ' % (peaks_dirname, prefix) + \
+              '%s.pval.signal.bedgraph ' % prefix + \
               '%s ' % (chrom_sizes) + \
               '%s' % (pvalue_signal_fn)
     logger.info(command)
@@ -259,6 +250,7 @@ def main(experiment,
     }
 
     return output
+
 
 if __name__ == '__main__':
     main(*sys.argv[1:])
