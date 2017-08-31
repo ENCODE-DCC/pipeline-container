@@ -51,34 +51,14 @@ def xcor_parse(fname):
 
 
 def main(input_tagAlign, paired_end):
-    q = Popen('pwd', stdout=PIPE)
-    outputz, _ = q.communicate()
-    print outputz
-    p = Popen(['ls', '-l'], stdout=PIPE)
-    outputz, _ = p.communicate()
-    print 'Beginning, line 58 in main'
-    print outputz
 
     input_tagAlign_filename = input_tagAlign
     #could do os.path.basename as well
     input_tagAlign_basename = input_tagAlign_filename.rstrip('.gz').split('/')[-1]
-    p = Popen(['ls', '-l'], stdout=PIPE)
-    outputz, _ = p.communicate()
-    print 'After making basename, line 66'
-    print outputz
-    print 'input_tagAlign_basename: %s' % input_tagAlign_basename
     uncompressed_TA_filename = input_tagAlign_basename
     #output to current folder, the key to keep the files in the right path
     out, err = common.run_pipe(['gzip -dc %s' % (input_tagAlign_filename)],
                                outfile=input_tagAlign_basename)
-    p = Popen(['ls', '-l'], stdout=PIPE)
-    outputz, _ = p.communicate()
-    print 'After running gzip on input_tagAlign_filename, which was %s' % input_tagAlign_filename
-    print outputz
-    print 'the tmpXYZ folder contains:'
-    r = Popen(['ls', '-l', 'tmp*'], stdout=PIPE)
-    outputz, _ = r.communicate()
-    print outputz
     # =================================
     # Subsample tagAlign file
     # ================================
@@ -122,23 +102,16 @@ def main(input_tagAlign, paired_end):
     # refer cwd for testing
     # does this really have to be with _no_dups
     run_spp_command = SPP_TOOL_PATH
-    print 'running SPP next, line 116'
     out, err = common.run_pipe([
         "Rscript %s -c=%s -p=%d -filtchr=chrM -savp=%s -out=%s" %
         (run_spp_command, subsampled_TA_filename, cpu_count(),
          CC_plot_filename, CC_scores_filename)
     ])
-    print 'SPP command has run, line 122'
-    print 'running sed command, line 123'
     out, err = common.run_pipe(
         [r"""sed -r  's/,[^\t]+//g' %s""" % (CC_scores_filename)],
         outfile="temp")
-    print 'sed command has run, output to temp'
-    print 'moving temp into %s' % CC_scores_filename
     out, err = common.run_pipe(["mv temp %s" % (CC_scores_filename)])
-    print 'temp moved, running xcor_parse next, line 130'
     xcor_qc = xcor_parse(CC_scores_filename)
-    print 'xcor_parse has run, line 132'
     # Return the outputs
     output = {
         "CC_scores_file": CC_scores_filename,
