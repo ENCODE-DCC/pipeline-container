@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # macs2 0.0.1
 
-import os
 import common
 import logging
 import sys

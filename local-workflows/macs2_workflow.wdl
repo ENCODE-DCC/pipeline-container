@@ -21,9 +21,9 @@ task macs2 {
         File broadpeaks_gzip = glob('*.broadPeak.gz')[0]
         File narrowpeaks_bb = glob('*narrowPeak.bb')[0]
         File gappedpeaks_bb = glob('*gappedPeak.bb')[0]
-        File broadpeaks_bb = glob('broadPeak.bb')[0]
+        File broadpeaks_bb = glob('*broadPeak.bb')[0]
         File fc_signal = glob('*.fc_signal.bw')[0]
-        File pvalue_signal = glob('*.pvalue_signal.bw')
+        File pvalue_signal = glob('*.pvalue_signal.bw')[0]
     }
 
     runtime {
