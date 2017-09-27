@@ -176,6 +176,13 @@ task gather_the_outputs {
         cp ${cc_pdf} .
         cp ${sep=' ' tag_align} .
     }
+
+    runtime {
+        docker: 'quay.io/encode-dcc/xcor:v1.0'
+        cpu: '2'
+        memory: '17.1 GB'
+        disks: 'local-disk 420 HDD'
+    }
 }
 
 # WORKFLOW DEFINITION
