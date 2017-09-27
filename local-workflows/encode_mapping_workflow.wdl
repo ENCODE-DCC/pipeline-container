@@ -37,7 +37,7 @@ task mapping {
     }
 
     runtime {
-        docker: 'quay.io/encode-dcc/mapping:v1.0'
+        docker: 'quay.io/jseth/mapping:cromwell-on-gc'
         cpu: '2'
         memory: '17.1 GB'
         disks: 'local-disk 420 HDD'
