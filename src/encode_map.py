@@ -261,7 +261,8 @@ def main(crop_length, reference_tar,
 
 
 if __name__ == '__main__':
-    if len(sys.argv) == 4:
-        main(sys.argv[2], sys.argv[1], "-q 5 -l 32 -k 2", False, sys.argv[3], None)
-    else:
-        main(sys.argv[2], sys.argv[1], "-q 5 -l 32 -k 2", False, sys.argv[3], sys.argv[4])
+    main(sys.argv[2], sys.argv[1], "-q 5 -l 32 -k 2", False, sys.argv[3], None)
+    # if len(sys.argv) == 4:
+    #     main(sys.argv[2], sys.argv[1], "-q 5 -l 32 -k 2", False, sys.argv[3], None)
+    # else:
+    #     main(sys.argv[2], sys.argv[1], "-q 5 -l 32 -k 2", False, sys.argv[3], sys.argv[4])
