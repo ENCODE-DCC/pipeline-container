@@ -48,6 +48,7 @@ ENV TRIMMOMATIC_HOME /image_software/Trimmomatic-0.36/
 # Get ENCODE pipeline container repository
 # This COPY asumes the build context is the root of the pipeline-container repo
 # and it gets whatever is checked out plus local modifications
+ARG CACHE_MISS=1
 RUN mkdir pipeline-container
 COPY / pipeline-container
 
