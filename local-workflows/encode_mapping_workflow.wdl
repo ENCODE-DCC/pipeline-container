@@ -70,7 +70,7 @@ task post_processing {
     }
 
     runtime {
-        docker: 'quay.io/encode-dcc/post_mapping:v1.0'
+        docker: 'quay.io/encode-dcc/post_mapping:cromwell-on-gc'
         cpu: '2'
         memory: '17.1 GB'
         disks: 'local-disk 420 HDD'
@@ -100,7 +100,7 @@ task filter_qc {
     }
 
     runtime {
-        docker: 'quay.io/encode-dcc/filter:v1.0'
+        docker: 'quay.io/encode-dcc/filter:cromwell-on-gc'
         cpu: '2'
         memory: '17.1 GB'
         disks: 'local-disk 420 HDD'
@@ -128,7 +128,7 @@ task xcor {
     }
 
     runtime {
-        docker: 'quay.io/encode-dcc/xcor:v1.0'
+        docker: 'quay.io/encode-dcc/xcor:cromwell-on-gc'
         cpu: '2'
         memory: '17.1 GB'
         disks: 'local-disk 420 HDD'
@@ -178,7 +178,7 @@ task gather_the_outputs {
     }
 
     runtime {
-        docker: 'quay.io/encode-dcc/xcor:v1.0'
+        docker: 'quay.io/encode-dcc/xcor:cromwell-on-gc'
         cpu: '2'
         memory: '17.1 GB'
         disks: 'local-disk 420 HDD'
