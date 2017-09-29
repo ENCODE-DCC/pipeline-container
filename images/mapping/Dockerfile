@@ -48,7 +48,6 @@ ENV TRIMMOMATIC_HOME /image_software/Trimmomatic-0.36/
 # Get ENCODE pipeline container repository
 # This COPY asumes the build context is the root of the pipeline-container repo
 # and it gets whatever is checked out plus local modifications
-ARG CACHE_MISS=1
 RUN mkdir pipeline-container
 COPY / pipeline-container
 
@@ -57,4 +56,5 @@ RUN groupadd -r encode && useradd --no-log-init -r -m -d /home/encode/ -g encode
 USER encode
 WORKDIR /home/encode
 
-ENTRYPOINT ["python", "/image_software/pipeline-container/src/encode_map.py"]
+#ENTRYPOINT ["python", "/image_software/pipeline-container/src/encode_map.py"]
+CMD ["bash"]

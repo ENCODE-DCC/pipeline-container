@@ -76,4 +76,5 @@ RUN groupadd -r encode && useradd --no-log-init -r -m -d /home/encode/ -g encode
 USER encode
 WORKDIR /home/encode
 
-ENTRYPOINT ["python", "/image_software/pipeline-container/src/xcor.py"]
+#ENTRYPOINT ["python", "/image_software/pipeline-container/src/encode_map.py"]
+CMD ["bash"]
