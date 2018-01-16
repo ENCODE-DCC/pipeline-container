@@ -23,7 +23,6 @@ pipeline {
                                 echo "$env.BRANCH_NAME"
                                 echo "Running non-master build steps."
                                 script {
-                                        import groovy.json.JsonSlurper
                                         def slurper = new JsonSlurper()
                                         def parsed_json = slurper.parseText(json_response)
                                         println(parsed_json.now.epoch)
