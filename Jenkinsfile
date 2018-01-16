@@ -23,10 +23,10 @@ pipeline {
                                 echo "$env.BRANCH_NAME"
                                 echo "Running non-master build steps."
                                 script {
-                                        hook = registerWebhook()
-                                        echo "Waiting for POST to ${hook.getURL()}"
-                                        data = waitForWebhook hook
-                                        echo "Webhook got a POST with data: ${data}"
+                                        import groovy.json.JsonSlurper
+                                        def slurper = new JsonSlurper()
+                                        def parsed_json = slurper.parseText(json_response)
+                                        println(parsed_json.now.epoch)
                                         }
                                 // sh "docker login -u=ottojolanki -p=${QUAY_PASS} quay.io"
                                 // sh "docker build --no-cache -t filter images/filter/"
