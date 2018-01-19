@@ -22,11 +22,6 @@ pipeline {
 				slackSend "The images will be tagged as ${env.BRANCH_NAME}:${env.BUILD_NUMBER}"
                                 echo "$env.BRANCH_NAME"
                                 echo "Running non-master build steps."
-                                script {
-                                        def slurper = new JsonSlurper()
-                                        def parsed_json = slurper.parseText(json_response)
-                                        println(parsed_json.now.epoch)
-                                        }
                                 // sh "docker login -u=ottojolanki -p=${QUAY_PASS} quay.io"
                                 // sh "docker build --no-cache -t filter images/filter/"
                                 // sh "docker tag filter quay.io/ottojolanki/filter:${env.BRANCH_NAME}"
