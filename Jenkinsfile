@@ -1,5 +1,5 @@
 pipeline {
-        agent {label 'slave-w-docker-cromwell-60GB-ebs'}
+        agent {label 'slave-60GB'}
 
         environment {
                 QUAY_PASS = credentials('ottojolanki-quay')
