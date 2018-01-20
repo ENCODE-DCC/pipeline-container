@@ -24,7 +24,8 @@ pipeline {
 				slackSend "The images will be tagged as ${env.BRANCH_NAME}:${env.BUILD_NUMBER}"
                                 echo "$env.BRANCH_NAME"
                                 echo "Running non-master build steps."
-                                ./envtest.sh
+
+                                sh "./envtest.sh"
                                 // sh "docker login -u=ottojolanki -p=${QUAY_PASS} quay.io"
                                 // sh "docker build --no-cache -t filter images/filter/"
                                 // sh "docker tag filter quay.io/ottojolanki/filter:${env.BRANCH_NAME}"
