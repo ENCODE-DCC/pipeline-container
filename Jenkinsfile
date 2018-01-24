@@ -1,9 +1,7 @@
 pipeline {
         agent {label 'master-builder'}
 
-        parameters {
-                string(name: 'TAG', defaultValue: ${env.BRANCH_NAME}')
-        }
+        parameters { string(name: 'TAG', defaultValue: ${env.BRANCH_NAME}, description: '') }
         environment {
                 
                 }
