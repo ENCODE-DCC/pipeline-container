@@ -1,8 +1,11 @@
 pipeline {
-        agent {label 'slave-w-docker-cromwell-60GB-ebs'}
+        agent {label 'master-builder'}
 
+        parameters {
+                string(TAG:'${env.BRANCH_NAME}')
+        }
         environment {
-                QUAY_PASS = credentials('ottojolanki-quay')
+                
                 }
         stages {
 		stage('Unit-tests') {
@@ -20,9 +23,7 @@ pipeline {
                         steps { 
                                 slackSend "started job: ${env.JOB_NAME}, build number ${env.BUILD_NUMBER} on branch: ${env.BRANCH_NAME}."
 				slackSend "The images will be tagged as ${env.BRANCH_NAME}:${env.BUILD_NUMBER}"
-                                echo "$env.BRANCH_NAME"
-                                echo "Running non-master build steps."
-
+                                echo "tag parameter from parameters: ${params.TAG}"
                                 sh "./envtest.sh $env.BRANCH_NAME $env.BUILD_NUMBER"
                                 // sh "docker login -u=ottojolanki -p=${QUAY_PASS} quay.io"
                                 // sh "docker build --no-cache -t filter images/filter/"
