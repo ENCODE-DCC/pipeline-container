@@ -6,7 +6,7 @@ pipeline {
 		stage('Unit-tests') {
 			steps { 
                                 script{
-                                        TAG = sh([script: "echo ${env.BUILD_NUMBER}"]).trim()
+                                        TAG = sh([script: "echo ${env.BUILD_NUMBER}", returnStdout: true]).trim()
                                 }
 				echo "Running unit tests.."
 				sh 'python src/test_common.py'
