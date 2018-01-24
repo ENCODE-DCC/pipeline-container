@@ -1,11 +1,13 @@
 pipeline {
         agent {label 'master-builder'}
 
-        parameters { string(name: 'TAG', defaultValue: ${env.BRANCH_NAME}, description: '') }
 
         stages {
 		stage('Unit-tests') {
 			steps { 
+                                script{
+                                        TAG = sh([script: echo ${env.BRANCH_NAME}]).trim()
+                                }
 				echo "Running unit tests.."
 				sh 'python src/test_common.py'
                                 sh 'python src/test_encode_map.py'
@@ -17,9 +19,9 @@ pipeline {
                 stage('Build-nonmaster') {
                         when { not { branch 'master' } }
                         steps { 
+                                echo "The TAG is ${TAG}"
                                 slackSend "started job: ${env.JOB_NAME}, build number ${env.BUILD_NUMBER} on branch: ${env.BRANCH_NAME}."
 				slackSend "The images will be tagged as ${env.BRANCH_NAME}:${env.BUILD_NUMBER}"
-                                echo "tag parameter from parameters: ${params.TAG}"
                                 sh "./envtest.sh $env.BRANCH_NAME $env.BUILD_NUMBER"
                                 // sh "docker login -u=ottojolanki -p=${QUAY_PASS} quay.io"
                                 // sh "docker build --no-cache -t filter images/filter/"
