@@ -6,7 +6,7 @@ pipeline {
 		stage('Unit-tests') {
 			steps { 
                                 script{
-                                        TAG = sh([script: "echo quay.io/encode-dcc/atac-seq-pipeline:${env.BUILD_NUMBER}", returnStdout: true]).trim()
+                                        TAG = sh([script: "echo quay.io/encode-dcc/atac-seq-pipeline:${env.BRANCH_NAME}_${env.BUILD_NUMBER}", returnStdout: true]).trim()
                                 }
 				echo "Running unit tests.."
 			}
