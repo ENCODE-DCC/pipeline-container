@@ -6,7 +6,7 @@ pipeline {
 		stage('Unit-tests') {
 			steps { 
                                 script{
-                                        TAG = sh([script: echo ${BUILD_NUMBER}]).trim()
+                                        TAG = sh([script: "echo ${env.BUILD_NUMBER}"]).trim()
                                 }
 				echo "Running unit tests.."
 				sh 'python src/test_common.py'
@@ -19,7 +19,7 @@ pipeline {
                 stage('Build-nonmaster') {
                         when { not { branch 'master' } }
                         steps { 
-                                echo "The TAG in $TAG"
+                                echo "The TAG is $TAG"
                                 slackSend "started job: ${env.JOB_NAME}, build number ${env.BUILD_NUMBER} on branch: ${env.BRANCH_NAME}."
 				slackSend "The images will be tagged as ${env.BRANCH_NAME}:${env.BUILD_NUMBER}"
                                 sh "./envtest.sh $env.BRANCH_NAME $env.BUILD_NUMBER"
