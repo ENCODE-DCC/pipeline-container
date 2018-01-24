@@ -9,11 +9,6 @@ pipeline {
                                         TAG = sh([script: "echo ${env.BUILD_NUMBER}", returnStdout: true]).trim()
                                 }
 				echo "Running unit tests.."
-				sh 'python src/test_common.py'
-                                sh 'python src/test_encode_map.py'
-                                sh 'python src/test_encode_post_map.py'
-                                sh 'python src/test_filter_qc.py'
-                                sh 'python src/test_xcor.py'
 			}
 		}
                 stage('Build-nonmaster') {
